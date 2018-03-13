@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
+import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -15,16 +16,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button service;
 
+    private Button broadCast;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        activity = (Button) findViewById(R.id.activity);
-        activity.setOnClickListener(this);
-
-        service = (Button) findViewById(R.id.service);
-        service.setOnClickListener(this);
+        initView();
     }
 
     @Override
@@ -38,6 +37,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.service:
                 intent = new Intent(MainActivity.this, ServiceLearningActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.broadCast:
+                intent = new Intent(MainActivity.this, BroadcastLearningActivity.class);
+                startActivity(intent);
+                break;
         }
+    }
+
+    private void initView(){
+        activity = (Button) findViewById(R.id.activity);
+        activity.setOnClickListener(this);
+
+        service = (Button) findViewById(R.id.service);
+        service.setOnClickListener(this);
+
+        broadCast = (Button) findViewById(R.id.broadCast);
+        broadCast.setOnClickListener(this);
     }
 }

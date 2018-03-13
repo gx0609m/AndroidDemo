@@ -26,4 +26,15 @@
         android:layout_toRightOf="@+id/activity"
         android:layout_toEndOf="@+id/activity" />
 
+    <Button
+        android:id="@+id/broadCast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BroadCast"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/service"
+        android:layout_toEndOf="@+id/service"
+        android:layout_marginLeft="23dp"
+        android:layout_marginStart="23dp" />
+
 </RelativeLayout>

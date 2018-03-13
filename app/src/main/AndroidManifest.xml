@@ -32,6 +32,9 @@
             android:process=":remote" />
         <service android:name=".service.MyIntentService"/>
 
+        <!-- BroadcastReceiver相关 -->
+        <activity android:name=".broadcast.BroadcastLearningActivity"/>
+
     </application>
 
 </manifest>
