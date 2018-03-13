@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/startService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Service" />
+
+        <Button
+            android:id="@+id/stopService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop Service" />
+
+        <Button
+            android:id="@+id/bindService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bind Service" />
+
+        <Button
+            android:id="@+id/unBindService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unbind Service" />
+
+        <Button
+            android:id="@+id/bindFrontService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bind Front Service" />
+
+        <Button
+            android:id="@+id/unBindFrontService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unbind Front Service" />
+
+        <Button
+            android:id="@+id/remoteService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bind Remote Service" />
+
+        <Button
+            android:id="@+id/unbindRemoteService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unbind Remote Service" />
+
+        <Button
+            android:id="@+id/startRemoteService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Remote Service" />
+
+        <Button
+            android:id="@+id/stopRemoteService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop Remote Service" />
+
+        <Button
+            android:id="@+id/bindRemoteServiceWithAIDL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bind Remote Service with AIDL" />
+
+        <Button
+            android:id="@+id/unBindRemoteServiceWithAIDL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unbind Remote Service with AIDL" />
+
+        <Button
+            android:id="@+id/startIntentService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start IntentService" />
+    </LinearLayout>
+</ScrollView>
