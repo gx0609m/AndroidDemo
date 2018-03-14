@@ -8,15 +8,15 @@ import android.widget.Button;
 
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
+import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button activity;
-
     private Button service;
-
     private Button broadCast;
+    private Button recycleview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent = new Intent(MainActivity.this, BroadcastLearningActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.recycleview:
+                intent = new Intent(MainActivity.this, RecycleViewLearningActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -54,5 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         broadCast = (Button) findViewById(R.id.broadCast);
         broadCast.setOnClickListener(this);
+
+        recycleview = (Button) findViewById(R.id.recycleview);
+        recycleview.setOnClickListener(this);
     }
 }
