@@ -1,13 +1,19 @@
 package com.example.administrator.androiddemo;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
+import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
 import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 
@@ -17,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button service;
     private Button broadCast;
     private Button recycleview;
+    private Button inputDialog;
+    private Button imageload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +54,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent = new Intent(MainActivity.this, RecycleViewLearningActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.inputDialog:
+                showInputDialog();
+                break;
+            case R.id.imageload:
+                intent = new Intent(MainActivity.this, ImageLoadLearningActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
-    private void initView(){
+    /**
+     * 弹出输入对话框（输入短信验证码）
+     */
+    private void showInputDialog() {
+        final EditText editText = new EditText(this);
+        editText.setRawInputType(InputType.TYPE_CLASS_NUMBER);// 弹出数字输入框
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);// 输入类型为数字文本
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(this);
+        builder.setTitle("我是一个输入Dialog").setView(editText);
+        builder.setCancelable(false); // 屏蔽返回按钮
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false); // 点屏幕其他区域不取消
+        builder.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivity.this, editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void initView() {
         activity = (Button) findViewById(R.id.activity);
         activity.setOnClickListener(this);
 
@@ -61,5 +105,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         recycleview = (Button) findViewById(R.id.recycleview);
         recycleview.setOnClickListener(this);
+
+        inputDialog = (Button) findViewById(R.id.inputDialog);
+        inputDialog.setOnClickListener(this);
+
+        imageload = (Button) findViewById(R.id.imageload);
+        imageload.setOnClickListener(this);
     }
 }

@@ -29,4 +29,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     // 使用RecycleView 要单独引入recyclerview-v7包
     compile 'com.android.support:recyclerview-v7:25.+'
+
+    // fresco依赖
+    compile 'com.facebook.fresco:fresco:0.12.0'
 }
