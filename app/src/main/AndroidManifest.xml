@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.administrator.androiddemo">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -42,6 +44,9 @@
         <!-- 图片加载相关 -->
         <activity android:name=".imageload.ImageLoadLearningActivity" />
         <activity android:name=".imageload.fresco.FrescoLearningActivity" />
+        <activity android:name=".imageload.glide.GlideLearningActivity"/>
+        <activity android:name=".imageload.picasso.PicassoLearningActivity"/>
+        <activity android:name=".imageload.universalimageloader.UniversalImageLoaderLearningActivity"/>
 
     </application>
 

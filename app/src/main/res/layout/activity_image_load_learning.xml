@@ -10,4 +10,21 @@
         android:layout_height="wrap_content"
         android:text="Fresco"/>
 
+    <Button
+        android:id="@+id/glide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Glide"/>
+
+    <Button
+        android:id="@+id/picasso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Picasso"/>
+
+    <Button
+        android:id="@+id/imageLoader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ImageLoader"/>
 </LinearLayout>
