@@ -37,6 +37,10 @@ public class FrescoLearningActivity extends AppCompatActivity {
      *          只需要调用Fresco.initialize一次即可完成初始化，
      *          在 Application 里面做这件事再适合不过了，注意多次的调用初始化是无意义的
      *
+     *          （还可以：
+     *              配置Image Pipeline ——— ImageLoaderConfig，如果配置了此，需要在初始化Fresco时通过Fresco的构造方法设置下;
+     *              配置内存缓存 ——— BitmapMemoryCacheParamsSupplier，在配置Image Pipeline时配置；）
+     *
      */
 
     // 加载网络图片前显示一张占位图
@@ -49,6 +53,7 @@ public class FrescoLearningActivity extends AppCompatActivity {
 
         initView();
         simpleLoadImage();
+
     }
 
     /**
@@ -67,6 +72,7 @@ public class FrescoLearningActivity extends AppCompatActivity {
          */
         Uri uri = Uri.parse("http://f2.topitme.com/2/b9/71/112660598401871b92l.jpg");
         simpleDraweeView.setImageURI(uri);
+
     }
 
     private void initView(){
