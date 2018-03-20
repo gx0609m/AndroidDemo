@@ -27,6 +27,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
     // 使用RecycleView 要单独引入recyclerview-v7包
     compile 'com.android.support:recyclerview-v7:25.+'
 
@@ -40,4 +41,7 @@ dependencies {
     compile 'com.facebook.fresco:imagepipeline-okhttp3:0.14.1'
     // okhttp网络日志拦截器
     compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+
+    // picasso依赖
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
