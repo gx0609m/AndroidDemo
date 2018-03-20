@@ -129,18 +129,31 @@ public class ImageLoaderConfig {
             // OkHttp中的日志拦截器
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
             // 替换网络加载层为OkHttp
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(loggingInterceptor)  // 添加日志拦截
 //                    .retryOnConnectionFailure(false)
                     .build();
 
+            // 设置渐进式加载图片
+            ProgressiveJpegConfig config = new ProgressiveJpegConfig() {
+                @Override
+                public int getNextScanNumberToDecode(int i) {
+                    return 0;
+                }
+
+                @Override
+                public QualityInfo getQualityInfo(int i) {
+                    return null;
+                }
+            };
+
             sImagePipelineConfig = OkHttpImagePipelineConfigFactory.newBuilder(context, okHttpClient) // 将Image pipeline默认使用的网加载层HttpURLConnection替换成OkHttp
 //            sImagePipelineConfig = ImagePipelineConfig.newBuilder(context)  // Image pipeline默认使用HttpURLConnection
                     .setBitmapsConfig(Bitmap.Config.RGB_565) // 若不是要求忒高清显示应用，就用使用RGB_565吧（默认是ARGB_8888)
                     .setDownsampleEnabled(true) // 在解码时改变图片的大小，支持PNG、JPG以及WEBP格式的图片，与ResizeOptions配合使用
                     // 设置Jpeg格式的图片支持渐进式显示
+//                    .setProgressiveJpegConfig(config)
                     .setProgressiveJpegConfig(new ProgressiveJpegConfig() {
                         @Override
                         public int getNextScanNumberToDecode(int scanNumber) {

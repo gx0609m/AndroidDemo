@@ -59,6 +59,15 @@ Fresco
     支持的图片格式：
         1.静态图：png、jpg、webp；
         2.动态图：gif、web格式的gif；
+                几种图片的主要特点：
+                        webp：文件最小，有透明通道；
+                        jpg：文件较小，无透明通道；
+                        png：文件较大，有透明通道；
+
+        由于Fresco支持webp格式的，对于splash和引导界面的大图可以使用智图(http://zhitu.isux.us/)压成webp放在drawable中，然后用Fresco加载；
+
+        Fresco还支持图片的渐进式呈现，渐进式的JPEG图片格式先呈现大致的图片轮廓，然后随着图片下载的继续，呈现逐渐清晰的图片，
+        这对于移动设备，尤其是慢网络有极大的利好，可带来更好的用户体验；
 
     使用：
         一般情况下，使用 SimpleDraweeView 即可，可以通过配置如下的XML属性来实现各式各样的展示效果：
@@ -118,5 +127,5 @@ Fresco
 
 
 
-
-（http://blog.csdn.net/android_yyf/article/details/73549538）
+（https://www.fresco-cn.org/）
+（http://blog.csdn.net/android_ls/article/details/53137867）
