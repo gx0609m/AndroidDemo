@@ -1,0 +1,35 @@
+Glide
+    简介：
+        是一款由Bump Technologies开发的图片加载框架；
+        目前，Glide最新的稳定版本是3.7.0，这个版本的Glide相当成熟和稳定；
+
+    基础功能：
+        图片异步加载；
+            //Glide使用了流式接口的调用方式，Glide类是核心实现类
+            Glide.with(context) // 上下文
+                 .load(Url) // 被加载图像的Url地址
+                 .into(targetImageView); // 图片最终要展示的地方
+
+    特色功能：
+        1.设置加载尺寸；
+            Glide.with(this)
+                 .load(imageUrl)
+                 .override(800, 800) // 加载尺寸
+                 .into(imageView);
+
+        2.设置加载动画；
+        3.设置要加载的内容；
+        4.设置加载中以及加载失败图片；
+        5.多样化的媒体加载：
+            a.常见图片格式的加载：jgp、png、gif（设置动态gif加载方式）、webp；
+            b.video加载；
+            c.缩略图（设置缩略图支持）；
+        6.关于缓存：
+            a.跳过内存缓存；
+            b.缓存的动态清理；
+            c.设置缓存策略；
+        7.生命周期集成；
+        8.设置动态转换；
+        9.设置下载优先级；
+
+
