@@ -1,0 +1,57 @@
+基本信息：
+    Picasso ——— Square 开源的项目，主导者是 JakeWharton；
+
+    Fresco ——— Facebook 在开源的图片缓存；
+
+    Glide ——— 是 Google 员工Sam sjudd的开源项目，被一些 Google App 使用，在14年的 Google I/O 上被推荐；
+                  “It has been used in many Google open source projects till now including Google I/O 2014 official application.”
+
+Glide vs Picasso:
+    使用：
+        “The way to load an image to ImageView with Glide is quite the same as Picasso.”
+
+                Picasso
+                    Picasso.with(context)
+                         .load("http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg")
+                         .into(ivImg);
+                Glide
+                    Glide.with(context)
+                         .load("http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg")
+                         .into(ivImg);
+
+        “Although it looks quite the same but in details Glide is designed far better since with doesn't accept only
+         Context but also Activity and Fragment. Context will be automatically extracted from those things you throw in.”
+
+        “And the brilliant benefit from passing Activity/Fragment to Glide is: image loading would be integrated with
+         Activity/Fragment's lifecycle for example, pause loading in Paused state and automatically resume on Resumed state.
+         So I encourage you to pass the Activity or Fragment to Glide not just a Context if possible.”
+
+         可以看到，虽然二者的使用方法很类似，但从设计的细节方面来说，Glide还是要远好于Picasso的，比如：
+                                    Glide的.with()方法不仅可以接收context还可以接收activity、fragment作为参数；
+
+         另外，接收activity/fragment作为传参的更大的好处是：
+                                    图片加载会和activity/fragment的生命周期关联起来，
+                                        当生命周期处于paused时，glide就会暂停图片加载；
+                                        当生命周期处于resumed时，glide也会自动的恢复加载；
+                                    当然，前提是在.with()传参时传入activity/fragment，而不是简单的传入一个context；
+
+    默认加载的图片格式：
+        “Image loaded by Glide has the worse quality compared to Picasso.
+         Why?
+         This is because Glide default Bitmap Format is set to RGB_565 since it consumed just 50%
+         memory footprint compared to Picasso ad ARGB_8888.”
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+（https://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en）

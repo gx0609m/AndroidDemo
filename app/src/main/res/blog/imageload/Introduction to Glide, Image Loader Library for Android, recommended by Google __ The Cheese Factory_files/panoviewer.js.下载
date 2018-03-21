@@ -1,0 +1,222 @@
+var PanoViewer = function() {
+    "use strict";
+
+    var container, camera, scene, renderer, material;
+
+    var isUserInteracting = false,
+        onMouseDownMouseX = 0,
+        onMouseDownMouseY = 0,
+        onPointerDownPointerX = 0,
+        onPointerDownPointerY = 0,
+        onPointerDownLat = 0,
+        onPointerDownLon = 0,
+        lat = 0,
+        lon = 180,
+        onMouseDownLat = 0,
+        onMouseDownLon = 0,
+        phi = 0,
+        theta = 0,
+        currentWidth = 1,
+        zoomable = false,
+        distorted = false;
+
+    var ratio = 1;
+    var that = this;
+
+    this.init = function(element_id, image_path) {
+        var mesh, geometry;
+
+        container = document.getElementById(element_id);
+
+        // Set container's size
+        resizeContainer();
+
+        // Create Camera with fova (Field of View Angle) = 65
+        //   which is equals to Facebook's 360 viewer
+        camera = new THREE.PerspectiveCamera(65, that.ratio, 1, 1100);
+        camera.target = new THREE.Vector3(0, 0, 0);
+
+        // Create a Scene
+        scene = new THREE.Scene();
+
+        // Create a Sphere with:
+        //   radius - 500
+        //   horizontal segments - 60
+        //   vertical segments - 40
+        geometry = new THREE.SphereGeometry(500, 60, 40);
+        geometry.scale(-1, 1, 1);
+
+        // Create a Texture Material
+        material = new THREE.MeshBasicMaterial({
+            map: new THREE.TextureLoader().load(image_path)
+        });
+
+        // Create a Mesh with Sphere geometry with created texture
+        mesh = new THREE.Mesh(geometry, material);
+
+        // Add Mesh to the scene
+        scene.add(mesh);
+
+        // Create renderer with proper width 1:1 pixel ratio
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(1);
+        renderer.setSize(getProperWidth(), getProperHeight());
+
+        // Add renderer (canvas) to the container
+        container.appendChild(renderer.domElement);
+
+        container.addEventListener('mousedown', onDocumentMouseDown, false);
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+        document.addEventListener('mouseup', onDocumentMouseUp, false);
+        container.addEventListener('touchstart', onDocumentMouseDown, false);
+        document.addEventListener('touchmove', onDocumentMouseMove, false);
+        document.addEventListener('touchend', onDocumentMouseUp, false);
+        container.addEventListener('mousewheel', onDocumentMouseWheel, false);
+        container.addEventListener('MozMousePixelScroll', onDocumentMouseWheel, false);
+
+        //
+        window.addEventListener('resize', onWindowResize, false);
+
+        onWindowResize();
+
+        animate();
+
+        return this;
+    };
+
+    this.ratio = function(ratio) {
+      that.ratio = ratio;
+      onWindowResize();
+      return this;
+    }
+
+    this.zoomable = function(zoomable) {
+      that.zoomable = zoomable;
+      return this;
+    }
+
+    this.distort = function(distorted) {
+      that.distorted = distorted;
+      return this;
+    }
+
+    this.updateEquirectangularSrc = function(srcUrl) {
+        material.map.image.src = srcUrl;
+        material.map.needsUpdate = true;
+    }
+
+    function resizeContainer() {
+      if (container != null)
+        container.style.height = getProperHeight() + "px";
+    }
+
+    function onWindowResize() {
+        if (camera == null || container == null || renderer == null)
+          return;
+
+        camera.aspect = that.ratio;
+        camera.updateProjectionMatrix();
+
+        resizeContainer();
+        renderer.setSize(getProperWidth(), getProperHeight());
+
+        currentWidth = getProperWidth();
+    }
+
+    function getProperWidth() {
+        if (container == null)
+          return 0;
+        return container.offsetWidth;
+    }
+
+    function getProperHeight() {
+      return getProperWidth() / that.ratio;
+    }
+
+    function onDocumentMouseDown(event) {
+        event.preventDefault();
+
+        var indicators = container.getElementsByClassName('panodrag');
+        for (var i = 0; i < indicators.length; i++)
+          indicators[i].style.display = "none";
+
+        isUserInteracting = true;
+
+        if (event.touches == null || event.touches[0] == null) {
+            onPointerDownPointerX = event.clientX;
+            onPointerDownPointerY = event.clientY;
+        } else {
+            onPointerDownPointerX = event.touches[0].pageX;
+            onPointerDownPointerY = event.touches[0].pageY;
+        }
+
+        onPointerDownLon = lon;
+        onPointerDownLat = lat;
+    }
+
+    function onDocumentMouseMove(event) {
+        if (isUserInteracting === true) {
+            if (event.touches == null || event.touches[0] == null) {
+                lon = (onPointerDownPointerX - event.clientX) * 0.1 * (1000 / currentWidth) + onPointerDownLon;
+                lat = (event.clientY - onPointerDownPointerY) * 0.1 * (1000 / currentWidth) + onPointerDownLat;
+            } else {
+                lon = (onPointerDownPointerX - event.touches[0].pageX) * 0.1 * (1000 / currentWidth) + onPointerDownLon;
+                lat = (event.touches[0].pageY - onPointerDownPointerY) * 0.1 * (1000 / currentWidth) + onPointerDownLat;
+            }
+        }
+    }
+
+    function onDocumentMouseUp(event) {
+        isUserInteracting = false;
+    }
+
+    function onDocumentMouseWheel(event) {
+        if (that.zoomable == true) {
+          event.preventDefault();
+
+          if (event.wheelDeltaY) {
+            // WebKit
+            camera.fov -= event.wheelDeltaY * 0.05;
+          } else if (event.wheelDelta) {
+            // Opera / Explorer 9
+            camera.fov -= event.wheelDelta * 0.05;
+          } else if (event.detail) {
+            // Firefox
+            camera.fov += event.detail * 1.0;
+          }
+          // Cap fov between 40-110
+          camera.fov = Math.max(Math.min(camera.fov, 110), 40);
+          camera.updateProjectionMatrix();
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        update();
+    };
+
+    function update() {
+        if (isUserInteracting === false) {
+            //lon += 0.1;
+        }
+
+        lat = Math.max(-85, Math.min(85, lat));
+        phi = THREE.Math.degToRad(90 - lat);
+        theta = THREE.Math.degToRad(lon);
+
+        camera.target.x = 500 * Math.sin(phi) * Math.cos(theta);
+        camera.target.y = 500 * Math.cos(phi);
+        camera.target.z = 500 * Math.sin(phi) * Math.sin(theta);
+
+        camera.lookAt(camera.target);
+
+        if (that.distorted) {
+          // distortion
+          camera.position.copy(camera.target).negate();
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    return this;
+};
