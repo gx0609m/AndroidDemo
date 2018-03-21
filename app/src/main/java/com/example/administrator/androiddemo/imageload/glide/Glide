@@ -3,6 +3,50 @@ Glide
         是一款由Bump Technologies开发的图片加载框架；
         目前，Glide最新的稳定版本是3.7.0，这个版本的Glide相当成熟和稳定；
 
+    支持的图片格式：
+        1.静态图：png、jpg、webp；
+        2.动态图：gif、web格式的gif；
+        3.Video;
+
+    优点：
+        1.生命周期集成：
+              通过设置绑定生命周期，我们可以更加高效的使用Glide提供的方式进行绑定，这样可以更好的让加载图片的请求的生命周期动态管理起来；
+
+        2.高效的缓存策略：
+              a.支持Memory和Disk图片缓存；
+              b.Picasso 只会缓存原始尺寸的图片，而 Glide 会根据你 ImageView 的大小来缓存相应大小的图片尺寸；
+                        例如：
+                            你 ImageView 大小是200*200，原图是 400*400 ，
+                            使用 Glide 就会缓存 200*200 规格的图，
+                            而使用Picasso 只会缓存 400*400 规格的，这就会造成内存资源的浪费，甚至是内存溢出的问题，
+                            这个改进就会导致 Glide 比 Picasso 加载的速度要快，毕竟少了每次裁剪重新渲染的过程，非常灵活 & 加载速度快；
+
+        3.内存开销小
+              Glide默认的 Bitmap 格式是 RGB_565（16bit，2Byte） 格式，而 Picasso 默认的是 ARGB_8888（32bit，4Byte） 格式，内存开销要小一半；
+
+        4.支持图片的预加载
+
+        5.支持加载多种图片资源：
+            Glide支持加载各种各样的图片资源，包括网络图片、本地图片、应用资源、二进制流、Uri对象等等，因此load()方法也有很多个方法重载：
+                // 加载本地图片
+                File file = new File(getExternalCacheDir() + "/image.jpg");
+                Glide.with(this).load(file).into(imageView);
+
+                // 加载应用资源
+                int resource = R.drawable.image;
+                Glide.with(this).load(resource).into(imageView);
+
+                // 加载二进制流
+                byte[] image = getImageBytes();
+                Glide.with(this).load(image).into(imageView);
+
+                // 加载Uri对象
+                Uri imageUri = getImageUri();
+                Glide.with(this).load(imageUri).into(imageView);
+
+        6.只下载图片，而不对图片进行加载
+            downloadOnly();
+
     基础功能：
         图片异步加载；
             //Glide使用了流式接口的调用方式，Glide类是核心实现类
@@ -11,25 +55,141 @@ Glide
                  .into(targetImageView); // 图片最终要展示的地方
 
     特色功能：
-        1.设置加载尺寸；
-            Glide.with(this)
-                 .load(imageUrl)
-                 .override(800, 800) // 加载尺寸
-                 .into(imageView);
+        1.设置加载尺寸大小；
+            实际上，使用Glide在绝大多数情况下我们都是不需要指定图片大小的；
+            首先，我们需要知道 ——— 我们平时在加载图片的时候很容易会造成内存浪费，什么叫内存浪费呢：
+                比如说一张图片的尺寸是1000*1000像素，但是我们界面上的ImageView可能只有200*200像素，这个时
+                候如果你不对图片进行任何压缩就直接读取到内存中，这就属于内存浪费了，因为程序中根本就用不到这么高像素的图片；
+
+            而使用Glide，我们就完全不用担心图片内存浪费，甚至是内存溢出的问题，
+            因为Glide从来都不会直接将图片的完整尺寸全部加载到内存中，而是用多少加载多少，Glide会自动判断ImageView的大小，
+            然后只将这么大的图片像素加载到内存当中，帮助我们节省内存开支；
+
+            因此，在绝大多数情况下我们都是不需要指定图片大小的，因为Glide会自动根据ImageView的大小来决定图片的大小；
+
+            如果你真的有这样的需求，必须给图片指定一个固定的大小，Glide仍然是支持这个功能的：
+                Glide.with(this)
+                    .load(imageUrl)
+                    .override(800, 800) // 加载尺寸 （如果你想加载一张图片的原始尺寸的话，可以使用Target.SIZE_ORIGINAL关键字替换）
+                    .into(imageView);
+
+            这里使用override()方法指定了一个图片的尺寸，也就是说，Glide现在只会将图片加载成100*100像素的尺寸，而不会管你的ImageView的大小是多少了；
 
         2.设置加载动画；
+            Glide.with(this)
+                 .load(imageUrl)
+                 .animate(R.anim.item_alpha_in)
+                 .into(imageView);
+
+            R.anim.item_alpha_in 动画文件：
+                <?xml version="1.0" encoding="utf-8"?>
+                <set xmlns:android="http://schemas.android.com/apk/res/android">
+                    <alpha
+                        android:duration="500"
+                        android:fromAlpha="0.0"
+                        android:toAlpha="1.0"/>
+                </set>
+            api也提供了几个常用的动画：比如crossFade()；
+
         3.设置要加载的内容；
-        4.设置加载中以及加载失败图片；
+            项目中有很多需要先下载图片然后再做一些合成的功能，比如项目中出现的图文混排，该如何实现：
+                Glide.with(this)
+                     .load(imageUrl)
+                     .centerCrop()
+                     .into(new SimpleTarget<GlideDrawable>() {
+                            @Override
+                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                imageView.setImageDrawable(resource);
+                            }
+                         });
+
+        4.设置加载中（占位图）以及加载失败图片；
+            Glide.with(this)
+                 .load(imageUrl)
+                 .placeholder(R.mipmap.ic_launcher) // 加载中（占位图）
+                 .error(R.mipmap.ic_launcher) // 加载失败
+                 .into(imageView);
+            api里面对placeholder()、error()函数中有多态实现，用的时候可以具体的熟悉一下；
+            另外，这个占位图的用法其实也演示了Glide当中绝大多数API的用法，其实就是在load()和into()方法之间串接任意想添加的功能就可以了；
+
         5.多样化的媒体加载：
             a.常见图片格式的加载：jgp、png、gif（设置动态gif加载方式）、webp；
             b.video加载；
             c.缩略图（设置缩略图支持）；
+                Glide.with(context)
+                     .load(imageUrl)；
+                     .thumbnail(0.1f)；//设置缩略图支持：先加载缩略图 然后在加载全图
+                                       //传了一个 0.1f 作为参数，Glide 将会显示原始图像的10%的大小
+                                       //如果原始图像有 1000x1000 像素，那么缩略图将会有 100x100 像素
+                     .asBitmap()// 指定显示gif静态图片
+                     .asGif();// 指定显示gif动态图片
+                     .into(imageView)；
+
+                无论我们传入url指向的是一张普通图片，还是一张GIF图片，Glide都会自动进行判断，并且可以正确地把它解析并展示出来，
+                但是如果我想指定图片的格式该怎么办呢？
+                就比如说，我希望加载的这张图必须是一张静态图片或gif，我不需要Glide自动帮我判断它到底是静图还是GIF图：
+                      就可以通过 .asBitmap() 、.asGift()  的这种串接形式；
+
+                如果我们指定的图片格式和实际加载的url图片格式不一致，那么就会加载错误了；
+
         6.关于缓存：
             a.跳过内存缓存；
+                Glide.with(this)
+                     .load(imageUrl)
+                     .skipMemoryCache(true)//设置跳过内存缓存
+                                           //这意味着 Glide 将不会把这张图片放到内存缓存中去
+                                           //这里需要明白的是，这只是会影响内存缓存！Glide 将会仍然利用磁盘缓存来避免重复的网络请求
+                     .into(imageView);
+
+
             b.缓存的动态清理；
+                Glide.get(this).clearDiskCache();//清理磁盘缓存 需要在子线程中执行
+                Glide.get(this).clearMemory();//清理内存缓存 可以在UI主线程中进行
+
             c.设置缓存策略；
+                Glide.with(this)
+                     .load(imageUrl)
+                     .diskCacheStrategy(DiskCacheStrategy.ALL)// 缓存参数说明
+                                                              // DiskCacheStrategy.NONE：不缓存任何图片，即禁用磁盘缓存
+                                                              // DiskCacheStrategy.ALL ：缓存原始图片 & 转换后的图片（默认）
+                                                              // DiskCacheStrategy.SOURCE：只缓存原始图片（原来的全分辨率的图像，即不缓存转换后的图片）
+                                                              // DiskCacheStrategy.RESULT：只缓存转换后的图片（即最终的图像：降低分辨率后 / 或者转换后 ，不缓存原始图片
+                     .into(imageView);
+
         7.生命周期集成；
+            通过设置绑定生命周期，我们可以更加高效的使用Glide提供的方式进行绑定，这样可以更好的让加载图片的请求的生命周期动态管理起来：
+                .with(Context context)// 绑定Context
+                .with(Activity activity);// 绑定Activity
+                .with(FragmentActivity activity);// 绑定FragmentActivity
+                .with(Fragment fragment);// 绑定Fragment
+                注意：
+                    a.传入的context类型影响到Glide加载图片的优化程度；
+                    b.Glide可以监视Activity的生命周期，在Activity销毁的时候自动取消等待中的请求。但是如果你使用Application context，你就失去了这种优化效果；
+
         8.设置动态转换；
+            Glide.with(this)
+                 .load(imageUrl)
+                 .centerCrop()
+                 .into(imageView);
+
         9.设置下载优先级；
+            Glide.with(this)
+                 .load(imageUrl)
+                 .priority(Priority.NORMAL)
+                 .into(imageView);
 
 
+
+
+
+
+
+
+
+
+Tips:
+    这里是基于glide:3.7.0来写的，目前Glide版本已经更新到了4.4.0，
+    如果想看下4.0+的更新可以参考：https://blog.csdn.net/guolin_blog/article/details/78582548#t7
+
+（https://www.jianshu.com/p/c3a5518b58b2）
+（http://blog.csdn.net/guolin_blog/article/details/70215985）
