@@ -24,7 +24,27 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support:appcompat-v7:25.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
+    // 使用RecycleView 要单独引入recyclerview-v7包
+    compile 'com.android.support:recyclerview-v7:25.+'
+
+    // fresco依赖
+    compile 'com.facebook.fresco:fresco:0.14.1'
+    compile 'com.facebook.fresco:animated-base-support:0.14.1'// 在 API < 14 上的机器支持 WebP 时，需要添加以下依赖
+    compile 'com.facebook.fresco:animated-gif:0.14.1'// 支持GIF动图，需要添加以下依赖
+    compile 'com.facebook.fresco:webpsupport:0.14.1'// 支持WebP，需要添加以下依赖
+    compile 'com.facebook.fresco:animated-webp:0.14.1'// 支持WebP动图，需要添加以下依赖
+    // fresco网络实现层使用okhttp，添加依赖
+    compile 'com.facebook.fresco:imagepipeline-okhttp3:0.14.1'
+    // okhttp网络日志拦截器
+    compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+
+    // picasso依赖
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // glide依赖
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }

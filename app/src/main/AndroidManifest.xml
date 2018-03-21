@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.administrator.androiddemo">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,10 +32,21 @@
         <service
             android:name=".service.MyRemoteService"
             android:process=":remote" />
-        <service android:name=".service.MyIntentService"/>
+        <service android:name=".service.MyIntentService" />
 
         <!-- BroadcastReceiver相关 -->
-        <activity android:name=".broadcast.BroadcastLearningActivity"/>
+        <activity android:name=".broadcast.BroadcastLearningActivity" />
+
+        <!-- RecycleView相关 -->
+        <activity android:name=".recycleview.RecycleViewLearningActivity" />
+        <activity android:name=".recycleview.RecycleViewAchieveListViewActivity" />
+
+        <!-- 图片加载相关 -->
+        <activity android:name=".imageload.ImageLoadLearningActivity" />
+        <activity android:name=".imageload.fresco.FrescoLearningActivity" />
+        <activity android:name=".imageload.glide.GlideLearningActivity"/>
+        <activity android:name=".imageload.picasso.PicassoLearningActivity"/>
+        <activity android:name=".imageload.universalimageloader.UniversalImageLoaderLearningActivity"/>
 
     </application>
 

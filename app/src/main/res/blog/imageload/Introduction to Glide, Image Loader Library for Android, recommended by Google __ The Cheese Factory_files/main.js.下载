@@ -1,0 +1,6 @@
+$(document).ready(function() {
+	$(".panoviewer").each(function(index) {
+		new PanoViewer().ratio(16/9)
+						.init($(this).attr('id'), $(this).attr("url"));
+	});
+});

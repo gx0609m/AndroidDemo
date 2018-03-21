@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<!-- saved from url=(0078)https://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en -->
+<html lang="en" ng-app=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="In the passed Google Developer Summit Thailand, Google introduced us an Image Loader Library for Android developed by bumptech named Glide as a library that recommended by Google. It has been use">
+    <meta name="author" content="nuuneoi">
+        <meta property="keywords" content="image loader, library, android, glide, picasso">
+        <meta property="fb:app_id" content="1563569900552418">
+	<meta property="fb:admins" content="1118131684">
+	<meta property="article:author" content="https://www.facebook.com/inthecheesefactory">
+	<meta property="article:publisher" content="https://www.facebook.com/inthecheesefactory">
+	
+		<link rel="alternate" type="application/rss+xml" title="The Cheese Factory&#39;s Blog" href="http://inthecheesefactory.com/blog/en/rss.xml">
+		
+			<meta property="og:title" content="Introduction to Glide, Image Loader Library for Android, recommended by Google">
+		<meta property="og:description" content="In the passed Google Developer Summit Thailand, Google introduced us an Image Loader Library for Android developed by bumptech named Glide as a library that recommended by Google. It has been use">
+		<meta property="og:type" content="article">
+		<meta property="og:image" content="http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg">
+		<meta property="og:url" content="http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en">
+		    
+	<title>Introduction to Glide, Image Loader Library for Android, recommended by Google :: The Cheese Factory</title>
+	
+    <!-- Bootstrap Core CSS -->
+    <link href="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/bootstrap.min.css" rel="stylesheet">
+
+    <link href="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/prism.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/clean-blog.css" rel="stylesheet">
+    <link href="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/style.css" rel="stylesheet">
+    
+    <!-- Custom Fonts -->
+    <link href="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- jQuery -->
+    <script async="" src="https://www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://apis.google.com/js/plusone.js"></script><script id="facebook-jssdk" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/sdk.js.下载"></script><script src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/jquery.js.下载"></script>
+    
+</head>
+
+<body>
+    <div style="max-width: 100%; width: 100%; overflow-x: hidden;">
+    
+    <div id="fb-root"></div>
+	<script>
+	  window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '1563569900552418',
+		  xfbml      : true,
+		  version    : 'v2.8'
+		});
+	  };
+
+	  (function(d, s, id){
+		 var js, fjs = d.getElementsByTagName(s)[0];
+		 if (d.getElementById(id)) {return;}
+		 js = d.createElement(s); js.id = id;
+		 js.src = "//connect.facebook.net/en_US/sdk.js";
+		 fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+	</script>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top is-fixed">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                                <a class="navbar-brand" href="https://inthecheesefactory.com/blog">The Cheese Factory :: Blog</a>
+                            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+	                                    <li>
+                        <a href="https://inthecheesefactory.com/login/fb">Login with Facebook</a>
+                    </li>
+                                    </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+	<!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(&#39;//inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg&#39;); background-color: black;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>Introduction to Glide, Image Loader Library for Android, recommended by Google</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">Posted <!--by <a href="#">Start Bootstrap</a> -->on 24 Mar 2015 00:46 | 371239 reads | <span id="fb-share-count">0</span> shares</span>
+                                                <div>&nbsp;</div>
+                        <div class="text-center">
+                            <span><a href="https://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en"><img src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/english_flag_64.png"></a></span>
+                            <span><a href="https://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/th"><img src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/thailand_flag_64.png"></a></span>
+                        </div>
+                                            </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 blog-content">
+                	<p>In the passed Google Developer Summit Thailand, Google introduced us an Image Loader Library for Android developed by bumptech named <a href="https://github.com/bumptech/glide" target="_blank">Glide</a>&nbsp;as a library that recommended by Google. It has been used in many Google open source projects till now including Google I/O 2014 official application.</p>
+<p>It succeeded in making me interested. I spent a whole night playing with it and decided to&nbsp;share&nbsp;&nbsp;my experience&nbsp;in this blog post. As a begining, I must say that it looks 90% similar to Picasso. To be more precise, I think it is something like a Picasso-clone.</p>
+<p>Anyway it is quite different in details. You will learn how.</p>
+<p><span class="section-heading">Import to project</span></p>
+<p>Both Picasso and Glide are on jcenter. You can simply import it to your project with&nbsp;dependency like this:</p>
+<p class="code-caption"><strong>Picasso<br></strong></p>
+<pre class=" language-groovy"><code class=" language-groovy">dependencies <span class="token punctuation">{</span>
+    compile <span class="token string">'com.squareup.picasso:picasso:2.5.1'</span>
+<span class="token punctuation">}</span></code></pre>
+<p class="code-caption"><strong>Glide</strong></p>
+<pre class=" language-groovy"><code class=" language-groovy">dependencies <span class="token punctuation">{</span>
+    compile <span class="token string">'com.github.bumptech.glide:glide:3.5.2'</span>
+    compile <span class="token string">'com.android.support:support-v4:22.0.0'</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Anyway Glide also needs <strong>Android Support Library v4</strong>, please don't forget to import&nbsp;<code>support-v4</code>&nbsp;to your project like above as well. But it is not kind of a problem since Android Support Library v4 is basically needed in every single new-age Android project.</p>
+<p><span class="section-heading">Basic</span></p>
+<p>As I said, it is very similar to Picasso. The way to load an image to ImageView with Glide is quite the same as Picasso.</p>
+<p class="code-caption"><strong>Picasso</strong></p>
+<pre class=" language-java"><code class=" language-java">Picasso<span class="token punctuation">.</span><span class="token function">with</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">"http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">into</span><span class="token punctuation">(</span>ivImg<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p class="code-caption"><strong>Glide</strong></p>
+<pre class=" language-java"><code class=" language-java">Glide<span class="token punctuation">.</span><span class="token function">with</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">"http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">into</span><span class="token punctuation">(</span>ivImg<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>Although it looks quite the same but in details Glide is designed far better since <code>with</code> doesn't accept only Context but also Activity and Fragment. Context will be automatically extracted from those things you throw in.</p>
+<p style="text-align: center;"><img src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/with.png" alt="with"></p>
+<p>And the brilliant benefit from passing Activity/Fragment to Glide is: image loading&nbsp;would be integrated with Activity/Fragment's lifecycle for example, pause loading in Paused state and automatically resume on Resumed state. So I encourage you to pass the Activity or Fragment to Glide not just a Context if possible.</p>
+<p><span class="section-heading">Default Bitmap Format is&nbsp;RGB_565</span></p>
+<p>Here is the result of image loading comparing to Picasso. (1920x1080 pixels image is loaded into&nbsp;768x432 pixels ImageView)</p>
+<p><a href="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/firstload.jpg" target="_blank"><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/firstload.jpg" alt="firstload"></a></p>
+<p>You can notice that image loaded by Glide has the worse quality compared to Picasso. Why? This is because Glide default Bitmap Format is set to <code>RGB_565</code>&nbsp;since it consumed just 50% memory footprint compared to <code>ARGB_8888</code>.</p>
+<p>Here is the memory&nbsp;consumption graphs between Picasso at ARGB8888&nbsp;and&nbsp;Glide at RGB565. (Base application consumes around&nbsp;8MB)</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/ram1_1.png" alt="ram1_1"></p>
+<p>You don't have to do anything&nbsp;if you are ok with the image's quality&nbsp;already. But if think it&nbsp;is unacceptable or just not good enough for you, you can switch Bitmap Format to <code>ARGB_8888</code>&nbsp;by creating a new class which extended from <code>GlideModule</code> like this:</p>
+<pre class=" language-java"><code class=" language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">GlideConfiguration</span> <span class="token keyword">implements</span> <span class="token class-name">GlideModule</span> <span class="token punctuation">{</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">applyOptions</span><span class="token punctuation">(</span>Context context<span class="token punctuation">,</span> GlideBuilder builder<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">// Apply options to the builder here.</span>
+        builder<span class="token punctuation">.</span><span class="token function">setDecodeFormat</span><span class="token punctuation">(</span>DecodeFormat<span class="token punctuation">.</span>PREFER_ARGB_8888<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">registerComponents</span><span class="token punctuation">(</span>Context context<span class="token punctuation">,</span> Glide glide<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">// register ModelLoaders here.</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>And then define it as <code>meta-data</code>&nbsp;inside&nbsp;<code>AndroidManifest.xml</code></p>
+<pre class=" language-xml"><code class=" language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta-data</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>com.inthecheesefactory.lab.glidepicasso.GlideConfiguration<span class="token punctuation">"</span></span>
+            <span class="token attr-name"><span class="token namespace">android:</span>value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>GlideModule<span class="token punctuation">"</span></span><span class="token punctuation">/&gt;</span></span></code></pre>
+<p>It&nbsp;looks far better now!</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/quality2.jpg" alt="quality2"></p>
+<p>Let's take a look at memory consumption graphs once again. It appears that although Glide consumes almost 2 times than previous but Picasso still consumes a lot memory footprint more than Glide.</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/ram2_1.png" alt="ram2_1"></p>
+<p>The reason is Picasso loads the full-size image (1920x1080 pixels) into the memory and let GPU does the real-time resizing when drawn. While Glide loads the exact ImageView-size (768x432 pixels) into the memory which is a best practice. Anyway you can change the behavior of Picasso to do&nbsp;the same with&nbsp;<code>resize()</code> command:</p>
+<pre class=" language-java"><code class=" language-java">Picasso<span class="token punctuation">.</span><span class="token function">with</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">"http://nuuneoi.com/uploads/source/playstore/cover.jpg"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">resize</span><span class="token punctuation">(</span><span class="token number">768</span><span class="token punctuation">,</span> <span class="token number">432</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">into</span><span class="token punctuation">(</span>ivImgPicasso<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>But the problem is you need to manually calculate the ImageView's size. Or if your ImageView has the exact size (not set to wrap_content), you can simply do like this.</p>
+<pre class=" language-java"><code class=" language-java">Picasso<span class="token punctuation">.</span><span class="token function">with</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">"http://nuuneoi.com/uploads/source/playstore/cover.jpg"</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">fit</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">centerCrop</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">into</span><span class="token punctuation">(</span>ivImgPicasso<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>Memory consumption graphs&nbsp;are&nbsp;now finally almost the same !</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/memory3.png" alt="memory3"></p>
+<p>Although memory consumption are quite the same but I must say that Glide beats Picasso in term of functionality of this part since it could calculate the ImageView size automatically in every single case.</p>
+<p><span class="section-heading">Image's quality in details</span></p>
+<p>Here is the result when I tried to zoom an ImageView to the actual size.</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/quality3.png" alt="quality3"></p>
+<p>It is noticeable that image loaded by Glide has some hard pixels&nbsp;and is not as smooth as the Picasso one. And&nbsp;till now, I still couldn't find the straight way to change image resizing algorithm.</p>
+<p><span style="color: #16a085;">But if you ask me is it bad? I would say that it is not that noticeable in&nbsp;real use. Quality is acceptable but you just need to set Bitmap Format to ARGB_8888, that's all.</span></p>
+<p><span class="section-heading">Disk Caching<br></span></p>
+<p>Default disk caching concept&nbsp;of&nbsp;Picasso and&nbsp;Glide are quite different. From the experiment, the same Full HD image is loaded into ImageView with Picasso and Glide. When I checked the cache folder, it appears that&nbsp;Glide cached the ImageView-size (768x432 pixels) while Picasso cached the full-size one&nbsp;(1920x1080 pixels).</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/cache.jpg" alt="cache"></p>
+<p>And yes, hard pixels&nbsp;described above is also&nbsp;there. In addition,&nbsp;if image is loaded&nbsp;in RGB565 mode, the cached image will be also in RGB565.</p>
+<p>When I tried to adjust ImageView to the&nbsp;different sizes. The result is whatever the size is, Picasso will cache only single size of image, the full-size one. Glide acts differently, caches separate file&nbsp;for&nbsp;each&nbsp;size of ImageView. Although an image has already been loaded once but if you need&nbsp;to load another size the same image, it needs to be downloaded once again before&nbsp;be resized to the right&nbsp;resolution and then be&nbsp;cached.</p>
+<p>To be more clear, if there is an ImageView in the first page with 200x200 pixels dimension and there is the another one in the second page with 100x100 pixels that are needed to show the same image. You have to download the same image twice.</p>
+<p>Anyway you could adjust its behavior by <span style="color: #2980b9;">let Glide cache&nbsp;both the full-size image and the resized one</span> with this command.</p>
+<pre class=" language-java"><code class=" language-java">        Glide<span class="token punctuation">.</span><span class="token function">with</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+             <span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">"http://nuuneoi.com/uploads/source/playstore/cover.jpg"</span><span class="token punctuation">)</span>
+             <span class="token punctuation">.</span><span class="token function">diskCacheStrategy</span><span class="token punctuation">(</span>DiskCacheStrategy<span class="token punctuation">.</span>ALL<span class="token punctuation">)</span>
+             <span class="token punctuation">.</span><span class="token function">into</span><span class="token punctuation">(</span>ivImgGlide<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>The next time image is requested to show on any ImageView, the full-size image would be loaded from cache, resized and then cached.</p>
+<p>An advantage&nbsp;of the way Glide was designed is image could be loaded and showed very fast. While the Picasso way causes some delay on loading since it needs to be resized first before is&nbsp;set to an ImageView even you add this command to make it showed immediately.</p>
+<pre class=" language-java"><code class=" language-java"><span class="token comment" spellcheck="true">//Picasso</span>
+<span class="token punctuation">.</span><span class="token function">noFade</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/loading3.gif" alt="loading3"></p>
+<p>There is some trade off between Picasso's and Glide's way of disk caching. You can&nbsp;choose the way fit your app's requirement best.</p>
+<p>For me, I prefer Glide to&nbsp;Picasso since it is far faster&nbsp;although it needs more space to cache the image.</p>
+<p><span class="section-heading">Features<br></span></p>
+<p>You can do almost all the same&nbsp;things just like Picasso can&nbsp;do with the same style&nbsp;of coding&nbsp;for example, <strong>Image Resizing</strong></p>
+<pre class=" language-java"><code class=" language-java"><span class="token comment" spellcheck="true">// Picasso</span>
+<span class="token punctuation">.</span><span class="token function">resize</span><span class="token punctuation">(</span><span class="token number">300</span><span class="token punctuation">,</span> <span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// Glide</span>
+<span class="token punctuation">.</span><span class="token function">override</span><span class="token punctuation">(</span><span class="token number">300</span><span class="token punctuation">,</span> <span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p><strong>Center Cropping</strong></p>
+<pre class=" language-html"><code class=" language-html">// Picasso
+.centerCrop();
+
+// Glide
+.centerCrop();</code></pre>
+<p><strong>Transforming</strong></p>
+<pre class=" language-java"><code class=" language-java"><span class="token comment" spellcheck="true">// Picasso</span>
+<span class="token punctuation">.</span><span class="token function">transform</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CircleTransform</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true">// Glide</span>
+<span class="token punctuation">.</span><span class="token function">transform</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CircleTransform</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+<p>Setting the <strong>Placeholder</strong>&nbsp;and&nbsp;<strong>Error&nbsp;</strong>image</p>
+<pre class=" language-java"><code class=" language-java"><span class="token comment" spellcheck="true">// Picasso</span>
+<span class="token punctuation">.</span><span class="token function">placeholder</span><span class="token punctuation">(</span>R<span class="token punctuation">.</span>drawable<span class="token punctuation">.</span>placeholder<span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span>R<span class="token punctuation">.</span>drawable<span class="token punctuation">.</span>imagenotfound<span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true">// Glide</span>
+<span class="token punctuation">.</span><span class="token function">placeholder</span><span class="token punctuation">(</span>R<span class="token punctuation">.</span>drawable<span class="token punctuation">.</span>placeholder<span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span>R<span class="token punctuation">.</span>drawable<span class="token punctuation">.</span>imagenotfound<span class="token punctuation">)</span></code></pre>
+<p>As I said, if you are familiar with Picasso, moving to Glide would be just like chewing a candy&nbsp;for you. =)</p>
+<p><span class="section-heading">What that Glide has but Picasso&nbsp;doesn't</span></p>
+<p>An&nbsp;ability to load <span style="color: #16a085;"><strong>GIF Animation&nbsp;</strong></span>to a simple ImageView&nbsp;might be the most interesting feature of Glide. And yes, you can't do that with&nbsp;Picasso.</p>
+<p><img src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/gifanimation2.gif" alt="gifanimation2"></p>
+<p>And since Glide is designed to work perfectly with Activity/Fragment's lifecycle so the animation would be automatically paused and resumed&nbsp;along with Activity/Fragment's state.</p>
+<p>The way Glide caches is still be the same, resized first and then&nbsp;cached.</p>
+<p>Anyway from an&nbsp;measurement I found that <span style="color: #d35400;">GIF Animation consumes quite a lot of memory</span>. Please use it wisely.</p>
+<p>Besides GIF Animation loading, Glide is also able to&nbsp;decode any <em>local</em> video file to a still image.</p>
+<p>Another feature that might be useful is you can configure the way image appears&nbsp;with an&nbsp;Animator (R.animator) while Picasso could do only one animation, fading in.</p>
+<p>The last one if you could <span style="color: #16a085;">generate a thumbnail file of an image you loaded</span>&nbsp;with <code>thumbnail()</code>.</p>
+<p>Actually there are some other features you can play with but most of them are not that important for general use for example, transcode an image into Byte Array, etc.</p>
+<p><span class="section-heading">Configurations</span></p>
+<p>You can adjust so many configurations for example, size and location of disk caching, maximum limit&nbsp;of memory caching, Bitmap Format and many more. You can read more about this at&nbsp;<a href="https://github.com/bumptech/glide/wiki/Configuration" target="_blank">Configuration</a>&nbsp;page.</p>
+<p><span class="section-heading">Library's size</span></p>
+<p>Picasso (v2.5.1)'s size is around 118KB while&nbsp;Glide (v3.5.2)'s is around 430KB.</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/librarysize.png" alt="librarysize"></p>
+<p>Anyway 312KB difference might not be that significant.</p>
+<p>Method count of Picasso and Glide are at 840 and 2678 respectively.</p>
+<p><img class="width-100percent" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/methodcount.png" alt="methodcount"></p>
+<p>I must say 2678 is quite a lot for 65535 methods limit of Android DEX file. ProGuard is recommended to turn on if you choose Glide. (And you should turn it on anyway for production release).</p>
+<p><span class="section-heading">Conclusion<br></span></p>
+<p>Neither Glide nor&nbsp;Picasso is&nbsp;perfect. The way Glide loads an image to memory and do the caching is better than Picasso which let&nbsp;an image loaded far faster. In addition, it also helps preventing an app from popular OutOfMemoryError.&nbsp;GIF Animation loading is a killing feature provided by Glide. Anyway&nbsp;Picasso decodes an image&nbsp;with better&nbsp;quality than Glide.</p>
+<p>Which one do I prefer? Although I use Picasso for such a very long time, I must admit that I now prefer Glide. <span style="color: #27ae60;">But I would recommend you to change Bitmap Format to ARGB_8888 and let Glide cache both full-size image and resized one first. The rest would do your job&nbsp;great!</span></p>
+<p><span class="section-heading">Resources<br></span></p>
+<p>There are not so many online resources related to Glide. But here are what I found. Please take a look on links below.</p>
+<p>-&nbsp;<a href="http://google-opensource.blogspot.com/2014/09/glide-30-media-management-library-for.html" target="_blank">Glide 3.0: a media management library for Android</a></p>
+<p>- <a href="https://github.com/bumptech/glide/wiki" target="_blank">Glide Wiki</a></p>
+<p>-&nbsp;<a href="http://pluu.github.io/blog/android-studio/2015/01/15/android-glide-picasso/" target="_blank">Android Picasso vs Glide</a></p>
+<p>-&nbsp;<a href="http://vardhan-justlikethat.blogspot.com/2014/09/android-image-loading-libraries-picasso.html" target="_blank">Android: Image loading libraries Picasso vs Glide</a></p>                	<table class="table" style="width: 100%; background-color: #f4f4f4; border-radius: 6px;">
+                	<tbody>
+	                	<tr><td style="border: 0px; width: 64px; padding: 16px 0px 16px 16px;"><img src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/profile_pic_nuuneoi2.png" width="48/"></td>
+	                	<td style="border: 0px; padding: 16px;" class="small">
+	                			                		Author: <strong>nuuneoi</strong> (Android GDE, CTO &amp; CEO at The Cheese Factory)<br>
+	                		<div class="text-muted small">A full-stack developer with more than 6 years experience on Android Application Development and more than 12 years in Mobile Application Development industry. Also has skill in Infrastucture, Service Side, Design, UI&amp;UX, Hardware, Optimization, Cooking, Photographing, Blogging, Training, Public Speaking and do love to share things to people in the world!</div>
+	                			                	</td>
+	                </tr></tbody>
+                	</table>
+                	<div style="height: 30px">
+		                <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en" data-count="horizontal" data-via="thecheesefact">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
+
+						<!-- Place this tag where you want the +1 button to render -->
+						<g:plusone size="medium" href="http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en"></g:plusone>
+						<!-- Place this render call where appropriate -->
+						<script type="text/javascript">
+						  (function() {
+							var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+							po.src = 'https://apis.google.com/js/plusone.js';
+							var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+						  })();
+						</script>
+
+						<br><div class="fb-like" data-href="http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en" data-width="100%" data-layout="standard" data-action="like" data-show-faces="true" data-share="true"></div>
+                	</div>
+                        <div class="fb-like" data-href="http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en" data-layout="standard" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+                	<div class="clearfix"></div>
+				</div>
+            </div>
+        </div>
+        <hr>
+                <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 comment-area">
+                    <div class="fb-comments" data-href="http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en" data-width="100%" data-numposts="5" data-colorscheme="light"></div>
+                </div>
+            </div>
+        </div>
+        <hr>
+                        <div class="container">
+        	<div class="row">
+        		<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1">
+					<div class="clearfix"></div>
+                	<h3 class="text-center">Related</h3>
+                	<div class="clearfix">&nbsp;</div>
+
+                	<div class="related">
+                			                	<div class="col-sm-6 col-lg-6 col-md-6">
+							<div class="post-preview">
+								<a href="https://inthecheesefactory.com/blog/understand-android-activity-launchmode/en">
+									<div class="post-bg" style="background-image: url(&#39;//inthecheesefactory.com/uploads/source/launchMode/standardgalleryl.jpg&#39;);"></div>
+									<h2 class="post-title">
+				                        Understand Android Activity's launchMode: standard, singleTop, singleTask and singleInstance				                    </h2>
+				                    <h3 class="post-subtitle">
+				                        				                    </h3>
+								</a>
+								<p class="post-meta">Posted <!--by <a href="#">Start Bootstrap</a> -->on 15 Apr 2015 17:01</p>
+							</div>
+						</div>
+							                	<div class="col-sm-6 col-lg-6 col-md-6">
+							<div class="post-preview">
+								<a href="https://inthecheesefactory.com/blog/how-to-install-and-use-acra-android/en">
+									<div class="post-bg" style="background-image: url(&#39;//inthecheesefactory.com/uploads/source/acra/cover3.jpg&#39;);"></div>
+									<h2 class="post-title">
+				                        How to setup ACRA, an Android Application Crash Tracking system, on your own host				                    </h2>
+				                    <h3 class="post-subtitle">
+				                        Application Crash Reports on Android				                    </h3>
+								</a>
+								<p class="post-meta">Posted <!--by <a href="#">Start Bootstrap</a> -->on 1 Mar 2015 23:35</p>
+							</div>
+						</div>
+											</div>
+
+        		</div>
+        	</div>
+        </div>
+            </article>
+
+    <script type="text/javascript">
+    <!--
+		// Facebook Shares Count
+    	$.getJSON("https://graph.facebook.com/?id=http://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en", function(fbdata) {
+        	$('#fb-share-count').text(ReplaceNumberWithCommas(fbdata.share.share_count))
+    	});
+
+	    function ReplaceNumberWithCommas(yourNumber) {
+			if (yourNumber == null)
+				yourNumber = 0;
+	        //Seperates the components of the number
+	        var components = yourNumber.toString().split(".");
+	        //Comma-fies the first part
+	        components [0] = components [0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	        //Combines the two sections
+	        return components.join(".");
+	    }
+    -->
+    </script>
+	
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://twitter.com/thecheesefact" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://facebook.com/inthecheesefactory" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+						                        <li>
+                            <a href="https://inthecheesefactory.com/blog/en/rss.xml">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                                            </ul>
+                    <p class="copyright text-muted">Copyright © The Cheese Factory Co.,Ltd. 2015</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/bootstrap.min.js.下载"></script>
+    
+    <!-- Syntax Highlighter -->
+    <script type="text/javascript" src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/prism.js.下载"></script>
+    
+    <!-- Panorama JavaScript -->
+    <script src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/three.min.js.下载"></script>
+    <script src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/panoviewer.js.下载"></script>
+    
+	<!-- Custom Theme JavaScript -->
+    <script src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/clean-blog-m.js.下载"></script>
+    <script src="./Introduction to Glide, Image Loader Library for Android, recommended by Google __ The Cheese Factory_files/main.js.下载"></script>
+
+    </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-49976949-1', 'inthecheesefactory.com');
+  ga('send', 'pageview');
+
+</script>
+
+</body></html>

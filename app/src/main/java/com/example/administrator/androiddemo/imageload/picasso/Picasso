@@ -1,0 +1,92 @@
+Picasso
+    简介：
+        是Square公司开源Android平台上强大的图片下载缓存库（A powerful image downloading and caching library for Android）
+
+    优点：
+        1.实现了图片的异步加载；
+        2.使用复杂的图片转换技术降低内存的使用；
+        3.在Adapter中取消了不在视图范围内的ImageView的资源加载,因为可能会产生图片错位；
+        4.实现内存和硬盘的二级缓存机制；
+
+    缺点：
+        不支持gif格式；
+
+    基础功能：
+        图片加载;
+
+    特色功能：
+        1.图片转换；
+            使用最少的内存完成复杂的图片转换，转换图片以适合所显示的ImageView，来减少内存消耗
+                Picasso.with(context)
+                  .load(url)
+                  .resize(50, 50)//裁剪图片尺寸
+                  .centerCrop()//设置图片圆角
+                  .into(imageView)
+
+        2.加载过重&错误处理；
+            Picasso支持加载过程中和加载错误时显示对应图片
+                Picasso.with(context)
+                    .load(url)
+                    .placeholder(R.drawable.user_placeholder)//加载过程中的图片显示
+                    //加载失败中的图片显示
+                    //如果重试3次（下载源代码可以根据需要修改）还是无法成功加载图片，则用错误占位符图片显示。
+                    .error(R.drawable.user_placeholder_error)
+                    .into(imageView);
+
+        3.在Adapter中回收不在视野的ImageView和取消已经回收的ImageView下载进程；
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    if (convertView==null){
+                        convertView = View.inflate(context,R.layout.item_picasso,null);
+                    }
+                    ImageView imageView = (ImageView)convertView;
+                    if (TextUtils.isEmpty(imageUrls[position])){
+                        Picasso
+                                .with(context)
+                                .cancelRequest(imageView);
+                        imageView.setImageDrawable(null);
+                    }else {
+                        //加载图片
+                        Picasso
+                                .with(context)
+                                .load(imageUrls[position])
+                                .placeholder(R.mipmap.ic_launcher)
+                                .error(R.mipmap.ic_launcher)
+                                .into((ImageView) convertView);
+                    }
+                    return convertView;
+                }
+
+        4.不同位置的资源文件加载；
+            支持多种数据源 网络、本地、资源、Assets 等
+                //加载资源文件
+                Picasso.with(context).load(R.drawable.landing_screen).into(imageView1);
+                //加载本地文件
+                Picasso.with(context).load(new File("/images/oprah_bees.gif")).into(imageView2);
+
+        5.自动添加内存缓存和磁盘缓存功能；
+
+        6.支持优先级处理；
+            每次任务调度前会选择优先级高的任务，比如 App 页面中 Banner 的优先级高于 Icon 时就很适用；
+
+        7.支持飞行模式、并发线程数根据网络类型而变；
+            手机切换到飞行模式或网络类型变换时会自动调整线程池最大并发数，比如 wifi 最大并发为 4， 4g 为 3，3g 为 2；
+
+        8.“无”本地缓存；
+            无”本地缓存，不是说没有本地缓存，而是 Picasso 自己没有实现，交给了 Square 的另外一个网络库 OkHttp 去实现，
+            这样的好处是可以通过请求 Response Header 中的 Cache-Control 及 Expired 控制图片的过期时间；
+
+
+
+
+
+
+
+
+
+
+
+
+
+（http://blog.csdn.net/tongseng/article/details/79593006）
+（http://blog.csdn.net/carson_ho/article/details/52437910）

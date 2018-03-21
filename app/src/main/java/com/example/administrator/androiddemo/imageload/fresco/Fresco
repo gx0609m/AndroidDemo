@@ -1,0 +1,131 @@
+Fresco
+    简介：
+        是Facebook开源Android平台上一个强大的图片加载库；
+
+    优点：
+        更好的内存管理和强大的功能；
+
+    缺点：
+        1.整体比较大，不过当前的版本做了拆分，只需要导入使用到的功能相关的库；
+        2.从代码层面来说侵入性太强，体现在要使用它需要用Fresco的组件SimpleDraweeView替换掉
+          Android原生图片显示组件ImageView，这也是很多人不愿意在项目中接入Fresco的主要原因；
+
+    内存管理：
+        5.0以下系统：
+                fresco使用”ashmem”（匿名共享内存）区域存储Bitmap缓存，这样Bitmap对象的创建、释放
+                将不会触发GC,不会占用javaheap.这个特点是其他图片加载框架所没有做到的；
+                        （解压后的图片，即Android中的Bitmap,会占用较大的内存，而大的内存占用 势必引发更加频繁的GC，在5.0以下，GC将会显著地引发界面卡顿）
+        5.0以上系统：
+                由于安卓系统本身内存管理的优化，Fresco将Bitmap缓存直接放到了javaheap内存中；
+
+        使用fresco,在图片不显示的时候，占用的内存会自动被释放，这会使得APP更加流畅，减少因图片内存占用而引发的OOM；
+
+    Image Pipeline:(负责图片的加载和管理)
+        1.Fresco设计的一个模块，负责从网络、本地文件系统、本地资源   加载图片   和   管理   ；
+
+        2.为了最大限度节省空间和CPU时间，它真正实现了三级缓存设计（2级内存缓存，1级磁盘缓存）
+              为什么说真正实现了三级缓存？
+                    因为很多第三方的图片加载框架提到的三级缓存设计其实是：网络缓存、内存缓存、磁盘缓存；
+
+              两级内存缓存：
+                    未解码的图片缓存；
+                    Bitmap缓存（解码后的图片就是Bitmap，其占用内存相对未解码的图片数据而言会大很多）；
+
+              通过这两层内存缓存，既可以加快图片的加载速度，又能节省内存的占用；
+              另外提一点,在app切换到后台时,fresco会自动清理两级的内存缓存,无需手动；
+
+        3.Image pipeline 负责完成加载图像，变成Android设备可呈现的形式所要经历的 大致流程 ：
+              a.根据Uri在  已解码  的（Bitmap缓存）内存缓存中查找，  （主线程）
+                    找到了---------------------------------------------------------------------------------------------返回Bitmap对象；
+                    如果在已解码的内存缓存中没找到，则  开启后台线程  开始后续的工作（去未解码的内存缓存中查找）；
+
+              b.根据Uri在  未解码  的内存缓存中查找，                （子线程）
+                    若找到了则解码，然后缓存到  已解码  的内存缓存中，------------------------------------------------------并且返回Bitmap对象；
+                    如果在未解码的内存缓存中没找到，则去磁盘缓存中查找；
+
+              d.根据Uri在磁盘缓存中查找；                           （子线程）
+                    若找到了则读取数据（byte数组），并缓存到  未解码  的内存缓存中，解码、然后缓存到  已解码  的内存缓存中，-----并且返回Bitmap对象；
+                    如果在磁盘缓存中没找到，则从网络或者本地加载数据，加载完成后：
+                                                                     依次缓存到磁盘缓存，
+                                                                     未解码的内存缓存中，
+                                                                     解码、然后缓存到已解码的内存缓存中，------------------并且返回Bitmap对象；
+
+    Drawees:(负责图片的呈现)
+        1.Fresco设计的一个模块，由以下三个元素组成：
+                a.DraweeView ——— 继承于 View, 负责图片的显示；
+                b.DraweeHierarchy ——— 用于组织和维护最终绘制和呈现的 Drawable 对象；
+                c.DraweeController ——— 负责和ImagePipeline的交互，可以创建一个这个类的实例，来实现对所要显示的图片做更多的控制;
+
+    支持的图片格式：
+        1.静态图：png、jpg、webp；
+        2.动态图：gif、web格式的gif；
+                几种图片的主要特点：
+                        webp：文件最小，有透明通道；
+                        jpg：文件较小，无透明通道；
+                        png：文件较大，有透明通道；
+
+        由于Fresco支持webp格式的，对于splash和引导界面的大图可以使用智图(http://zhitu.isux.us/)压成webp放在drawable中，然后用Fresco加载；
+
+        Fresco还支持图片的渐进式呈现，渐进式的JPEG图片格式先呈现大致的图片轮廓，然后随着图片下载的继续，呈现逐渐清晰的图片，
+        这对于移动设备，尤其是慢网络有极大的利好，可带来更好的用户体验；
+
+    使用：
+        一般情况下，使用 SimpleDraweeView 即可，可以通过配置如下的XML属性来实现各式各样的展示效果：
+                a.fresco:fadeDuration="300" // 淡入淡出的持续时间
+                b.fresco:actualImageScaleType="focusCrop"  // 实际图像的缩放类型
+                c.fresco:placeholderImage="@color/wait_color"  //占位图
+                d.fresco:placeholderImageScaleType="fitCenter" //占位图的缩放类型
+                e.fresco:failureImage="@drawable/error" //下载失败显示的图片
+                f.fresco:failureImageScaleType="centerInside" //失败图的缩放类型
+                g.fresco:retryImage="@drawable/retrying"
+                //图片加载失败时显示，提示用户点击重新加载，重复加载4次还是没有加载出来的时候才会显示failureImage的图片
+                h.fresco:retryImageScaleType="centerCrop" //重新加载的图片缩放类型
+                i.fresco:progressBarImage="@drawable/progress_bar" //进度条图片
+                j.fresco:progressBarImageScaleType="centerInside"
+                k.fresco:progressBarAutoRotateInterval="1000"
+                //进度图自动旋转间隔时间(单位：毫秒ms)
+                l.fresco:backgroundImage="@color/blue"
+                //背景图片，这里的背景图片首先被绘制
+                m.fresco:overlayImage="@drawable/watermark"
+                // 设置叠加图，在xml中只能设置一张叠加图片，如果需要多张图片的话，需要在java代码中设置哦
+                n.fresco:pressedStateOverlayImage="@color/red"
+                // 设置点击状态下的叠加图
+                o.fresco:roundAsCircle="false" //设置为圆形图
+                p.fresco:roundedCornerRadius="1dp" // 圆角半径
+                q.fresco:roundTopLeft="true" // 左上角是否为圆角
+                r.fresco:roundTopRight="false"
+                s.fresco:roundBottomLeft="false"
+                t.fresco:roundBottomRight="true"
+                u.fresco:roundWithOverlayColor="@color/corner_color"
+                v.fresco:roundingBorderWidth="2dp" //边框的宽度
+                w.fresco:roundingBorderColor="@color/border_color" //边框颜色
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+（https://www.fresco-cn.org/）
+（http://blog.csdn.net/android_ls/article/details/53137867）
