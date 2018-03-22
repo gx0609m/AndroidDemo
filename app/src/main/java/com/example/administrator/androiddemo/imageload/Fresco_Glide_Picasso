@@ -18,28 +18,118 @@ Glide vs Picasso:
                     Glide.with(context)
                          .load("http://inthecheesefactory.com/uploads/source/glidepicasso/cover.jpg")
                          .into(ivImg);
-
         “Although it looks quite the same but in details Glide is designed far better since with doesn't accept only
          Context but also Activity and Fragment. Context will be automatically extracted from those things you throw in.”
 
         “And the brilliant benefit from passing Activity/Fragment to Glide is: image loading would be integrated with
          Activity/Fragment's lifecycle for example, pause loading in Paused state and automatically resume on Resumed state.
          So I encourage you to pass the Activity or Fragment to Glide not just a Context if possible.”
-
          可以看到，虽然二者的使用方法很类似，但从设计的细节方面来说，Glide还是要远好于Picasso的，比如：
                                     Glide的.with()方法不仅可以接收context还可以接收activity、fragment作为参数；
-
          另外，接收activity/fragment作为传参的更大的好处是：
                                     图片加载会和activity/fragment的生命周期关联起来，
                                         当生命周期处于paused时，glide就会暂停图片加载；
                                         当生命周期处于resumed时，glide也会自动的恢复加载；
                                     当然，前提是在.with()传参时传入activity/fragment，而不是简单的传入一个context；
 
+
     默认加载的图片格式：
-        “Image loaded by Glide has the worse quality compared to Picasso.
-         Why?
-         This is because Glide default Bitmap Format is set to RGB_565 since it consumed just 50%
-         memory footprint compared to Picasso ad ARGB_8888.”
+        The result of image loading comparing to Picasso. (1920x1080 pixels image is loaded into 768x432 pixels ImageView):
+                “Image loaded by Glide has the worse quality compared to Picasso.
+                 Why?
+                 This is because Glide default Bitmap Format is set to RGB_565 since it consumed just 50%
+                 memory footprint compared to Picasso at ARGB_8888.”
+        通过比较加载1920x1080像素的图片到768x432像素的ImageView控件的结果中，我们可以看到：
+                 通过Glide加载的图片效果要低于使用Picasso加载的，
+                 为什么会存在这样的差距呢？
+                 因为Glide默认加载的图片格式RGB_565的，而Picasso默认的是ARGB_8888，
+                 因此，Glide加载的图片显示的效果较差，但同时，占用的内存也只有Picasso的一半；
+
+
+        You don't have to do anything if you are ok with the image's quality already. But if think it
+        is unacceptable or just not good enough for you, you can switch Bitmap Format to ARGB_8888 by
+        creating a new class which extended from GlideModule like this:
+                 public class GlideConfiguration implements GlideModule {
+                     @Override
+                     public void applyOptions(Context context, GlideBuilder builder) {
+                         // Apply options to the builder here.
+                         builder.setDecodeFormat(DecodeFormat.PREFER_ARGB_8888);
+                     }
+                     @Override
+                     public void registerComponents(Context context, Glide glide) {
+                         // register ModelLoaders here.
+                     }
+                 }
+
+        And then define it as meta-data inside AndroidManifest.xml:
+                 <meta-data android:name="com.inthecheesefactory.lab.glidepicasso.GlideConfiguration"
+                            android:value="GlideModule"/>
+        当然你也可以新建一个GlideModule的子类来修改Glide默认加载图片的格式为ARGB_8888，代码如上；
+
+
+        Let's take a look at memory consumption graphs once again. It appears that although Glide consumes
+        almost 2 times than previous but Picasso still consumes a lot memory footprint more than Glide.
+        但是当我们再次看下内存消耗的图表时却发现：
+                尽管修改图片加载格式后的Glide的内存占用是修改前的两倍，但是却仍远低于使用同样图片加载格式（ARGB_8888）的Picasso所占用的内存；
+
+
+        The reason is Picasso loads the full-size image (1920x1080 pixels) into the memory and let GPU
+        does the real-time resizing when drawn. While Glide loads the exact ImageView-size (768x432 pixels)
+        into the memory which is a best practice.
+        原因是：
+              Picasso在加载图片时，会将全尺寸的原图（1920x1080 pixels）都加载到内存中，之后在需要展示时，让GPU做实时的resize；
+              而Glide在加载时，只会讲ImageView所实际需要的尺寸（768x432 pixels）给加载到内存中，展示时就不用在消耗GPU了；
+
+
+        Anyway you can change the behavior of Picasso to do the same with resize() command.
+              Picasso.with(this)
+                  .load("http://nuuneoi.com/uploads/source/playstore/cover.jpg")
+                  .resize(768, 432)
+                  .into(ivImgPicasso);
+        你也可以通过修改Picasso的行为，让它也能在加载图片时就做resize()操作，而不用等到展示图片时：
+
+
+        But the problem is you need to manually calculate the ImageView's size.
+        这样修改Picasso的问题是：
+               需要手动的计算ImageView的大小；
+        Or if your ImageView has the exact size (not set to wrap_content), you can simply do like this：
+               Picasso.with(this)
+                   .load("http://nuuneoi.com/uploads/source/playstore/cover.jpg")
+                   .fit()
+                   .centerCrop()
+                   .into(ivImgPicasso);
+
+
+        Although memory consumption are quite the same but I must say that Glide beats Picasso in term of
+        functionality of this part since it could calculate the ImageView size automatically in every single case.
+        经过上面的一系列操作后，使用Glide和Picasso加载1920x1080像素的图片到像素是768x432的ImageView中消耗的内存就基本一致了！
+        但必须说的是，Glide在加载图片的功能性这方面还是优于Picasso的，因为它在任何情况下都能自动的计算ImageView所需要的尺寸。
+
+
+        When I tried to adjust ImageView to the different sizes. The result is whatever the size is, Picasso will
+        cache only single size of image, the full-size one. Glide acts differently, caches separate file for each size of
+        ImageView. Although an image has already been loaded once but if you need to load another size the same image,
+        it needs to be downloaded once again before be resized to the right resolution and then be cached.
+        To be more clear, if there is an ImageView in the first page with 200x200 pixels dimension and there is the another one
+        in the second page with 100x100 pixels that are needed to show the same image.
+        You have to download the same image twice.
+        我们调整ImageView为不同的尺寸进行网络请求加载测试时发现，无论ImageView的尺寸是多少：
+               Picasso只会缓存一张全尺寸的图片；
+               Glide会根据ImageView的大小，缓存不同尺寸的图片；
+        这也就意味着，如果我有两个不同尺寸的ImageView请求同一张图片：
+               Picasso只会进行一次下载；
+               Glide会由于ImageView的尺寸不同，而进行两次下载；
+
+
+        Anyway you could adjust its behavior by 'let Glide cache both the full-size image and the resized one' with this command.
+               Glide.with(this)
+                            .load("http://nuuneoi.com/uploads/source/playstore/cover.jpg")
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(ivImgGlide);
+        The next time image is requested to show on any ImageView, the full-size image would be loaded from cache, resized and then cached.
+        当然，你也可以通过上面的代码命令来达到 ‘让Glide即缓存全尺寸的图片，也缓存resized过的图片’ 的行为；
+        The next time image is requested to show on any ImageView, the full-size image would be loaded from cache, resized and then cached.
+        这样，当下次需求相同的图片时，Glide就不用重新下载了，而是直接记载内存中的全尺寸图片、resized、cached（缓存resized后的图片）。
 
 
 
@@ -54,4 +144,10 @@ Glide vs Picasso:
 
 
 
-（https://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en）
+
+
+
+
+
+
+（https://inthecheesefactory.com/blog/get-to-know-glide-recommended-by-google/en  |  \app\src\main\res\blog\imageload）
