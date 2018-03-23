@@ -160,8 +160,77 @@ Glide vs Picasso:
                 let Glide cache both full-size image and resized one first. The rest would do your job great!
 
 
-配置：
-    Glide配置调整：
+Glide vs Picasso vs Fresco:
+    依赖包体积：
+        Fresco > Glide > Picasso
+
+    各自特点：
+        Fresco:
+            1.支持Gif；
+            2.支持WebP；
+            3.渐进式的JPEG呈现；
+            4.两级内存缓存，一级磁盘缓存；
+            5.代码入侵性较强（SimpleDraweeView）；
+            6.图片可以在任意点进行裁剪，而不是中心，即自定义居中焦点；
+            7.内存管理优秀，在5.0以下的内存优化非常好，因为5.0以下图片不存储在Java heap，而是存储在ashmemheap，中间的字节buffer同样位于native heap，使应用有更多内存空间，降低OOM风险，减少GC次数；
+            8.默认的网络请求框架为HttpURLConnection，通过配置，也可修改为OkHttp；
+
+        Picasso:
+            1.不支持Gif；
+            2.只缓存一张全尺寸的原图；
+            3.一级内存缓存，一级磁盘缓存；
+            4.图片质量相对Glide更高，因其默认加载图片格式为ARGB_8888（所以内存消耗也高）；
+            5.由于只缓存全尺寸图的原因，当ImageView的尺寸不同时，在展示图片时需要GPU重新resize，因此也更占用内存；
+            6.内存优化方面要若于另外二者（出现图片加载OOM的可能性较另外二者大）；
+            7.由于Picasso特性5、Glide特性5的原因，导致加载网络图片显示时，Glide速度会更快，毕竟少了裁剪重新渲染的过程（当网络图片的size与ImageView的size不同时会更明显）；
+            8.如果项目使用了Square公司的全家桶，如 Retrofit 或者 OkHttp ，那么搭配 Picasso一起使用，兼容性可能会更好些；
+            9.在.with()方法中，只接受context作为参数；
+            10.图片的显示动画只有一种：fading in；
+
+        Glide:
+            1.支持Gif；
+            2.支持Video；
+            3.一级内存缓存，一级磁盘缓存；
+            4.Glide默认加载图片格式为RGB_565；（可配置）
+            5.会根据不同的ImageView尺寸，缓存不同大小的图片；（可配置）
+            6.由于Picasso特性4、5的原因，Glide的内存占用优于Picasso；
+            7.建议修改默认的图片格式为ARGB_8888，这样图片展示的效果更好；
+            8.建议修改图片的缓存方式为：同时缓存一张全尺寸的原图，避免有多个不同尺寸的ImageView需要展示同一张网络图时，还需要重新联网下载，造成资源浪费；
+            9.在.with()方法中，不光接受 Context,还接受 Activity 和 Fragment,Context 会自动的从他们获取，这样做的好处是：
+                    图片加载会和 Activity/Fragment 的生命周期保持一致，比如 Paused 状态在暂停加载，在 Resumed 的时候又自动重新加载；
+            10.可将任何的本地视频解码成一张静态图片；
+            11.可以配置图片显示的动画，而 Picasso 只有一种动画：fading in；
+            12.是可以使用 thumbnail()产生一个你所加载图片的 thumbnail；
+
+        总结：
+            Picasso 所能实现的功能 Glide 都能做到，只是所需设置不同，两者的区别是：
+                    Picasso 比 Glide 体积小很多，图像质量比 Glide 高；
+                    Glide 的速度比 Picasso 更快；
+            Fresco 可以说是综合了之前图片加载库的优点：
+                    其在5.0以下的内存优化非常好；
+                    但它的不足是体积太大，按体积进行比较：Fresco>Glide>Picasso；
+
+    使用推荐：
+            Glide 的长处是处理大型的图片流，如 gif、video，如果要制作视频类应用，Glide 当为首选；
+            Fresco 在图片较多的应用中更能凸显其价值，如果应用没有太多图片需求，不推荐使用 Fresco；
+            如果项目使用了Square公司的全家桶，如 Retrofit 或者 OkHttp ，那么搭配 Picasso一起使用，兼容性可能会更好些；
+
+
+            平时开发中，推荐Glide；
+
+
+
+
+
+
+
+
+
+
+
+
+
+Glide配置调整：
         You can adjust so many configurations for example, size and location of disk caching, maximum limit of memory caching,
         Bitmap Format and many more. You can read more about this at Configuration page.
         你可以调整很多Glide的配置，例如：磁盘缓存的大小和位置、支持的最大内存缓存、图片格式等等，
