@@ -132,6 +132,41 @@ Glide vs Picasso:
         这样，当下次需求相同的图片时，Glide就不用重新下载了，而是直接记载内存中的全尺寸图片、resized、cached（缓存resized后的图片）。
 
 
+    资源包大小：
+        Picasso (v2.5.1)'s size is around 118KB while
+        Glide (v3.5.2)'s is around 430KB.
+        Anyway 312KB difference might not be that significant.
+
+
+    包含的方法数：
+        Method count of Picasso and Glide are at 840 and 2678 respectively.
+        I must say 2678 is quite a lot for 65535 methods limit of Android DEX file.
+        ProGuard is recommended to turn on if you choose Glide. (And you should turn it on anyway for production release).
+
+
+     Glide/Picasso 总结:
+        Neither Glide nor Picasso is perfect.
+        The way Glide loads an image to memory and do the caching is better than Picasso which let an image loaded far faster.
+        In addition, it also helps preventing an app from popular OutOfMemoryError.
+        GIF Animation loading is a killing feature provided by Glide.
+        Anyway Picasso decodes an image with better quality than Glide.
+
+
+     推荐：
+        Which one do I prefer?
+        Although I use Picasso for such a very long time,I must admit that I now prefer Glide.
+        But I would recommend you:
+                to change Bitmap Format to ARGB_8888 and
+                let Glide cache both full-size image and resized one first. The rest would do your job great!
+
+
+配置：
+    Glide配置调整：
+        You can adjust so many configurations for example, size and location of disk caching, maximum limit of memory caching,
+        Bitmap Format and many more. You can read more about this at Configuration page.
+        你可以调整很多Glide的配置，例如：磁盘缓存的大小和位置、支持的最大内存缓存、图片格式等等，
+        具体的可以看这个：https://github.com/bumptech/glide/wiki/Configuration
+
 
 
 
