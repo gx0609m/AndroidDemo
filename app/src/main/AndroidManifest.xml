@@ -48,6 +48,9 @@
         <activity android:name=".imageload.picasso.PicassoLearningActivity"/>
         <activity android:name=".imageload.universalimageloader.UniversalImageLoaderLearningActivity"/>
 
+        <!-- 图片压缩相关 -->
+        <activity android:name=".imagecompress.ImageCompressLearningActivity"/>
+
     </application>
 
 </manifest>

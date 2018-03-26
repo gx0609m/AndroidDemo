@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.imageload.fresco.FrescoLearningActivity;
