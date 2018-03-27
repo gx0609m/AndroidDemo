@@ -66,4 +66,13 @@
         android:layout_alignRight="@+id/recycleview"
         android:layout_alignEnd="@+id/recycleview" />
 
+    <Button
+        android:id="@+id/imageCompress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ImageCompress"
+        android:layout_below="@+id/broadCast"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

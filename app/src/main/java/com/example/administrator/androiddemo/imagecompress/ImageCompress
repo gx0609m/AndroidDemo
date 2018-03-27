@@ -1,0 +1,153 @@
+图片压缩
+    简介：
+        Android中图片是以bitmap形式存在的，那么bitmap所占内存，直接影响到了应用所占内存大小，所以首先要知道：
+                bitmap所占内存 = 图片长度 x 图片宽度 x 一个像素点占用的字节数
+
+        Bitmap压缩都是围绕这个公式来做文章的，3个参数，任意减少一个的值，就达到了压缩的效果。
+
+
+    分类：
+        1.质量压缩（不改变图片的尺寸）；
+        2.尺寸压缩（减小图片的长、宽）；
+
+
+    尺寸压缩：
+        通过缩放图片的大小来达到压缩效果，基本不会对图片的显示效果有影响；
+
+        1.获取要加载图片（原图）的属性（长、宽、类型等）；
+            a.通过Android中的BitmapFactory类；
+            b.根据不同的图片源选择BitmapFactory中不同的解码方法：decodeByteArray()、decodeFile()
+              、decodeResource()等，去加载图片，创建出Bitmap；
+            c.这些方法中，都可以传入一个BitmapFactory.Options的实例对象options，通过这个对象，可以
+              更改一些加载图片的设置；
+            d.通过实例对象options，将options.inJustDecodeBounds设置为true，这样做的原因是：
+                    上述的几个解码方法会返回加载后的Bitmap图片；
+                    而构建Bitmap会占用内存；
+                    因此会比较容易导致OOM的发生；
+                    将options.inJustDecodeBounds设置为true后，在解码过程中就不会申请内存去创建Bitmap；
+                    返回的是一个空的Bitmap；
+                    但是可以获取图片的一些属性，如宽、高、图片类型等；
+
+             BitmapFactory.Options options = new BitmapFactory.Options();
+             options.inJustDecodeBounds = true;      // 设置为true，不将图片解码到内存中
+             BitmapFactory.decodeResource(getResources(), R.id.myimage, options);
+             int imageHeight = options.outHeight;    // 获取图片高度
+             int imageWidth = options.outWidth;      // 获取图片宽度
+             String imageType = options.outMimeType; // 获取图片类型
+
+             一般来说，为了避免OOM的异常，在加载图片到内存之前，会先检查图片的尺寸，除非你能确保图片源不会导致OOM；
+
+        2.缩小图片的长宽（来压缩图片）
+             设置options.inSampleSize的数值，来控制压缩图片程度；
+
+             在我们知道图片的大小之后，就可以决定是否将完整的图片加载到内存或者是加载压缩版的图片到内存，
+             这可以基于以下几点做出决定：
+                    · 估计完整图片加载到内存中所使用内存；
+                    · 可分配给加载图片的内存；
+                    · 用于显示图片的控件的大小；
+                    · 当前设备的屏幕大小和密度；
+
+             例如，如果显示图片的控件大小为128x96像素，就没有必要将一个1024x768像素的图片加载到内存中。
+             如果将options.inSampleSize设置为4，将一个2048x1536像素的图片解码加载到内存后，产生的Bitmap
+             大约为512x384像素，如果使用的位图配置是ARGB_8888，那么仅仅需要0.75M就加载了缩小版的图片到内存，
+             而加载完整的图片需要12M；
+             也就是说，如果我们设置inSampleSize == 2，解码出来的位图的宽高都是原图的1/2，图片所占用内存
+             缩小了1/4（1/2 x 1/2）。
+             如果inSampleSize设置的值小于等1，都会当做inSampleSize == 1来解码加载图片。
+
+             于是我们可以在加载图片的时候，根据控件的大小（显示到屏幕上的大小）来计算出加压缩版图片
+             的inSampleSize值：
+                        /**
+                         * 计算inSampleSize值
+                         *
+                         * @param options 用于获取原图的长宽
+                         * @param reqWidth 要求压缩后的图片宽度
+                         * @param reqHeight 要求压缩后的图片长度
+                         * @return 返回计算后的inSampleSize值
+                         */
+                        public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+                            // 原图片的宽高
+                            final int height = options.outHeight;
+                            final int width = options.outWidth;
+                            int inSampleSize = 1;
+
+                            if (height > reqHeight || width > reqWidth) {
+                                final int halfHeight = height / 2;
+                                final int halfWidth = width / 2;
+
+                                // 计算inSampleSize值
+                                while ((halfHeight / inSampleSize) >= reqHeight
+                                        && (halfWidth / inSampleSize) >= reqWidth) {
+                                    inSampleSize *= 2;
+                                }
+                            }
+                            return inSampleSize;
+                        }
+              有人可能会疑问为什么每次inSampleSize都是乘以2，指数增长。这是因为在加载图片过程中，
+              解析器使用的inSampleSize都是2的指数倍，如果inSampleSize是其他值，则找一个离这个值
+              最近的2的指数值；
+
+              上面已经获取了inSampleSize，然后就可以根据这个值来加载压缩版的图片了：
+                       public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                               int reqWidth, int reqHeight) {
+                           // 先将inJustDecodeBounds设置为true来获取图片的长宽属性
+                           final BitmapFactory.Options options = new BitmapFactory.Options();
+                           options.inJustDecodeBounds = true;
+                           BitmapFactory.decodeResource(res, resId, options);
+
+                           // 计算inSampleSize
+                           options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+                           // 加载压缩版图片
+                           options.inJustDecodeBounds = false;
+                           // 根据具体情况选择具体的解码方法
+                           return BitmapFactory.decodeResource(res, resId, options);
+                       }
+
+              获取到了压缩版的Bitmap之后就可以直接设置到屏幕的控件上了：
+                       mImageView.setImageBitmap(
+                           decodeSampledBitmapFromResource(getResources(), R.id.myimage, 100, 100));
+
+
+    质量压缩：
+        由字面意思可知，此方法会导致图片质量下降；
+
+        1.获取要压缩的Bitmap实例；
+        2.使用
+              Bitmap.compress(CompressFormat format, int quality, OutputStream stream)
+          来进行压缩；
+              a.此方法有三个参数，返回值是布尔类型；
+              b.CompressFormat指定Bitmap被压缩成的图片格式，只支持JPEG，PNG，WEBP三种；
+              c.quality控制图片压缩质量，范围为0~100，
+                    0 表示压缩后体积最小，但是质量也是最差；
+                    100 表示压缩后体积最大，但是质量也是最好的（相当于未压缩）；
+                    有些格式，例如png，它是无损的，所以会忽略这个值；
+              d.OutputStream 压缩后的数据会写入这个字节流中；
+              e.返回值表示返回的字节流是否可以使用BitmapFactory.decodeStream()解码成Bitmap；
+
+        3.获取经过压缩后的ByteArrayOutputStream实例stream；
+        4.判断stream的大小是否满足要求；
+        5.若不满足，则通过修改quality的值，循环压缩，知道stream大小满足要求；
+        6.将满足要求的字节数组输出流stream，转换成字节数组输入流byteArrayInputStream；
+        7.将byteArrayInputStream转换成Bitmap格式；
+        8.从外到内顺序关闭流；
+
+        整个的转换过程大概就是：
+               （设置不同的quality值）
+            Bitmap  -->  ByteArrayOutputStream  -->  ByteArrayInputStream  -->  Bitmap
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+（https://blog.csdn.net/xiaohanluo/article/details/52485037）

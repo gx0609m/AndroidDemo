@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
+import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
 import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button recycleview;
     private Button inputDialog;
     private Button imageload;
+    private Button imageCompress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageload:
                 intent = new Intent(MainActivity.this, ImageLoadLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.imageCompress:
+                intent = new Intent(MainActivity.this, ImageCompressLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -111,5 +117,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         imageload = (Button) findViewById(R.id.imageload);
         imageload.setOnClickListener(this);
+
+        imageCompress = (Button) findViewById(R.id.imageCompress);
+        imageCompress.setOnClickListener(this);
     }
 }
