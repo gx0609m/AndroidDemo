@@ -2,6 +2,7 @@ package com.example.administrator.androiddemo.imagecompress;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -39,6 +40,7 @@ public class ImageCompressLearningActivity extends BaseActivity {
         setContentView(R.layout.activity_image_compress_learning);
 
         initView();
+
         // 将经过了尺寸压缩后获取到的bitmap对象展示到屏幕上
         // 原图尺寸是117*117，这里根据ImageView的尺寸将所需的宽高设置为58*58
         sizeCompressImg.setImageBitmap(sampleCompress(58, 58));
@@ -97,7 +99,7 @@ public class ImageCompressLearningActivity extends BaseActivity {
          * 获取原图属性
          */
         BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.inJustDecodeBounds = true; // 设置为true，不将图片解码到内存中
+        opts.inJustDecodeBounds = true; // 设置为true，不将图片解码到内存中 （仅仅解码边缘区域）
         BitmapFactory.decodeResource(getResources(), R.mipmap.retry, opts);
         int imageHeight = opts.outHeight; // 获取原图高度
         int imageWidth = opts.outWidth; // 获取原图宽度
@@ -126,6 +128,45 @@ public class ImageCompressLearningActivity extends BaseActivity {
         opts.inJustDecodeBounds = false;
         // 根据图片的不同位置，选择BitmapFactory的不同解码方法
         return BitmapFactory.decodeResource(getResources(), R.mipmap.retry, opts);
+    }
+
+    /**
+     * 缩放法压缩（使用Matrix）
+     */
+    private Bitmap matrixCompress(Bitmap bitmap, int reqWidth, int reqHeight) {
+        Matrix matrix = new Matrix();
+
+        // 注意这里的0.5f,0.5f，是我们设置的
+        // 也可以通过bitmap.getWidth()/reqWidth，bitmap.getHeight()/reqHeight，分别计算出 原图宽高与期望宽高 的缩放比
+        // matrix.setScale((float) bitmap.getWidth() / reqWidth, (float) bitmap.getHeight() / reqHeight);
+        matrix.setScale(0.5f, 0.5f);
+//        matrix.postScale(0.5f, 0.5f); // 注意下这三个方法的区别
+//        matrix.preScale(0.5f,0.5f);
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    /**
+     * 使用Bitmap.createScaledBitmap(*,*,*,*)压缩
+     * <p>
+     * 此方法内部其实是使用了上面的Bitmap.createBitmap()方法，只不过省去了我们自己计算 原图宽高与期望宽高 的缩放比的过程
+     */
+    private Bitmap compress(Bitmap bitmap, int reqWidth, int reqHeight) {
+        return Bitmap.createScaledBitmap(bitmap, reqWidth, reqHeight, true);
+    }
+
+    /**
+     * 通过修改Bitmap.Config中的图片格式压缩图片
+     * <p>
+     * Bitmap.Config中有三种图片格式： ALPHA_8、RGB_565、ARGB_8888、   ARGB_4444（@Deprecated）
+     * <p>
+     * 使用此方法要先确定被压缩的图片格式，如果压缩前就是RGB_565，又设置压缩的格式为RGB_565，那压缩前后大小肯定没有变化的
+     */
+    private Bitmap configCompress() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        // 注意这里被压缩的图片时png格式的，也就意味着有Alpha通道，而要压缩成的格式是没有Alpha通道的RGB_565
+        return BitmapFactory.decodeResource(getResources(), R.mipmap.retry, options);
     }
 
     private void initView() {
