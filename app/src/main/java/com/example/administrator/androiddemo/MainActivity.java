@@ -17,6 +17,7 @@ import com.example.administrator.androiddemo.imagecompress.ImageCompressLearning
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
 import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
+import com.example.administrator.androiddemo.thread.ThreadCorrelationLearningActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button inputDialog;
     private Button imageload;
     private Button imageCompress;
+    private Button threadCorrelation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageCompress:
                 intent = new Intent(MainActivity.this, ImageCompressLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.threadCorrelation:
+                intent = new Intent(MainActivity.this, ThreadCorrelationLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -120,5 +126,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         imageCompress = (Button) findViewById(R.id.imageCompress);
         imageCompress.setOnClickListener(this);
+
+        threadCorrelation = (Button) findViewById(R.id.threadCorrelation);
+        threadCorrelation.setOnClickListener(this);
     }
 }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.administrator.androiddemo">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MyApplication"
@@ -44,12 +44,17 @@
         <!-- 图片加载相关 -->
         <activity android:name=".imageload.ImageLoadLearningActivity" />
         <activity android:name=".imageload.fresco.FrescoLearningActivity" />
-        <activity android:name=".imageload.glide.GlideLearningActivity"/>
-        <activity android:name=".imageload.picasso.PicassoLearningActivity"/>
-        <activity android:name=".imageload.universalimageloader.UniversalImageLoaderLearningActivity"/>
+        <activity android:name=".imageload.glide.GlideLearningActivity" />
+        <activity android:name=".imageload.picasso.PicassoLearningActivity" />
+        <activity android:name=".imageload.universalimageloader.UniversalImageLoaderLearningActivity" />
 
         <!-- 图片压缩相关 -->
-        <activity android:name=".imagecompress.ImageCompressLearningActivity"/>
+        <activity android:name=".imagecompress.ImageCompressLearningActivity" />
+
+        <!-- 线程/线程池相关 -->
+        <activity android:name=".thread.ThreadCorrelationLearningActivity" />
+        <activity android:name=".thread.thread.ThreadLearningActivity" />
+        <activity android:name=".thread.threadpool.ThreadPoolLearningActivity" />
 
     </application>
 

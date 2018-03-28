@@ -141,6 +141,16 @@
             Bitmap  -->  ByteArrayOutputStream  -->  ByteArrayInputStream  -->  Bitmap
 
 
+    缩放法压缩（使用Matrix）；
+
+
+    使用Bitmap.createScaledBitmap(*,*,*,*)压缩；
+
+
+    通过修改Bitmap.Config中的图片格式压缩图片；
+
+
+    混合压缩（综上）；
 
 
 
