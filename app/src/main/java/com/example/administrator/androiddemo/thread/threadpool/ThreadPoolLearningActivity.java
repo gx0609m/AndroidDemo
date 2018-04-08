@@ -6,6 +6,10 @@ import android.support.annotation.Nullable;
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * Created by gx on 2018/3/28 0028
  */
@@ -16,5 +20,6 @@ public class ThreadPoolLearningActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_thread_pool_learning);
+
     }
 }
