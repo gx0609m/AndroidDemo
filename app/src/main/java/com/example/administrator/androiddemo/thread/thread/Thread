@@ -1,6 +1,6 @@
 线程
     简介：
-        Android系统中最小的调度单位；
+        Java中最小的调度单位，而Android几乎完全采用了Java中的线程机制；
 
     优点：
         子线程中做耗时操作，避免界面卡顿（ANR）；
@@ -10,6 +10,15 @@
 
     实现方式：
         1.继承Thread类；
+            class MyThread extend Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    Log.i(Thread.currentThread().getId());
+                }
+            }
+            new MyThread().start();
+
         2.实现Runnable接口；
 
 
