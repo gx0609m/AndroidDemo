@@ -26,8 +26,8 @@
 
 
     关系：
-        ThreadPoolExecutor（类） --extends--> AbstractExecutorService（类） --implements--> ExecutorService（接口）；
-        Executors封装了功能不一样的线程池，通过new ThreadPoolExecutor(…)方式；
+        ThreadPoolExecutor（类） --extends--> AbstractExecutorService（类） --implements--> ExecutorService（接口）--extends--Executor（接口）；
+        Executors是封装了功能不一样的线程池的类，内部的封装其实也是通过new ThreadPoolExecutor(…)方式；
 
 
     创建线程池：
@@ -90,6 +90,9 @@
                             c. ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
                             d. ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
                             e. ScheduledExecutorService singleThreadScheduledPool = Executors.newSingleThreadScheduledExecutor();
+
+                            注意：通过ScheduledExecutorService执行的周期任务，如果任务执行过程中抛出了异常，那么ScheduledExecutorService就会停止
+                                 执行任务，且也不会再周期地执行该任务了。所以你如果想保住任务都一直被周期执行，那么catch一切可能的异常；
 
                         可以看到通过Executors的工厂方法来创建线程池极其简便，其实它的内部还是通过new ThreadPoolExecutor(…)的方式创建线程池的，
                         我们看一下这些工厂方法的内部实现：

@@ -6,20 +6,106 @@
         子线程中做耗时操作，避免界面卡顿（ANR）；
 
     缺点：
-        对于系统而言，创建、销毁、调度线程的过程都是需要内存开销的，过度开启线程，会适得其反；
+        1.对于系统而言，创建、销毁、调度线程的过程都是需要内存开销的，过度开启线程，会适得其反；（线程间也会存在资源竞争）
+        2.不利于扩展，比如如定时执行、定期执行、线程中断等；
 
     实现方式：
         1.继承Thread类；
-            class MyThread extend Thread(){
+            class MyThread extends Thread(){
                 @Override
                 public void run() {
                     super.run();
-                    Log.i(Thread.currentThread().getId());
+                    Log.i("MyThread",Thread.currentThread().getId());
                 }
             }
             new MyThread().start();
 
         2.实现Runnable接口；
+            class MyRunnable implements Runnable{
+                @Override
+                public void run() {
+                    Log.i("MyRunnable", Thread.currentThread().getName());
+                }
+            }
+            MyRunnable myRunnable = new MyRunnable();
+            new Thread(myRunnable).start();
+
+    停止线程：
+        停止线程之前，必须先让线程处于阻塞状态；
+        我们可以通过interrupt()方法和isInterrupted()方法来停止正在运行的线程；
+            private void destroyThread() {
+                    try {
+                        if (null != thread && Thread.State.RUNNABLE == thread .getState()) {
+                            try {
+                                Thread.sleep(500); // 让线程处于阻塞状态
+                                thread.interrupt();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        thread = null;
+                    }
+                }
+
+    线程同步：
+        概念：
+            防止多个线程访问一个数据对象时，造成数据不一致的问题；
+
+        方式：
+            1.同步函数：
+                 private synchronized void count() {     // 多个线程调用这一个方法
+                    // ...  操作int对象s
+                 }
+
+            2.同步代码块：
+                 private void count() {      // 多个线程调用这一个方法
+                        synchronized (this) {
+                            // ...  操作int对象s
+                        }
+                 }
+
+            3.使用特殊域变量 ——— volatile：
+                private volatile int s = 1000;
+
+                a.volatile关键字为域变量的访问提供了一种免锁机制；
+                b.volatile不会提供任何原子操作，它也不能用来修饰final类型的变量；
+                c.使用volatile修饰域相当于告诉虚拟机，该域可能会被其他线程更新，因此每次使用该域就要重新计算，而不是使用寄存器中的值；
+
+            4.使用重入锁实现线程同步：
+                private void count() {
+                        lock.lock();
+                        // ...  操作int对象s
+                        lock.unlock();
+                }
+
+                a.ReentrantLock()：创建一个ReentrantLock实例；
+                b.lock()：获得锁；
+                c.unlock()：释放锁；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
