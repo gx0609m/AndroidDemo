@@ -1,0 +1,79 @@
+Thread_Runnable
+    Thread类--implements--Runnable接口；
+    Thread类中的run()是对Runnable中run()的实现；
+
+
+    Runnable只是一个接口，单看这个接口，它其实和线程并无关系；
+    只是线程Thread类，实现了Runnable接口，通过实现的Runnable中的run()方法，在线程中去执行任务；
+
+
+    所以，thread.run()与thread.start()还是有区别的：
+            thread.run()是对Runnable中run()的实现，由于Runnable与线程并无直接关系，因此，此方法是运行在当前线程上的；
+            thread.start()则会开启一个线程，然后在线程中调用run()方法执行任务（JVM内存机制）；
+                     /**
+                      * Causes this thread to begin execution;
+                      * the Java Virtual Machine calls the <code>run</code> method of this thread.
+                      */
+                     public synchronized void start() {
+                            // ...
+                     }
+    总结下，Thread类中：
+            调用start方法方可启动线程；
+            而run方法只是thread的一个普通方法调用，并且是在主线程中执行；
+
+
+    Thread调用start()方法之后：
+            此线程处于就绪（可运行）状态，但并没有运行；
+            一旦得到cpu时间片，就开始执行run()方法，这里方法 run()称为线程体，它包含了要执行的这个线程的内容；
+            Run方法运行结束，此线程随即终止；
+
+
+Runnable_Callable
+    共同点：
+        都提供在线程中执行任务的方法；
+
+            public interface Runnable {
+                public abstract void run();
+            }
+
+            @FunctionalInterface
+            public interface Callable<V> {
+                V call() throws Exception;
+            }
+
+    区别：
+        1.Runnable从JDK1.0开始提供，Callable是在JDK1.5增加的；
+        2.Runnable接口的方法是run()，Callable接口下的方法是 call()；
+        3.Runnable任务执行后不能返回值，而Callable任务执行后是可返回值的；
+        4.run()方法不能抛出异常，而call()可以；
+        5.运行Callable任务可以拿到一个Future对象，表示异步计算的结果，它提供了检查计算是否完成的方法，
+          以等待计算的完成，并检索计算的结果，通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果；
+
+    然而！！！
+    Thread类只支持Runnable接口，由此引入FutureTask的概念；
+
+
+FutureTask
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
