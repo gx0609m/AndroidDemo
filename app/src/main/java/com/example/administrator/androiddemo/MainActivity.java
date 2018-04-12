@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
+import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button imageload;
     private Button imageCompress;
     private Button threadCorrelation;
+    private Button algorithm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.threadCorrelation:
                 intent = new Intent(MainActivity.this, ThreadCorrelationLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.algorithm:
+                intent = new Intent(MainActivity.this, SortLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -129,5 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         threadCorrelation = (Button) findViewById(R.id.threadCorrelation);
         threadCorrelation.setOnClickListener(this);
+
+        algorithm = (Button) findViewById(R.id.algorithm);
+        algorithm.setOnClickListener(this);
     }
 }

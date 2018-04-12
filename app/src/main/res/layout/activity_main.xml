@@ -84,4 +84,13 @@
         android:layout_alignLeft="@+id/inputDialog"
         android:layout_alignStart="@+id/inputDialog" />
 
+    <Button
+        android:id="@+id/algorithm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Algorithm"
+        android:layout_below="@+id/imageload"
+        android:layout_toRightOf="@+id/threadCorrelation"
+        android:layout_toEndOf="@+id/threadCorrelation" />
+
 </RelativeLayout>

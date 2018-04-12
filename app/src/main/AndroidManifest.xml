@@ -56,6 +56,9 @@
         <activity android:name=".thread.thread.ThreadLearningActivity" />
         <activity android:name=".thread.threadpool.ThreadPoolLearningActivity" />
 
+        <!-- 算法 -->
+        <activity android:name=".algorithm.SortLearningActivity" />
+
     </application>
 
 </manifest>
