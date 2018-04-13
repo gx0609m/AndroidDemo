@@ -30,6 +30,15 @@
             MyRunnable myRunnable = new MyRunnable();
             new Thread(myRunnable).start();
 
+        3.通过FutureTask类来间接实现 ——— 三种实现方式；
+            如果我们希望线程在完成某项工作后能够返回一个结果，而run方法的返回值是void类型，因此前两种直接实现run方法的方式并不可行，
+            这时我们就要通过FutureTask类来间接实现；
+            a. Future + ExecutorService 实现线程池：
+                    Callable myCallable = new MyCallable();
+                    ExecutorService service = Executors.newCachedThreadPool();
+                    Future<Integer> future = service.submit(myCallable);
+                    service.shutdown();
+
     停止线程：
         停止线程之前，必须先让线程处于阻塞状态；
         我们可以通过interrupt()方法和isInterrupted()方法来停止正在运行的线程；

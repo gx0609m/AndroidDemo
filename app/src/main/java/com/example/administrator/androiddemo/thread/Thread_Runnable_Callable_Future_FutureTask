@@ -41,6 +41,7 @@ Runnable_Callable
                 V call() throws Exception;
             }
 
+
     区别：
         1.Runnable从JDK1.0开始提供，Callable是在JDK1.5增加的；
         2.Runnable接口的方法是run()，Callable接口下的方法是 call()；
@@ -49,12 +50,87 @@ Runnable_Callable
         5.运行Callable任务可以拿到一个Future对象，表示异步计算的结果，它提供了检查计算是否完成的方法，
           以等待计算的完成，并检索计算的结果，通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果；
 
+
     然而！！！
     Thread类只支持Runnable接口，由此引入FutureTask的概念；
 
+Future
+    在说FutureTask之前，我们先说下Future ——— Future只是一个接口，不能直接用来创建对象；
+    Future接口代表异步计算的结果，通过Future接口提供的方法可以：
+        1.查看异步计算是否执行完成；
+        2.等待执行结果并获取执行结果；
+        3.同时还可以取消执行；
+
+
+    Future接口的定义如下:
+        public interface Future<V> {
+            boolean cancel(boolean mayInterruptIfRunning);
+            boolean isCancelled();
+            boolean isDone();
+            V get() throws InterruptedException, ExecutionException;
+            V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
+        }
+
+
+    Future接口中的方法说明：
+        cancel() ——— cancel()方法用来取消异步任务的执行；
+                     如果异步任务已经完成或者已经被取消，或者由于某些原因不能取消，则会返回false。；
+                     如果任务还没有被执行，则会返回true并且异步任务不会被执行；
+                     如果任务已经开始执行了，但是还没有执行完成，
+                            若mayInterruptIfRunning为true，则会立即中断执行任务的线程并返回true，
+                            若mayInterruptIfRunning为false，则会返回true且不会中断任务执行线程；
+        isCanceled() ——— 判断任务是否被取消，如果任务在结束(正常执行结束或者执行异常结束)前被取消则返回true，否则返回false；
+        isDone() ——— 判断任务是否已经完成，如果完成则返回true，否则返回false。需要注意的是：任务执行过程中发生异常、任务被取消也属于任务已完成，也会返回true。
+        get() ——— 获取任务执行结果；
+                  如果任务还没完成则会阻塞等待直到任务执行完成；
+                  如果任务被取消则会抛出CancellationException异常；
+                  如果任务执行过程发生异常则会抛出ExecutionException异常；
+                  如果阻塞等待过程中被中断则会抛出InterruptedException异常；
+        get(long timeout,Timeunit unit) ——— 带超时时间的get()版本，如果阻塞等待过程中超时则会抛出TimeoutException异常；
 
 FutureTask
+    FutureTask是Future的实现类，可以用来创建对象；
 
+
+    FutureTask的继承关系如下：
+        FutureTask（类）--implements-- RunnableFuture（接口）--extends-- Runnable（接口）,Future（接口）；
+
+        FutureTask的构造方法中可以传入Callable对象，即可以在创建FutureTask对象时与Callable产生联系；
+                public FutureTask(Callable<V> callable) {
+                       // ...
+                }
+
+    可以看到，FutureTask实现了RunnableFuture接口，而RunnableFuture接口继承了Runnable接口和Future接口，所以：
+            1.FutureTask既能当做一个Runnable直接被Thread执行；
+            2.也能作为Future用来得到Callable的计算结果；
+
+    在多线程编程中，我们一般通过实现Runnable接口或是继承Thread类的方式，来创建一个线程，这个线程在内部会执行Runnable对象的run方法，
+    如果说我们创建一个线程来完成某项工作，希望在完成以后该线程能够返回一个结果，而run方法的返回值是void类型，直接实现run方法并不可行，
+    这时我们就要通过FutureTask类来间接实现了；
+
+
+    那么，FutureTask是如何让java多线程的执行框架保持不变的同时，又实现了线程完成后返回结果的功能？
+        先看下FutureTask类的构造方法之一：
+                public FutureTask(Callable<V> callable) {
+                    if (callable == null)
+                        throw new NullPointerException();
+                    this.callable = callable;
+                    this.state = NEW;       // ensure visibility of callable
+                }
+        可以看到，这个构造方法接收一个Callable对象作为参数，在方法内部，将这个Callable参数实例传给了全局私有变量callable；
+
+        再看下FutureTask中的run()方法，由于FutureTask还实现了Runnable接口，它内部其实也实现了run()方法：
+                public void run() { // 只展示核心代码
+                        Callable<V> c = callable;    // 将构造方法中被赋值的全局私有变量callable，赋值给局部变量c
+                        V result;
+                        result = c.call();   // 调用Callable的call()方法
+                        set(result);      // 将call()方法的返回值作为参数传入set()方法，这样，就能通过Future的get()方法来获取到返回结果了
+                }
+        可以看到，FutureTask的run()方法，实际上就是调用了由构造函数传递进来的Callable实例的call()方法，
+        并将call()的返回值作为参数传入set()方法，从而让我们能通过get()方法获取到返回结果；
+
+        这样一来，我们将FutureTask传递给一个Thread时，表面上我们仍然执行的是Future的run()，
+        但在run方法的内部实际上执行的是带有返回值的call方法，这样即 使得java多线程的执行框架保持不变，又实现了线程完成后返回结果的功能；
 
 
 
