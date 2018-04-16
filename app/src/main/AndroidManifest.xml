@@ -59,6 +59,9 @@
         <!-- 算法 -->
         <activity android:name=".algorithm.SortLearningActivity" />
 
+        <!-- 自定义View相关 -->
+        <activity android:name=".customview.CustomViewLearningActivity" />
+
     </application>
 
 </manifest>
