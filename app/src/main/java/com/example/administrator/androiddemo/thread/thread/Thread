@@ -39,7 +39,7 @@
                     Future<Integer> future = service.submit(myCallable);
                     service.shutdown();
 
-    停止线程：
+    停止线程（线程中断）：
         停止线程之前，必须先让线程处于阻塞状态；
         我们可以通过interrupt()方法和isInterrupted()方法来停止正在运行的线程；
             private void destroyThread() {
@@ -58,6 +58,17 @@
                         thread = null;
                     }
                 }
+
+        在java中启动线程非常容易，大多数情况下一个线程执行完自己的任务后就会自己停掉；
+
+        一个线程在未正常结束之前, 被强制终止是很危险的事情，
+             因为它可能带来完全预料不到的严重后果，比如会带着自己所持有的锁而永远的休眠，迟迟不归还锁等；
+
+        在当前的api中，Thread.suspend、Thread.stop等方法都被Deprecated了，线程只能用interrupt中断，
+             而且不是立刻中断，只是发了一个类似于信号量的东西，通过修改了被调用线程的中断状态来告知那个线程，
+             说它被中断了，至于什么时候中断，这个有系统判断，会在一个合适的时候进行中断处理；
+
+        这种interrupt中断类似于GC,当你发起一次GC时，jvm并不会马上进行garbage collection，而是会在一个适当的时间进行gc操作；
 
     线程同步：
         概念：

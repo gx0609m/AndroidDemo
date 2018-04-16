@@ -19,7 +19,7 @@ Thread_Runnable
                      }
     总结下，Thread类中：
             调用start方法方可启动线程；
-            而run方法只是thread的一个普通方法调用，并且是在主线程中执行；
+            而run方法只是thread的一个普通方法调用，并且如果只是调用thread.run()，则此时run()是在主线程中执行；
 
 
     Thread调用start()方法之后：
@@ -44,7 +44,7 @@ Runnable_Callable
 
     区别：
         1.Runnable从JDK1.0开始提供，Callable是在JDK1.5增加的；
-        2.Runnable接口的方法是run()，Callable接口下的方法是 call()；
+        2.Runnable接口的方法是run()，Callable接口下的方法是call()；
         3.Runnable任务执行后不能返回值，而Callable任务执行后是可返回值的；
         4.run()方法不能抛出异常，而call()可以；
         5.运行Callable任务可以拿到一个Future对象，表示异步计算的结果，它提供了检查计算是否完成的方法，
