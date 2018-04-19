@@ -19,6 +19,7 @@ import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity
 import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 import com.example.administrator.androiddemo.thread.ThreadCorrelationLearningActivity;
+import com.example.administrator.androiddemo.webview.WebViewLearningActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button imageCompress;
     private Button threadCorrelation;
     private Button algorithm;
+    private Button webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.algorithm:
                 intent = new Intent(MainActivity.this, SortLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.webView:
+                intent = new Intent(MainActivity.this, WebViewLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -138,5 +144,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         algorithm = (Button) findViewById(R.id.algorithm);
         algorithm.setOnClickListener(this);
+
+        webView = (Button) findViewById(R.id.webView);
+        webView.setOnClickListener(this);
     }
 }

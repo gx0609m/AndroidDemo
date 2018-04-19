@@ -62,6 +62,9 @@
         <!-- 自定义View相关 -->
         <activity android:name=".customview.CustomViewLearningActivity" />
 
+        <!-- WebView相关 -->
+        <activity android:name=".webview.WebViewLearningActivity"/>
+
     </application>
 
 </manifest>
