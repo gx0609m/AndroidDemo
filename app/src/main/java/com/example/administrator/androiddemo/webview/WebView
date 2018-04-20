@@ -1,6 +1,7 @@
 WebView
     简介：
         Android中的一个组件，用来加载网页 ——— Android手机中内置了一个webkit内核浏览器；
+        Android在不同版本中采用了不同的webkit内核，4.4后直接使用了Chrome，因此，不同android版本使用WebView时也有些许不同；
 
     功能：
         1.加载网页；
@@ -14,10 +15,13 @@ WebView
             b.在activity的layout文件里添加WebView控件，然后 mWebView=(WebView)findViewById(R.id.mWebView)；
         3.设置webView基本信息；
         4.加载要显示的网页：
-            a.加载本地页面 ——— 本地文件存放在assets文件夹（src/main/assets，与java文件夹同级）中：
-                webView.loadUrl("file:///android_asset/XX.html");
-            b.加载网页：
+            a.加载网页：
                 webView.loadUrl("https://www.baidu.com/");
+            b.加载apk包中的页面 ——— 文件存放在assets文件夹（src/main/assets，与java文件夹同级）中：
+                webView.loadUrl("file:///android_asset/XX.html");
+            c.加载手机内存中的页面：
+                webView.loadUrl("content://com.android.htmlfileprovider/sdcard/test.html");  //用的很少
+
 
     与JS交互：
         1.Android调JS方法：

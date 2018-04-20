@@ -48,6 +48,10 @@
         <activity android:name=".imageload.picasso.PicassoLearningActivity" />
         <activity android:name=".imageload.universalimageloader.UniversalImageLoaderLearningActivity" />
 
+        <meta-data
+            android:name="com.example.administrator.androiddemo.imageload.glide.GlideConfiguration"
+            android:value="GlideModule" />
+
         <!-- 图片压缩相关 -->
         <activity android:name=".imagecompress.ImageCompressLearningActivity" />
 
@@ -63,7 +67,7 @@
         <activity android:name=".customview.CustomViewLearningActivity" />
 
         <!-- WebView相关 -->
-        <activity android:name=".webview.WebViewLearningActivity"/>
+        <activity android:name=".webview.WebViewLearningActivity" />
 
     </application>
 

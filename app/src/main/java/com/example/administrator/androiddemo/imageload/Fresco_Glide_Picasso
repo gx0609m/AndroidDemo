@@ -33,7 +33,7 @@ Glide vs Picasso:
                                     当然，前提是在.with()传参时传入activity/fragment，而不是简单的传入一个context；
 
 
-    默认加载的图片格式：
+    修改/默认加载的图片格式：
         The result of image loading comparing to Picasso. (1920x1080 pixels image is loaded into 768x432 pixels ImageView):
                 “Image loaded by Glide has the worse quality compared to Picasso.
                  Why?
