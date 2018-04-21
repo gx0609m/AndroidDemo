@@ -20,6 +20,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
@@ -45,7 +46,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         loadUrl();
     }
 
-    private void loadUrl() {
+    private void webSettings() {
         //声明WebSettings子类
         WebSettings webSettings = webView.getSettings();
         //设置自适应屏幕，两者合用
@@ -55,6 +56,13 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提
         webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
         webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
+        webSettings.setJavaScriptEnabled(true); //支持JS
+    }
+
+    /**
+     * WebViewClient ——— 处理各种通知、请求事件
+     */
+    private void webViewClient() {
         webView.setWebViewClient(new WebViewClient() {
             /**
              * 复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器，而是在当前WebView中显示
@@ -149,7 +157,94 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
                 super.onReceivedSslError(view, handler, error);
             }
         });
-        webView.loadUrl("https://www.baidu.com"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test
+    }
+
+    /**
+     * 辅助 WebView 处理 Javascript 的对话框,网站图标,网站标题等等
+     */
+    private void webChromeClient() {
+        webView.setWebChromeClient(new WebChromeClient() {
+            /**
+             * 获得网页的加载进度并显示，可以通过progressBar来显示
+             */
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+                if (newProgress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress(newProgress);
+                }
+            }
+
+            /**
+             * 获取Web页中的标题
+             */
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+            }
+
+            /**
+             * 支持javascript的警告框 ——— 需要webSettings设置支持 JS
+             *
+             * 可以将网页中的alert框，替换成Android中的Toast、AlertDialog之类的，由于是alert框，所以换成AlertDialog的话，只写一个setPositiveButton
+             */
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+                new AlertDialog.Builder(WebViewLearningActivity.this)
+                        .setTitle("JsAlert")
+                        .setMessage(message)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+                // If the client returns true, WebView will assume that the client will handle the dialog.
+                // If the client returns false, it will continue execution.
+                // 如果这里return false，那么会先弹出网页alert，再弹出Android中的AlertDialog
+                return true;
+            }
+
+            /**
+             * 支持javascript的确认框
+             *
+             * 可以将网页中的confirm，替换成AlertDialog，由于confirm框和alert框不一样，需要写setPositiveButton和setNegativeButton
+             */
+            @Override
+            public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+                new AlertDialog.Builder(WebViewLearningActivity.this)
+                        .setTitle("JsConfirm")
+                        .setMessage(message)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.cancel();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+                return true;
+            }
+        });
+    }
+
+    private void loadUrl() {
+        webSettings();
+        webViewClient();
+        webChromeClient();
+        webView.loadUrl("file:///android_asset/test.html"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
     }
 
     @Override

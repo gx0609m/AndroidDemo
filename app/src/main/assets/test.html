@@ -10,8 +10,10 @@
 <button><a href="http:www.baidu.com">百度一下a</a></button>
 <button onclick="openBaidu()">百度一下onclick</button>
 
+<button onclick="callConfirm()">弹出确定框</button>
+
 <script>
-    // Android调用JS方法
+    // Android调用JS方法--alert框
     function callJS(){
     	alert("Hello World!")
     }
@@ -19,6 +21,11 @@
     // 打开百度
     function openBaidu(){
         window.open('http:www.baidu.com');
+    }
+
+    // confirm框
+    function callConfirm(){
+        confirm("Sure?");
     }
 </script>
 </body>
