@@ -3,17 +3,25 @@ WebView
         Android中的一个组件，用来加载网页 ——— Android手机中内置了一个webkit内核浏览器；
         Android在不同版本中采用了不同的webkit内核，4.4后直接使用了Chrome，因此，不同android版本使用WebView时也有些许不同；
 
+
     功能：
         1.加载网页；
         2.Android与JS交互的桥梁；
 
+
     使用：
         1.添加权限：
             AndroidManifest.xml中添加 "android.permission.INTERNET" 权限，否则会报 Web page not available 错误；
+
         2.在Activity中生成一个WebView组件：
             a.WebView webView = new WebView(this)；
             b.在activity的layout文件里添加WebView控件，然后 mWebView=(WebView)findViewById(R.id.mWebView)；
+
         3.设置webView基本信息；
+            a.WebSettings；
+            b.WebViewClient ——— 处理各种通知、请求事件；
+            c.WebChromeClient ——— 处理 Javascript 的对话框,网站图标,网站标题等；
+
         4.加载要显示的网页：
             a.加载网页：
                 webView.loadUrl("https://www.baidu.com/");
@@ -28,3 +36,29 @@ WebView
 
 
         2.JS调Android方法：
+
+
+    性能优化：
+        1.优化网页加载速度：
+
+        2.避免WebView内存泄露：
+
+
+    漏洞处理：
+        起因：
+            2013年Android平台暴露出WebView漏洞，攻击者可以通过存在风险的addJavascriptInterface接口函数，利用反射执行Android本地代码，造成很大的风险；
+
+            如果你使用的是AndroidStudio，在你的webSettings.setJavaScriptEnabled(true)这句代码中，AndroidStudio会给你一个提示：
+                "Using setJavaScriptEnabled can introduce XSS vulnerabilities into your application,review carefully.
+                 Your code should not invoke setJavaScriptEnabled if you are not sure that your app really requires JavaScript support."
+            这个漏洞在Android 4.2上已经修复了，通过使用@JavascriptInterface这个注解；
+
+            但是从兼容性方面考虑，不能保证每个用户使用的都是4.2+的系统；
+            所以基本上我们不会再利用Android系统为我们提供的addJavascriptInterface()、@JavascriptInterface注解来实现js和java的通信了；
+            那怎么办呢？
+
+        处理方式：
+            1.Android 4.2+：
+                使用@JavascriptInterface注解；
+
+

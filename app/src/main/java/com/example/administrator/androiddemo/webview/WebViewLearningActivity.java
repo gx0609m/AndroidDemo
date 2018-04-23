@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -20,8 +22,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.example.administrator.androiddemo.MainActivity;
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
 
@@ -46,30 +51,98 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         loadUrl();
     }
 
+    private void loadUrl() {
+        /*
+         * WebViewClient和WebChromeClient的功能都是帮助WebView分担一些工作，
+         * 这样一来WebView就只需专注于自己的加载网页的工作，
+         * 而加载网页过程中所需处理的一些其他事宜便交给WebViewClient和WebChromeClient去处理；
+         *
+         * 这种设计一定程度上体现了单一职责原则；
+         */
+        webSettings();
+        webViewClient();
+        webChromeClient();
+        webView.loadUrl("http://wanandroid.com/index"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
+    }
+
     private void webSettings() {
         //声明WebSettings子类
         WebSettings webSettings = webView.getSettings();
+        /*
+         * JS相关
+         */
+        webSettings.setJavaScriptEnabled(true);  //支持js
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+        /*
+         * Web页适配屏幕
+         */
         //设置自适应屏幕，两者合用
         webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
         webSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
-        //缩放操作
+        /*
+         * 缩放处理
+         */
         webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提
         webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
         webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
         webSettings.setJavaScriptEnabled(true); //支持JS
+        /*
+         * 内容布局
+         */
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN); //支持内容重新布局
+        webSettings.supportMultipleWindows(); //多窗口
+        /*
+         * 文件缓存
+         *
+         * 使用缓存 LOAD_CACHE_ELSE_NETWORK
+         * 不使用缓存 LOAD_NO_CACHE
+         */
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //webView中的缓存
+        webSettings.setAllowFileAccess(true); //设置可以访问文件
+        /*
+         * 其他设置
+         */
+        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
+        webSettings.setDefaultTextEncodingName("utf-8"); //设置编码格式
+        webSettings.setPluginState(WebSettings.PluginState.OFF); //设置是否支持flash插件
+        webSettings.setDefaultFontSize(20); //设置默认字体大小
+        webSettings.setNeedInitialFocus(true); //当webView调用requestFocus时为webView设置节点
     }
 
     /**
-     * WebViewClient ——— 处理各种通知、请求事件
+     * WebViewClient ——— 监听网页加载状态（开始、完成之类的）、处理各种通知、请求事件
      */
     private void webViewClient() {
         webView.setWebViewClient(new WebViewClient() {
             /**
              * 复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器，而是在当前WebView中显示
+             *
+             * 返回false ——— 当前 WebView 处理URL；
+             * 返回true ——— Android 系统唤起系统浏览器处理URL；
+             * 默认放回false
              */
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                /*if (Uri.parse(url).getHost().equals("github.com/gx0609m")) {
+                    //如果是自己站点的链接, 则用本地WebView跳转
+                    return false;
+                }
+                //如果不是自己的站点则launch别的Activity来处理
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                mContext.startActivity(intent);
+                return true;*/
+
+                /*view.loadUrl(request.getUrl().toString());*/
+
                 return super.shouldOverrideUrlLoading(view, request);
+            }
+
+            /**
+             * 当WebView的缩放因子改变时这个方法会被回调
+             */
+            @Override
+            public void onScaleChanged(WebView view, float oldScale, float newScale) {
+                super.onScaleChanged(view, oldScale, newScale);
             }
 
             /**
@@ -111,7 +184,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
             }
 
             /**
-             * 在api 23里面 已经上面方法已经deprecation
+             * 在api 23里面 上面方法已经deprecation
              *
              * Redirect to deprecated method, so you can use it in all SDK versions
              *
@@ -160,7 +233,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
     }
 
     /**
-     * 辅助 WebView 处理 Javascript 的对话框,网站图标,网站标题等等
+     * WebChromeClient ——— 监听网页加载进度、处理 Javascript 的对话框,网站图标,网站标题等等
      */
     private void webChromeClient() {
         webView.setWebChromeClient(new WebChromeClient() {
@@ -237,14 +310,46 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
                         .show();
                 return true;
             }
+
+            /**
+             * 支持javascript输入框
+             */
+            @Override
+            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
+                final EditText et = new EditText(WebViewLearningActivity.this);
+                et.setText(defaultValue);
+                new AlertDialog.Builder(WebViewLearningActivity.this)
+                        .setTitle(message)
+                        .setView(et)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.confirm(et.getText().toString());
+                                Toast.makeText(WebViewLearningActivity.this, et.getText().toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                result.cancel();
+                            }
+                        })
+                        .setCancelable(false)
+                        .show();
+
+                return true;
+            }
         });
     }
 
-    private void loadUrl() {
-        webSettings();
-        webViewClient();
-        webChromeClient();
-        webView.loadUrl("file:///android_asset/test.html"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
+    //点击返回上一Web页而不是从当前WebActivity退出 ——— 如果当前Web页能返回的话canGoBack
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+            webView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

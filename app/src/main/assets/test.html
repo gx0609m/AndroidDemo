@@ -6,11 +6,13 @@
 </head>
 <body>
 
-<button onclick="callJS()">I am a Button!</button>
+<button onclick="callJS()">弹出警告框</button>
 <button><a href="http:www.baidu.com">百度一下a</a></button>
 <button onclick="openBaidu()">百度一下onclick</button>
 
 <button onclick="callConfirm()">弹出确定框</button>
+<button onclick="callPrompt()">弹出输入框</button>
+
 
 <script>
     // Android调用JS方法--alert框
@@ -26,6 +28,11 @@
     // confirm框
     function callConfirm(){
         confirm("Sure?");
+    }
+
+    // prompt框
+    function callPrompt(){
+        prompt("How are you today");
     }
 </script>
 </body>
