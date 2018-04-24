@@ -307,7 +307,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
             }
 
             /**
-             * 支持javascript的警告框 ——— 需要webSettings设置支持 JS
+             * 支持javascript的警告框 ——— 需要webSettings设置支持 JS ——— 无返回值
              *
              * 可以将网页中的alert框，替换成Android中的Toast、AlertDialog之类的，由于是alert框，所以换成AlertDialog的话，只写一个setPositiveButton
              */
@@ -331,7 +331,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
             }
 
             /**
-             * 支持javascript的确认框
+             * 支持javascript的确认框 ——— 两个返回值 true、false，点击“确认”返回true，点击“取消”，返回“false”
              *
              * 可以将网页中的confirm，替换成AlertDialog，由于confirm框和alert框不一样，需要写setPositiveButton和setNegativeButton
              */
@@ -358,11 +358,41 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
             }
 
             /**
-             * 支持javascript输入框
+             * 支持javascript输入框 ——— 设置任意返回值 ，点击“确认”返回输入框中的值，点击“取消”返回null
+             *
+             * 参数message:代表prompt('')的内容（'xxx'中的内容xxx）
              */
             @Override
             public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
-                final EditText et = new EditText(WebViewLearningActivity.this);
+                /*
+                 * 根据协议的参数，判断是否是所需要的url
+                 * 一般根据scheme（协议格式） & authority（协议名）判断（前两个参数）
+                 * 假定传入进来的 url = "js://webview?arg1=111&arg2=222"（同时也是约定好的需要拦截的）
+                 */
+                Uri uri = Uri.parse(message);
+                if (uri.getScheme().equals("js")) { // 如果url的协议 = 预先约定的 js 协议，就解析往下解析参数
+                    if (uri.getAuthority().equals("webview")) {  // 如果 authority  = 预先约定协议里的 webview，即代表都符合约定的协议
+                        /*
+                         * 执行JS所需要调用的逻辑
+                         * 可以在协议上带有参数并传递到Android上
+                         */
+                        // 获取参数值
+                        String param1Value = uri.getQueryParameter("arg1");
+                        String param2Value = uri.getQueryParameter("arg2");
+                        Log.e(TAG, "两个参数值分别为：" + "参数1：" + param1Value + "参数2：" + param2Value); // 两个参数值分别为111、222
+                        // 获取参数名
+                        Set<String> collection = uri.getQueryParameterNames();
+                        // 从set中取出指定位置的元素，通过将Set转换成List，再取值
+                        List<String> list = new ArrayList<String>(collection);
+                        if (list.size() >= 2) {
+                            JSCallAndroidWithUrlIntercept(list.get(0), list.get(1)); // 两个参数名分别为arg1、arg2
+                        }
+                    }
+                    return true;
+                }
+                return super.onJsPrompt(view, url, message, defaultValue, result);
+
+                /*final EditText et = new EditText(WebViewLearningActivity.this);
                 et.setText(defaultValue);
                 new AlertDialog.Builder(WebViewLearningActivity.this)
                         .setTitle(message)
@@ -382,8 +412,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
                         })
                         .setCancelable(false)
                         .show();
-
-                return true;
+                return true;*/
             }
         });
     }

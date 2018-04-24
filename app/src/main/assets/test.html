@@ -7,15 +7,11 @@
 <body>
 
 <button onclick="callJS()">弹出警告框</button>
-<button><a href="http:www.baidu.com">百度一下a</a></button>
-<button onclick="openBaidu()">百度一下onclick</button>
-
 <button onclick="callConfirm()">弹出确定框</button>
 <button onclick="callPrompt()">弹出输入框</button>
-
 <button onclick="callAndroidWithMap()">通过类映射 调用Android中的方法</button>
-
 <button onclick="callAndroidWithUrlIntercept()">通过Url拦截 调用Android中的方法</button>
+<button onclick="">通过onJsPrompt() 调用Android中的方法</button>
 
 <script>
     // Android调用JS方法--alert框
@@ -38,6 +34,12 @@
     function callAndroidWithUrlIntercept(){
         // 约定的url协议为：js://webview?arg1=111&arg2=222
         document.location = "js://webview?arg1=111&arg2=222";
+    }
+
+    // JS调用Android方法 -- 通过onJsPrompt()方式
+    function callAndroidWithOnJsPrompt(){
+        // 约定的url协议：js://webview?arg1=111&arg2=222
+        prompt("js://demo?arg1=111&arg2=222");
     }
 
     // 打开百度
