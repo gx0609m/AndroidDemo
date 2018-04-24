@@ -34,6 +34,7 @@ WebView
     与JS交互：
         1.Android调JS方法：
             a.webView.loadUrl("javascript:XX()")；
+
             b.webView.evaluateJavascript("javascript:XX()", new ValueCallback<String>() {       // 可以获取JS方法的返回值
                        @Override
                        public void onReceiveValue(String value) {
@@ -63,6 +64,86 @@ WebView
                         }
 
         2.JS调Android方法：
+            a.通过WebView的addJavascriptInterface()进行对象映射；
+                1>.设置与JS交互的权限：
+                    webSettings.setJavaScriptEnabled(true);  //支持js
+
+                2>.定义一个与JS对象映射的Android类 ——— JsCallAndroid：
+                        // js通信类
+                        public class JsCallAndroid {
+                            Context context;
+
+                            public JsCallAndroid(Context c) {
+                                context = c;
+                            }
+
+                            @JavascriptInterface  // Android 4.2+ 以上，只有添加了此注解，才会被JS方法调用
+                            public void XX(String type) {
+                                Log.e("tag","JS调了Android的XX()方法，同时传了一个String类型的值："+type);
+                            }
+                        }
+
+                3>.通过WebView设置Android类与JS代码的映射：
+                     webView.addJavascriptInterface(new JsCallAndroid(), "test"); // JsCallAndroid类对象映射到JS中的test对象
+
+                4>.在JS代码中，通过test.XX()方法调用Android中的XX()方法；
+
+                优点：使用简单，只需将Android对象和JS对象映射即可；
+
+                缺点：存在严重的安全漏洞 ——— Android 4.2 以下可通过反射执行Android本地代码；
+
+            b.通过WebViewClient的shouldOverrideUrlLoading()方法回调拦截Url；
+                原理：
+                    1>.通过WebViewClient的回调方法shouldOverrideUrlLoading()拦截url；
+                    2>.解析该 url 的协议；
+                    3>.如果检测到是预先约定好的协议，就调用相应方法，即实现了JS调用Android方法；
+
+                步骤：
+                    1>.在JS约定所需要的Url协议；
+                            // 约定的url协议为：js://webview?arg1=111&arg2=222
+                            document.location = "js://webview?arg1=111&arg2=222";
+
+                    2>.重写shouldOverrideUrlLoading()方法；
+                            /**
+                            * 通过拦截Url来实现JS调用Android方法
+                            */
+                            @Override
+                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                /*
+                                 * 根据协议的参数，判断是否是所需要的url
+                                 * 一般根据scheme（协议格式） & authority（协议名）判断（前两个参数）
+                                 * 假定传入进来的 url = "js://webview?arg1=111&arg2=222"（同时也是约定好的需要拦截的）
+                                 */
+                                 Uri uri = Uri.parse(url);
+                                 // 如果url的协议 = 预先约定的 js 协议，就解析往下解析参数
+                                 if (uri.getScheme().equals("js")) {
+                                     // 如果 authority  = 预先约定协议里的 webview，即代表都符合约定的协议
+                                     if (uri.getAuthority().equals("webview")) {  ----------------------------  以下即为步骤3逻辑
+                                         /*
+                                          * 执行JS所需要调用的逻辑
+                                          * 可以在协议上带有参数并传递到Android上
+                                          */
+                                         // 获取参数值
+                                         String param1Value = uri.getQueryParameter("arg1");
+                                         String param2Value = uri.getQueryParameter("arg2");
+                                         Log.e(TAG, "两个参数值分别为：" + "参数1：" + param1Value + "参数2：" + param2Value); // 两个参数值分别为111、222
+                                         // 获取参数名
+                                         Set<String> collection = uri.getQueryParameterNames();
+                                         // 从set中取出指定位置的元素，通过将Set转换成List，再取值
+                                         List<String> list = new ArrayList<String>(collection);
+                                         if (list.size() >= 2) {
+                                             // 调用Android中的方法
+                                             JSCallAndroidWithUrlIntercept(list.get(0), list.get(1)); // 两个参数名分别为arg1、arg2
+                                         }
+                                     }
+                                     return true;
+                                 }
+                                 return super.shouldOverrideUrlLoading(view, url);
+                             }
+
+                    3>.拦截Url，截取判断，都符合约定的协议时，即可执行相应逻辑 ——— 调用Android中的方法；
+
+            c.通过WebChromeClient的onJsAlert()、onJsConfirm()、onJsPrompt()方法回调拦截JS对话框alert()、confirm()、prompt()消息；
 
 
     性能优化：

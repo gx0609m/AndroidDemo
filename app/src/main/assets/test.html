@@ -13,6 +13,9 @@
 <button onclick="callConfirm()">弹出确定框</button>
 <button onclick="callPrompt()">弹出输入框</button>
 
+<button onclick="callAndroidWithMap()">通过类映射 调用Android中的方法</button>
+
+<button onclick="callAndroidWithUrlIntercept()">通过Url拦截 调用Android中的方法</button>
 
 <script>
     // Android调用JS方法--alert框
@@ -24,6 +27,17 @@
     function callJSWithEvaluateJavascript(){
         var index = 1;
         return index+1;
+    }
+
+    // JS调用Android方法 -- 通过类映射的方式
+    function callAndroidWithMap(){
+        test.callMethod('I am a String!');
+    }
+
+    // JS调用Android方法 -- 通过Url拦截的方式
+    function callAndroidWithUrlIntercept(){
+        // 约定的url协议为：js://webview?arg1=111&arg2=222
+        document.location = "js://webview?arg1=111&arg2=222";
     }
 
     // 打开百度

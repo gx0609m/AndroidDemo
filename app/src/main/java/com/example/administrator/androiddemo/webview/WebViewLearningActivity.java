@@ -1,8 +1,10 @@
 package com.example.administrator.androiddemo.webview;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
@@ -31,6 +34,11 @@ import com.example.administrator.androiddemo.MainActivity;
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by gx on 2018/4/19 0019
  */
@@ -41,7 +49,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
 
     private WebView webView;
     private Button callJS;  // Android调JS方法 ——— 要设置JS支持
-    private Button callAndroid;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +58,8 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
 
         initView();
         loadUrl();
+        // 定义一个与JS对象映射的Android类，方便JS调用Android方法
+        webView.addJavascriptInterface(new JsCallAndroid(getApplicationContext()), "test");
     }
 
     private void loadUrl() {
@@ -86,7 +96,6 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提
         webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
         webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
-        webSettings.setJavaScriptEnabled(true); //支持JS
         /*
          * 内容布局
          */
@@ -115,6 +124,42 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
      */
     private void webViewClient() {
         webView.setWebViewClient(new WebViewClient() {
+            /**
+             * 通过拦截Url来实现JS调用Android方法
+             */
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                /*
+                 * 根据协议的参数，判断是否是所需要的url
+                 * 一般根据scheme（协议格式） & authority（协议名）判断（前两个参数）
+                 * 假定传入进来的 url = "js://webview?arg1=111&arg2=222"（同时也是约定好的需要拦截的）
+                 */
+                Uri uri = Uri.parse(url);
+                // 如果url的协议 = 预先约定的 js 协议，就解析往下解析参数
+                if (uri.getScheme().equals("js")) {
+                    // 如果 authority  = 预先约定协议里的 webview，即代表都符合约定的协议
+                    if (uri.getAuthority().equals("webview")) {
+                        /*
+                         * 执行JS所需要调用的逻辑
+                         * 可以在协议上带有参数并传递到Android上
+                         */
+                        // 获取参数值
+                        String param1Value = uri.getQueryParameter("arg1");
+                        String param2Value = uri.getQueryParameter("arg2");
+                        Log.e(TAG, "两个参数值分别为：" + "参数1：" + param1Value + "参数2：" + param2Value); // 两个参数值分别为111、222
+                        // 获取参数名
+                        Set<String> collection = uri.getQueryParameterNames();
+                        // 从set中取出指定位置的元素，通过将Set转换成List，再取值
+                        List<String> list = new ArrayList<String>(collection);
+                        if (list.size() >= 2) {
+                            JSCallAndroidWithUrlIntercept(list.get(0), list.get(1)); // 两个参数名分别为arg1、arg2
+                        }
+                    }
+                    return true;
+                }
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+
             /**
              * 复写shouldOverrideUrlLoading()方法，使得打开网页时不调用系统浏览器，而是在当前WebView中显示
              *
@@ -343,6 +388,14 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         });
     }
 
+    /**
+     * 通过shouldOverrideUrlLoading()拦截Url，来实现JS调用Android方法
+     */
+    private void JSCallAndroidWithUrlIntercept(String param1, String param2) {
+        Log.e(TAG, "通过拦截Url的方式，使JS调用了Android的方法，并传了两个参数名：" + param1 + "和" + param2);
+        Toast.makeText(this, "通过拦截Url的方式，使JS调用了Android的方法，并传了两个参数名：" + param1 + "和" + param2, Toast.LENGTH_LONG).show();
+    }
+
     //点击返回上一Web页而不是从当前WebActivity退出 ——— 如果当前Web页能返回的话canGoBack
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -374,8 +427,6 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
                     }
                 });
                 break;
-            case R.id.callAndroid:
-                break;
         }
     }
 
@@ -384,9 +435,21 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
 
         callJS = (Button) findViewById(R.id.callJS);
         callJS.setOnClickListener(this);
+    }
 
-        callAndroid = (Button) findViewById(R.id.callAndroid);
-        callAndroid.setOnClickListener(this);
+    // js通信类
+    public class JsCallAndroid {
+        Context context;
+
+        public JsCallAndroid(Context c) {
+            context = c;
+        }
+
+        @JavascriptInterface
+        public void callMethod(String type) {
+            Log.e("tag", "JS调了Android的XX()方法，同时传了一个String类型的值：" + type);
+            Toast.makeText(context, "JS调了Android的XX()方法，同时传了一个String类型的值：" + type, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
