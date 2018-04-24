@@ -14,6 +14,7 @@ import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -39,7 +40,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
     private static final String TAG = "WebViewLearningActivity";
 
     private WebView webView;
-    private Button callJS;
+    private Button callJS;  // Android调JS方法 ——— 要设置JS支持
     private Button callAndroid;
 
     @Override
@@ -62,7 +63,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         webSettings();
         webViewClient();
         webChromeClient();
-        webView.loadUrl("http://wanandroid.com/index"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
+        webView.loadUrl("file:///android_asset/test.html"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
     }
 
     private void webSettings() {
@@ -352,10 +353,26 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         return super.onKeyDown(keyCode, event);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.callJS:
+
+            /*
+             * 注意：
+             *     1.JS代码调用一定要在 onPageFinished() 回调之后才能调用，否则不会被调用；
+             *       因此，如果是在onPageFinished()回调之前，evaluateJavascript()是获取不到JS的返回值的；
+             *     2.evaluateJavascript需要minSDKVersion >= 19
+             */
+            case R.id.callJS:  // Android调JS方法    ———    1.loadUrl()；  2.evaluateJavascript()；
+//                webView.loadUrl("javascript:callJSWithLoadUrl()");
+                webView.evaluateJavascript("javascript:callJSWithEvaluateJavascript()", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        Log.e(TAG, "JS方法的返回值是：" + value);
+                        Toast.makeText(WebViewLearningActivity.this, "JS方法的返回值是：" + value, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
             case R.id.callAndroid:
                 break;

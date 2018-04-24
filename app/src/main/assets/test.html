@@ -16,8 +16,14 @@
 
 <script>
     // Android调用JS方法--alert框
-    function callJS(){
+    function callJSWithLoadUrl(){
     	alert("Hello World!")
+    }
+
+    // Android调用JS方法
+    function callJSWithEvaluateJavascript(){
+        var index = 1;
+        return index+1;
     }
 
     // 打开百度
@@ -34,6 +40,7 @@
     function callPrompt(){
         prompt("How are you today");
     }
+
 </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 WebView
     简介：
         Android中的一个组件，用来加载网页 ——— Android手机中内置了一个webkit内核浏览器；
-        Android在不同版本中采用了不同的webkit内核，4.4后直接使用了Chrome，因此，不同android版本使用WebView时也有些许不同；
+        Android在不同版本中采用了不同的webkit内核，4.4后直接使用了Chrome内核，因此，不同android版本使用WebView时也有些许不同；
 
 
     功能：
@@ -33,7 +33,34 @@ WebView
 
     与JS交互：
         1.Android调JS方法：
+            a.webView.loadUrl("javascript:XX()")；
+            b.webView.evaluateJavascript("javascript:XX()", new ValueCallback<String>() {       // 可以获取JS方法的返回值
+                       @Override
+                       public void onReceiveValue(String value) {
+                              Log.e(TAG, "JS方法的返回值是：" + value);
+                       }
+              })；
 
+            需要注意的是：
+                1>.loadUrl()方法会刷新页面，
+                   evaluateJavascript()不会使页面刷新，
+                   因此，evaluateJavascript()的效率更高、性能更好；
+                2>.evaluateJavascript() 需要 minSDKVersion >= 19 ——— Android 4.4；
+                3>.JS代码调用一定要在 onPageFinished() 回调之后才能调用，否则不会被调用；
+                   因此，如果是在onPageFinished()回调之前，evaluateJavascript() 是获取不到JS的返回值的；
+
+            使用建议：
+                分版本混合使用，如下：
+                        if (Build.VERSION.SDK_INT < 18) {
+                            webView.loadUrl("javascript:callJS()");
+                        } else {
+                            webView.evaluateJavascript（"javascript:callJS()", new ValueCallback<String>() {
+                                @Override
+                                public void onReceiveValue(String value) {
+                                    // js 返回的结果
+                                }
+                            });
+                        }
 
         2.JS调Android方法：
 
