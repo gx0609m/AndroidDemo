@@ -102,4 +102,13 @@
         android:layout_alignLeft="@+id/threadCorrelation"
         android:layout_alignStart="@+id/threadCorrelation" />
 
+    <Button
+        android:id="@+id/tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tips"
+        android:layout_below="@+id/imageCompress"
+        android:layout_toRightOf="@+id/algorithm"
+        android:layout_toEndOf="@+id/algorithm" />
+
 </RelativeLayout>

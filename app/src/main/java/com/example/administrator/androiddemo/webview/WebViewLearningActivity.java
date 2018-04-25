@@ -73,6 +73,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         webSettings();
         webViewClient();
         webChromeClient();
+        // WebView专心做好解析、渲染的工作就行了
         webView.loadUrl("file:///android_asset/test.html"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
     }
 
@@ -248,7 +249,7 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
             }
 
             /**
-             * 捕获 http errors
+             * 捕获 http errors ——— https://blog.csdn.net/freddy24/article/details/50357836?locationNum=6
              *
              * 加载页面的服务器出现错误时（如404）调用 -- 由于api版本的原因，此方法只能在Android M 以上调用
              *
@@ -424,6 +425,15 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         Log.e(TAG, "通过拦截Url的方式，使JS调用了Android的方法，并传了两个参数名：" + param1 + "和" + param2);
         Toast.makeText(this, "通过拦截Url的方式，使JS调用了Android的方法，并传了两个参数名：" + param1 + "和" + param2, Toast.LENGTH_LONG).show();
     }
+
+   /* *//**
+     * 通过window.control方式 调用Android中的方法
+     *//*
+    @JavascriptInterface
+    private void JSCallAndroidWithWindowControl(String param) {
+        Log.e(TAG, "通过window.control的方式，调用Android方法，并传了参数：" + param);
+        Toast.makeText(this, "通过window.control的方式，调用Android方法，并传了参数：" + param, Toast.LENGTH_LONG).show();
+    }*/
 
     //点击返回上一Web页而不是从当前WebActivity退出 ——— 如果当前Web页能返回的话canGoBack
     @Override

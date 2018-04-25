@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:showIn="@layout/activity_tools_namespace_learning">
+    <!-- tools命名空间 ——— showIn属性： 支持预览外层布局 -->
+
+    <!-- tools命名空间 ——— 支持 fragment 标签预览；-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="I am A Fragment Layout"/>
+
+</LinearLayout>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="5dp"
+    android:orientation="vertical"
+    tools:context=".tips.toolsnamespace.ToolsNameSpaceLearningActivity">
+    <!-- 通过 tools:context 属性，在根部局引用，主要的作用是：
+            声明该布局文件默认关联的Activity，引号传Activity类的完整包名；
+            随之就可以开启一些与其相关的特性，例如：
+                比如日常点击事件中，就可以直接在XML中声明onClick的方法名，然后会有错误的lint提示，
+                需要你在Activity中创建改方法，跟随着AS的智能指引，便可创建对应的方法，点击事件的处理便可以放在里面；（未测试）
+    -->
+
+
+    <!-- tools命名空间 ——— text属性： 支持文字预览，但不会显示到apk中 -->
+    <Button
+        android:id="@+id/seeMe"
+        android:layout_width="60dp"
+        android:layout_height="18dp"
+        android:background="#d7e492"
+        tools:text="看不见我" />
+
+
+    <!-- tools命名空间 ——— 支持ListView预览，但需要设置控件id -->
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:listfooter="@layout/listview_footer"
+        tools:listheader="@layout/listview_header"
+        tools:listitem="@layout/listview_item" />
+
+
+    <!-- tools命名空间 ——— 支持GridView预览，但需要设置控件id -->
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        android:visibility="gone"
+        tools:listitem="@layout/listview_item" />
+
+
+    <!-- tools命名空间 ——— 似乎暂不支持 RecyclerView 的item内容预览 -->
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <!-- tools命名空间 ——— 支持 include_layout 标签预览；
+                          在include的布局中，通过 tools:showIn 属性，可以预览到外层布局，即当前布局；
+    -->
+    <include layout="@layout/include_layout" />
+
+
+    <!-- tools命名空间 ——— 支持fragment预览，可以预览fragment中的布局内容 -->
+    <fragment
+        android:name="com.example.administrator.androiddemo.tips.toolsnamespace.FragmentLayoutTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_layout" />
+
+</LinearLayout>

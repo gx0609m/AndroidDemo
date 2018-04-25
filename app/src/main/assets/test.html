@@ -11,7 +11,10 @@
 <button onclick="callPrompt()">弹出输入框</button>
 <button onclick="callAndroidWithMap()">通过类映射 调用Android中的方法</button>
 <button onclick="callAndroidWithUrlIntercept()">通过Url拦截 调用Android中的方法</button>
-<button onclick="">通过onJsPrompt() 调用Android中的方法</button>
+<button onclick="callAndroidWithOnJsPrompt()">通过onJsPrompt() 调用Android中的方法</button>
+<!--
+<button onclick="callAndroidWithWindowControl()">通过window.control 调用Andriod中的方法</button>
+-->
 
 <script>
     // Android调用JS方法--alert框
@@ -39,8 +42,13 @@
     // JS调用Android方法 -- 通过onJsPrompt()方式
     function callAndroidWithOnJsPrompt(){
         // 约定的url协议：js://webview?arg1=111&arg2=222
-        prompt("js://demo?arg1=111&arg2=222");
+        prompt('js://demo?arg1=111&arg2=222');
     }
+
+    <!--// JS调Android方法 &#45;&#45; 通过window.control方式
+    function callAndroidWithWindowControl(){
+        window.control.JSCallAndroidWithWindowControl('I am a param!');
+    }-->
 
     // 打开百度
     function openBaidu(){
@@ -56,6 +64,7 @@
     function callPrompt(){
         prompt("How are you today");
     }
+
 
 </script>
 </body>

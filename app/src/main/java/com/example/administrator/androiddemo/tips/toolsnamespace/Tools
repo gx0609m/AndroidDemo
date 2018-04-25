@@ -1,0 +1,37 @@
+Tools命名空间
+    前言：
+        Android开发中的UI预览和调整，一般情况下都是直接run看效果，或者是使用AS的preview预览，但会带来两个小问题：
+            1.你的测试内容会跟随着代码被打包到apk中，如果没做容错的处理很有可能将测试内容展示给用户；
+            2.一些列表之类的控件是不支持预览效果的，比如ListView等；
+
+    功能：
+        1.直接运行不会有效果，因此测试数据不会展示给用户；
+        2.支持右侧的preview预览，一些复杂控件的预览也都支持，如ListView、GridView、RecyclerView等；
+
+    使用：
+        1.由于是命名空间，需要在XML的根布局中进行声明：
+            xmlns:tools="http://schemas.android.com/tools"
+
+        2.在不同的控件中使用tools命名空间中包含的不同属性，例如：
+            a.tools:text=""；          // 预览文字
+            b.tools:listfooter=""；    // 预览listView布局
+            c.tools:listheader=""；    // 预览listView布局
+            d.tools:listitem=""；      // 预览listView、gridView布局
+            e.tools:layout=""；        // 预览fragment布局
+            f.tools:showIn=""；        // 在include、merge所包含的 子布局中 预览 外层布局
+            g.tools:context=""；       // 声明布局文件默认关联的Activity（在根布局中使用）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+（https://www.jianshu.com/p/52ba7800d3b9）

@@ -69,6 +69,12 @@
         <!-- WebView相关 -->
         <activity android:name=".webview.WebViewLearningActivity" />
 
+        <!-- 小技巧相关 -->
+        <activity android:name=".tips.TipsLearningActivity" />
+
+        <!-- tools 命名空间 -->
+        <activity android:name=".tips.toolsnamespace.ToolsNameSpaceLearningActivity" />
+
     </application>
 
 </manifest>
