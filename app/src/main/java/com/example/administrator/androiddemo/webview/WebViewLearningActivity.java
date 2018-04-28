@@ -111,13 +111,25 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //webView中的缓存
         webSettings.setAllowFileAccess(true); //设置可以访问文件
         /*
+         * Http、Https 的问题 ——— Android 5.0上webView默认不允许加载Http与Https混合内容
+         *
+         * MIXED_CONTENT_ALWAYS_ALLOW： 允许从任何来源加载内容，即使起源是不安全的；
+         * MIXED_CONTENT_NEVER_ALLOW： 不允许Https加载Http的内容，即不允许从安全的起源去加载一个不安全的资源；
+         * MIXED_CONTENT_COMPLTIBILITY_MODE： 当涉及到混合式内容时，WebView会尝试去兼容最新Web浏览器的风格；
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //两者都可以
+            webSettings.setMixedContentMode(webSettings.getMixedContentMode());
+            //mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        /*
          * 其他设置
          */
-        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setDefaultTextEncodingName("utf-8"); //设置编码格式
+        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
         webSettings.setPluginState(WebSettings.PluginState.OFF); //设置是否支持flash插件
-        webSettings.setDefaultFontSize(20); //设置默认字体大小
         webSettings.setNeedInitialFocus(true); //当webView调用requestFocus时为webView设置节点
+        webSettings.setDefaultFontSize(20); //设置默认字体大小
     }
 
     /**

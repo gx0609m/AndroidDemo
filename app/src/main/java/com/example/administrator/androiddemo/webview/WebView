@@ -9,7 +9,28 @@ WebView
         2.Android与JS交互的桥梁；
 
 
-    使用：
+    状态：
+        1.webView.onResume()：
+            激活WebView为活跃状态，能正常执行网页的响应；
+
+        2.webView.onPause()：
+            a.当页面被失去焦点被切换到后台不可见状态，需要执行onPause；
+            b.通知内核尝试停止所有处理，如动画和地理位置，但是不能停止Js，如果想停止Js，可以调用pauseTimers()停止；
+
+        3.webView.pauseTimers()：
+            当应用程序(存在webView)被切换到后台时，它会暂停所有webView的layout，parsing，JavaScriptTimer，降低CPU功耗；
+
+        4.webView.resumeTimers()：
+            恢复pauseTimers状态；
+
+        5.webView.destroy()：
+            销毁webView，在关闭了Activity时，如果webView的音乐或视频，还在播放，就必须销毁webView；
+            但是注意：调用destory()时,webView仍绑定在当前Activity上，
+                     这是由于构建webView时传入了该Activity的context对象，
+                     因此需要先从父容器中移除webView,然后再销毁webView；
+
+
+    基本使用：
         1.添加权限：
             AndroidManifest.xml中添加 "android.permission.INTERNET" 权限，否则会报 Web page not available 错误；
 
@@ -29,6 +50,28 @@ WebView
                 webView.loadUrl("file:///android_asset/XX.html");
             c.加载手机内存中的页面：
                 webView.loadUrl("content://com.android.htmlfileprovider/sdcard/test.html");  //用的很少
+
+
+    网页中的前进、后退：
+        1.webView.canGoForward()             // 是否可以前进
+          webView.goForward()                // 前进网页
+
+        2.webView.canGoBack()                // 是否可以后退
+          webView.goBack()                   // 后退网页
+
+        3.webView.goBackOrForward(intSteps)  // 以当前的index为起始点，前进或者后退到历史记录中指定的steps，如果steps为负数则为后退，正数则为前进
+
+        4.Back键控制网页后退：
+            由于默认情况下，浏览网页时点击系统的“Back”键,整个Browser会调用context.finish()而结束当前activity，
+            当我们想要实现 点击返回后，只是网页的回退，就需要 在当前Activity中处理并消费掉该“Back”事件，如下：
+                @Override
+                public boolean onKeyDown(int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
+                        webView.goBack();
+                        return true;
+                    }
+                    return super.onKeyDown(keyCode, event);
+                }
 
 
     与JS交互：
@@ -164,10 +207,132 @@ WebView
 
                 缺点：使用较a方案复杂 ——— 需要定义约束协议；
 
+
+    缓存相关：
+        设置缓存策略：
+            缓存模式如下：
+                LOAD_NO_CACHE： 不使用缓存，只从网络获取数据；
+                LOAD_CACHE_ONLY： 不使用网络，只读取本地缓存数据；
+                LOAD_DEFAULT：（默认）根据cache-control决定是否从网络上取数据；
+                LOAD_CACHE_ELSE_NETWORK：只要本地有，无论是否过期，或者no-cache，都使用缓存中的数据；
+
+            缓存策略设置：
+                webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);     // 关闭webView中缓存
+                WebSettings.setAppCachePath();                                     // 结合使用（离线加载），每个 Application 只调用一次
+                WebSettings.setAppCacheMaxSize();                                  // 结合使用（离线加载），每个 Application 只调用一次
+
+        缓存使用：
+            String cacheDirPath = getFilesDir().getAbsolutePath() + APP_CACHE_DIRNAME;
+            webSettings.setAppCachePath(cacheDirPath);                             // 设置 Application Caches 缓存目录
+            webSettings.setDomStorageEnabled(true);                                // 开启 DOM storage API 功能
+            webSettings.setDatabaseEnabled(true);                                  // 开启 database storage API 功能
+            webSettings.setAppCacheEnabled(true);                                  // 开启 Application Caches 功能
+            if (NetStatusUtil.isConnected(getApplicationContext())) {              // 判断网络是否连接
+                webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);                // 根据cache-control决定是否从网络上取数据。
+            } else {
+                webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);     // 没网，则从本地获取，即离线加载
+            }
+
+
+        清楚缓存数据：
+            webView.clearCache(true);    // 清除网页访问留下的缓存
+            webView.clearHistory()；     // 清除当前webView访问的历史记录
+            webView.clearFormData()；    // 清除自动完成填充的表单数据，并不会清除WebView存储到本地的数据
+
+
+    添加监听事件：
+        步骤：
+            1.给WebView添加监听：
+                webView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                    }
+                });
+
+            2.获取点击的类型 ——— type：
+                WebView.HitTestResult result = ((WebView) v).getHitTestResult();
+                int type = result.getType();
+
+            3.根据获取到的类型做相应的操作 ——— 如点击图片，跳转到显示图片的页面：
+                mWebView.setOnLongClickListener(new View.OnLongClickListener() {                   // 添加监听
+                    @Override
+                    public boolean onLongClick(View v) {
+                        WebView.HitTestResult result = ((WebView)v).getHitTestResult();
+                        if (null == result)
+                            return false;
+                        int type = result.getType();                                               // 获取点击的类型
+                        if (type == WebView.HitTestResult.UNKNOWN_TYPE)
+                            return false;
+                        switch (type) {                                                            // 拦截类型，进行相应处理
+                            case WebView.HitTestResult.PHONE_TYPE:                                 // 处理拨号
+                                break;
+                            case WebView.HitTestResult.EMAIL_TYPE:                                 // 处理Email
+                                break;
+                            case WebView.HitTestResult.GEO_TYPE:                                   // 地图类型
+                                break;
+                            case WebView.HitTestResult.SRC_ANCHOR_TYPE:                            // 超链接
+                                break;
+                            case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+                                break;
+                            case WebView.HitTestResult.IMAGE_TYPE:                                 // 处理长按图片的菜单项
+                                String saveImgUrl = result.getExtra();                             // 获取图片的路径
+                                Intent i = new Intent(this, ImageActivity.class);     // 跳转到图片详情页，显示图片
+                                i.putExtra("imgUrl", saveImgUrl);
+                                startActivity(i);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+
+
     性能优化：
         1.优化网页加载速度：
+            a.图片的自动加载引起的网页加载缓慢：
+                产生原因：
+                    默认情况下，html代码下载到WebView后，webkit开始解析网页各个节点，发现有外部样式文件或者外部脚本文件时，
+                    会异步发起网络请求下载文件，但如果在这之前也有解析到image节点，那势必也会发起网络请求下载相应的图片，
+                    在网络情况较差的情况下，过多的网络请求就会造成带宽紧张，影响到css或js文件加载完成的时间，造成页面空白loading过久；
+
+               解决方法：
+                    让webView先不自动加载图片，等页面finish后再发起图片加载，代码如下：
+                        在WebView初始化时：
+                            if(Build.VERSION.SDK_INT >= 19) {
+                                webSettings.setLoadsImagesAutomatically(true);          // 设置图片自动加载
+                            } else {
+                                webSettings.setLoadsImagesAutomatically(false);         // 禁止图片自动加载
+                            }
+                        在WebView的WebViewClient实例的onPageFinished()方法中：
+                            @Override
+                            public void onPageFinished(WebView view, String url) {
+                                if(!webSettings.getLoadsImagesAutomatically()) {
+                                    webSettings.setLoadsImagesAutomatically(true);      // 设置图片自动加载
+                                }
+                            }
+
 
         2.避免WebView内存泄露：
+            a.创建、销毁WebView引起的内存泄漏：
+                1>.不在xml中定义webView，而是需要的时候在Activity中创建，并且getApplicationgContext()作为context:
+                      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                                                ViewGroup.LayoutParams.MATCH_PARENT);
+                      mWebView = new WebView(getApplicationContext());
+                      mWebView.setLayoutParams(params);
+                      mLayout.addView(mWebView);
+                2>.在Activity销毁的时候，先让WebView加载null内容，然后移除WebView，再销毁WebView，最后置空：
+                      @Override
+                      protected void onDestroy() {
+                          if (mWebView != null) {
+                              mWebView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+                              mWebView.clearHistory();
+
+                              ((ViewGroup) mWebView.getParent()).removeView(mWebView);
+                              mWebView.destroy();
+                              mWebView = null;
+                          }
+                          super.onDestroy();
+                      }
 
 
     漏洞处理：
@@ -183,8 +348,69 @@ WebView
             所以基本上我们不会再利用Android系统为我们提供的addJavascriptInterface()、@JavascriptInterface注解来实现js和java的通信了；
             那怎么办呢？
 
-        处理方式：
-            1.Android 4.2+：
-                使用@JavascriptInterface注解；
+        分类：
+            WebView的使用主要有三类漏洞：
+                1.任意代码执行漏洞 ——— 三种（a、b、c） ；
+                    a.addJavascriptInterface 接口引起远程代码执行漏洞：
+                        产生原因：
+                            js调用Android的其中一个方式是通过addJavascriptInterface接口进行对象映射；
+                            当JS拿到android这个对象后，就可以调用这个Android对象中所有的方法，包括系统类（Java.lang.Runtime 类），从而进行任意代码执行；
+
+                        解决方法：
+                            a.Android 4.2版本之前：
+                                采用拦截prompt()、shouldOverrideUrlLoading()等方式进行修复；
+                            b.Android 4.2版本之后：
+                                Google 在Android 4.2 版本中规定对被调用的函数以 @JavascriptInterface进行注解从而避免漏洞攻击；
+
+                        JS攻击代码：
+                            function execute(cmdArgs)  {
+                                /*
+                                 * 步骤1：遍历 window 对象；
+                                 * 目的是为了找到包含getClass（）的对象，因为Android映射的JS对象也在window中，所以肯定会遍历到；
+                                 */
+                                for (var obj in window) {
+                                    if ("getClass" in window[obj]) {
+                                        /*
+                                         * 步骤2：利用反射调用forName（）得到Runtime类对象；
+                                         */
+                                        alert(obj);
+                                        return  window[obj].getClass().forName("java.lang.Runtime")
+                                         /*
+                                          * 步骤3：调用静态方法来执行一些命令，比如访问文件的命令；
+                                          * 从执行命令后返回的输入流中得到字符串，有很严重暴露隐私的危险；
+                                          * 如执行完访问文件的命令之后，就可以得到文件名的信息了；
+                                          */
+                                        getMethod("getRuntime",null).invoke(null,null).exec(cmdArgs);
+                                    }
+                                }
+                            }
+                            当一些APP通过扫描二维码打开一个外部网页时，攻击者就可以执行这段js代码进行漏洞攻击，在微信盛行、扫一扫行为普及的情况下，该漏洞带来的危险性会非常大；
+
+                    b.searchBoxJavaBridge_接口引起远程代码执行漏洞：
+                        产生原因：
+                            在Android 3.0以下，Android系统会默认通过searchBoxJavaBridge_的Js接口给WebView添加一个JS映射对象：
+                            searchBoxJavaBridge_对象；
+                            该接口可能被利用，实现远程任意代码；
+
+                        解决方法：
+                            删除searchBoxJavaBridge_接口 ——— 通过调用removeJavascriptInterface()方法删除接口；
+
+                    c.accessibility和 accessibilityTraversal接口引起远程代码执行漏洞：
+                        产生原因：
+                            在Android 3.0以下，Android系统会默认通过searchBoxJavaBridge_的Js接口给WebView添加一个JS映射对象：
+                            searchBoxJavaBridge_对象；
+                            该接口可能被利用，实现远程任意代码；
+
+                        解决方法：
+                            删除searchBoxJavaBridge_接口 ——— 通过调用removeJavascriptInterface()方法删除接口；
+
+                2.密码明文存储漏洞；
+                3.域控制不严格漏洞；
 
 
+        处理方式总结：
+            1.使用@JavascriptInterface注解 ——— Android 4.2+ 版本以上可使用；
+
+            2.通过WebViewClient的shouldOverrideUrlLoading()方法回调拦截Url ——— Android 全版本可使用；
+
+            3.通过WebChromeClient的onJsAlert()、onJsConfirm()、onJsPrompt()方法回调拦截JS对话框alert()、confirm()、prompt()消息 ——— Android 全版本可使用；
