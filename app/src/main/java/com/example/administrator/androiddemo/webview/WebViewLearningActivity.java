@@ -77,6 +77,9 @@ public class WebViewLearningActivity extends BaseActivity implements View.OnClic
         webView.loadUrl("file:///android_asset/test.html"); //  http://wanandroid.com/index    http://192.168.102.114:8093/login/test   file:///android_asset/XX.html
     }
 
+    /**
+     * WebSettings ——— 相关设置
+     */
     private void webSettings() {
         //声明WebSettings子类
         WebSettings webSettings = webView.getSettings();

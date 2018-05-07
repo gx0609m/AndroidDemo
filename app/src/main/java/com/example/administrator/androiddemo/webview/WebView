@@ -240,7 +240,7 @@ WebView
             webView.clearFormData()；    // 清除自动完成填充的表单数据，并不会清除WebView存储到本地的数据
 
 
-    添加监听事件：
+    添加监听事件：。
         步骤：
             1.给WebView添加监听：
                 webView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -287,6 +287,35 @@ WebView
                 });
 
 
+    页面滑动：
+        关于页面滑动, 我们在做下拉刷新等功能时, 经常会去判断WebView是否滚动到顶部或者滚动到底部，常见的有以下三个判断高度的方法：
+            1.getScrollY();
+                该方法返回的是当前可见区域的顶端距整个页面顶端的距离,也就是当前内容滚动的距离；
+
+            2.getHeight() | getBottom();
+                该方法都返回当前WebView这个容器的高度；
+
+            3.getContentHeight();
+                返回的是整个html的高度，但并不等同于当前整个页面的高度，因为WebView有缩放功能，
+                所以当前整个页面的高度实际上应该是原始html的高度再乘上缩放比例；
+
+            因此，判断页面是否可滑动的方法是：
+                if (webView.getContentHeight() * webView.getScale() == (webView.getHeight() + webView.getScrollY())) {
+                    //已经处于底端
+                }
+                if(webView.getScrollY() == 0){
+                    //处于顶端
+                }
+            不过从API 17开始, mWebView.getScale()被标记为deprecated，因此scale的获取改用以下方式：
+                setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onScaleChanged(WebView view, float oldScale, float newScale) {
+                        super.onScaleChanged(view, oldScale, newScale);
+                        mCurrentScale = newScale
+                    }
+                });
+
+
     性能优化：
         1.优化网页加载速度：
             a.图片的自动加载引起的网页加载缓慢：
@@ -298,6 +327,8 @@ WebView
                解决方法：
                     让webView先不自动加载图片，等页面finish后再发起图片加载，代码如下：
                         在WebView初始化时：
+                            // 4.4以上系统在onPageFinished时再恢复图片加载时,如果存在多张图片引用的是相同的src时，
+                            // 会只有一个image标签得到加载，因而对于这样的系统我们就先直接加载
                             if(Build.VERSION.SDK_INT >= 19) {
                                 webSettings.setLoadsImagesAutomatically(true);          // 设置图片自动加载
                             } else {
@@ -405,8 +436,36 @@ WebView
                             删除searchBoxJavaBridge_接口 ——— 通过调用removeJavascriptInterface()方法删除接口；
 
                 2.密码明文存储漏洞；
-                3.域控制不严格漏洞；
+                    产生原因：
+                        mWebView.setSavePassword(true);  // WebView默认开启密码保存功能 ：
+                        在开启后，在用户输入密码时，会弹出提示框，询问用户是否保存密码；
+                        如果选择”是”，密码会被明文保到 /data/data/com.package.name/databases/webview.db 中，这样就有被盗取密码的危险；
 
+                    解决方法：
+                        WebSettings.setSavePassword(false);  // 关闭密码保存提醒
+
+                3.域控制不严格漏洞；
+                    产生原因：
+                        https://www.jianshu.com/p/44b977907e51
+
+                    解决方法：
+                        1>.对于不需要使用 file 协议的应用，禁用 file 协议：
+                            // 禁用 file 协议；
+                            webView.setAllowFileAccess(false);
+                            webView.setAllowFileAccessFromFileURLs(false);
+                            webView.setAllowUniversalAccessFromFileURLs(false);
+
+                        2>.对于需要使用 file 协议的应用，禁止 file 协议加载 JavaScript：
+                            // 需要使用 file 协议
+                            webView.setAllowFileAccess(true);
+                            webView.setAllowFileAccessFromFileURLs(false);
+                            webView. setAllowUniversalAccessFromFileURLs(false);
+                            // 禁止 file 协议加载 JavaScript
+                            if (url.startsWith("file://") {
+                                webView.setJavaScriptEnabled(false);
+                            } else {
+                                webView.setJavaScriptEnabled(true);
+                            }
 
         处理方式总结：
             1.使用@JavascriptInterface注解 ——— Android 4.2+ 版本以上可使用；
