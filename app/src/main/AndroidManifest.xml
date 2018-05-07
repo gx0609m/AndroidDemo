@@ -75,6 +75,12 @@
         <!-- tools 命名空间 -->
         <activity android:name=".tips.toolsnamespace.ToolsNameSpaceLearningActivity" />
 
+        <!-- 网络请求相关 -->
+        <activity android:name=".network.NetworkLearningActivity" />
+        <activity android:name=".network.okhttp.OkHttpLearningActivity" />
+        <activity android:name=".network.retrofit.RetrofitLearningActivity" />
+        <activity android:name=".network.retrofit_rxjava.RetrofitWithRxJavaLearningActivity" />
+
     </application>
 
 </manifest>
