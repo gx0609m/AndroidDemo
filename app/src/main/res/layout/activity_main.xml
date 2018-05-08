@@ -111,4 +111,14 @@
         android:layout_toRightOf="@+id/algorithm"
         android:layout_toEndOf="@+id/algorithm" />
 
+    <Button
+        android:id="@+id/network"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Network"
+        android:layout_alignBaseline="@+id/webView"
+        android:layout_alignBottom="@+id/webView"
+        android:layout_toRightOf="@+id/activity"
+        android:layout_toEndOf="@+id/activity" />
+
 </RelativeLayout>

@@ -1,0 +1,62 @@
+OkHttp
+    简介：
+        Square公司开发的 “An HTTP & HTTP/2 client for Android and Java applications”；
+
+
+    出现背景：
+        为了网络访问更加高效，体现在：
+            1.提供了对 HTTP/2 和 SPDY 的支持，这使得对同一个主机发出的所有请求都可以共享相同的套接字连接；
+            2.如果 HTTP/2 和 SPDY 不可用，OkHttp 会使用连接池来复用连接以提高效率；
+            3.提供了对 GZIP 的默认支持来降低传输内容的大小；
+            4.提供了对 “HTTP 响应的缓存机制”，可以避免不必要的网络请求；
+            5.当网络出现问题时，OkHttp 会自动重试一个主机的多个 IP 地址；
+
+
+    框架体系：
+                  |— — — — — — — — —|
+                  |  OkHttpClient   |
+                  |    (Builder)    |
+                  |— — — —|— — — — —|
+                          |                            |— — — — — —|
+                 newCall()| — — — — — — — — — — — — — —|  Request  |
+                          |                            |— — — — — —|
+                |— — — — —|— — — — — —|
+                |         |           |
+                |    | — — — — — —|   |
+                |    |  RealCall  |   |
+                |    | — — — — — —|   |
+                |         |           |
+                | execute()/enqueue() |
+                |         |           |
+                |   |— — — — — — — —| |                |— — — — — —|
+                |   |  Interceptor  |—| — — — — — — — —|  Response |
+                |   |— — — — — — — —| |                |— — — — — —|
+                |— — — — — — — — — — —|
+
+
+    使用：
+        1.添加网络权限：
+            <uses-permission android:name="android.permission.INTERNET" />
+        2.添加gradle依赖：
+            compile 'com.squareup.okio:okio:1.11.0'
+            compile 'com.squareup.okhttp3:okhttp:3.5.0'
+        3.网络请求代码：
+            1>.创建 okHttpClient 实例：
+                OkHttpClient okHttpClient = new OkHttpClient();
+
+            2>.构建 request 对象实例：                                     （ 使用method(**,**)方法确定网络请求的方式 ）
+                Request request = new Request.Builder()
+                                .method("GET", null)                                         // OkHttp 默认使用get请求
+                                .url(baseUrl + "top250?start=" + start + "&count=" + count)  // 与Retrofit相比，如果需要传参的话，需要手动拼接url
+                                .build();
+            3>.构建 call 实例：
+                okhttp3.Call call = okHttpClient.newCall(request);                           // OkHttp中是Call,而Retrofit中是Call<T>
+
+            4>.进行网络请求：
+                call.execute();                                         // 同步网络请求
+                call.enqueue(new Callback() {...});                     // 异步网络请求
+
+
+
+
+

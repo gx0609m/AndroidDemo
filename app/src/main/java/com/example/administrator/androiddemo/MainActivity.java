@@ -16,6 +16,7 @@ import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
+import com.example.administrator.androiddemo.network.NetworkLearningActivity;
 import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActivity;
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 import com.example.administrator.androiddemo.thread.ThreadCorrelationLearningActivity;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button algorithm;
     private Button webView;
     private Button tips;
+    private Button network;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.tips:
                 intent = new Intent(MainActivity.this, TipsLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.network:
+                intent = new Intent(MainActivity.this, NetworkLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -157,5 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         tips = (Button) findViewById(R.id.tips);
         tips.setOnClickListener(this);
+
+        network = (Button) findViewById(R.id.network);
+        network.setOnClickListener(this);
     }
 }
