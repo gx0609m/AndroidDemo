@@ -41,21 +41,43 @@ OkHttp
             compile 'com.squareup.okio:okio:1.11.0'
             compile 'com.squareup.okhttp3:okhttp:3.5.0'
         3.网络请求代码：
-            1>.创建 okHttpClient 实例：
-                OkHttpClient okHttpClient = new OkHttpClient();
+            a.Get请求：
+                1>.创建 okHttpClient 实例：
+                    OkHttpClient okHttpClient = new OkHttpClient();
 
-            2>.构建 request 对象实例：                                     （ 使用method(**,**)方法确定网络请求的方式 ）
-                Request request = new Request.Builder()
-                                .method("GET", null)                                         // OkHttp 默认使用get请求
-                                .url(baseUrl + "top250?start=" + start + "&count=" + count)  // 与Retrofit相比，如果需要传参的话，需要手动拼接url
-                                .build();
-            3>.构建 call 实例：
-                okhttp3.Call call = okHttpClient.newCall(request);                           // OkHttp中是Call,而Retrofit中是Call<T>
+                2>.构建 request 对象实例：
+                    Request request = new Request.Builder()
+                                    .method("GET", null)                                         // OkHttp 默认使用get请求
+                                    .url(baseUrl + "top250?start=" + start + "&count=" + count)  // 与Retrofit相比，如果需要传参的话，需要手动拼接url
+                                    .build();
 
-            4>.进行网络请求：
-                call.execute();                                         // 同步网络请求
-                call.enqueue(new Callback() {...});                     // 异步网络请求
+                3>.构建 call 实例：
+                    okhttp3.Call call = okHttpClient.newCall(request);                           // OkHttp中是Call,而Retrofit中是Call<T>
 
+                4>.进行网络请求：
+                    call.execute();                                         // 同步网络请求
+                    call.enqueue(new Callback() {...});                     // 异步网络请求
+
+            b.Post请求：
+                与Get请求代码步骤差别不大：
+                    1>.Post异步上传键值对 ——— asyncUploadKeyValueWithPost()；
+
+                    2>.Post异步上传文件 ——— asyncUploadFileWithPost()；
+
+                    3>.Post异步上传流 ——— asyncUploadStreamWithPost()；
+
+                    牵涉到文件时，须添加如下权限：
+                        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+                        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+                上传类型：
+                    在上传文件，创建RequestBody的时候可以看到，我们不仅仅
+                        可以上传File文件；
+                        还可以上传String，ByteString，byte数组等类型；
+                    其中上传byte数据时可以选择三个参数的creta方法，需要指定偏移量和需要写入的byte长度，这说明了
+                        可以直接进行多线程、断点上传；
+                    通过这些类型，
+                        我们可以上传Json串，图片等内容；
 
 
 

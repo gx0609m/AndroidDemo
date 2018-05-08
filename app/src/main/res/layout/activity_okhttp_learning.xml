@@ -7,15 +7,42 @@
         android:id="@+id/syncGetReq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="同步Get请求"/>
+        android:text="同步Get请求" />
 
     <Button
         android:id="@+id/asyncGetReq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="异步Get请求"
         android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/syncGetReq"
         android:layout_toRightOf="@+id/syncGetReq"
-        android:layout_toEndOf="@+id/syncGetReq" />
+        android:text="异步Get请求" />
+
+    <Button
+        android:id="@+id/postAsyncUploadKeyValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post异步上传键值对"
+        android:layout_below="@+id/syncGetReq"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/postAsyncUploadFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post异步上传文件"
+        android:layout_below="@+id/postAsyncUploadKeyValue"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/postAsyncUploadStream"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post异步上传流"
+        android:layout_below="@+id/postAsyncUploadFile"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
