@@ -54,4 +54,9 @@ dependencies {
 
     // gson解析依赖
     compile 'com.google.code.gson:gson:2.8.4'
+
+    // Retrofit依赖
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    // Retrofit将返回的Json数据转换成实体类，这里使用Gson转换工厂
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
 }

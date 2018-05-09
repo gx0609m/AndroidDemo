@@ -1,0 +1,82 @@
+Retrofit
+    简介：
+        Square 公司开源的一款RESTful 风格的 HTTP 网络请求框架协议的封装；
+        （注意这里并没有说它是网络请求框架，主要原因在于，网络请求的工作并不是 Retrofit 来完成的。）
+
+
+    特点：
+        1.简易的接口配置；
+        2.强大的扩展支持；
+        3.优雅的代码结构；
+
+
+    初识：
+        Retrofit：意为“改进，式样更新”，单从字面上似乎看不出来什么，看看维基百科上对它的定义：
+            "Retrofitting refers to the addition of new technology or features to older systems."
+                                                                                            –From Wikipedia
+        于是我们就明白了，冠以 Retrofit 这个名字的这个家伙，应该是某某某的 『Plus』 版本了。
+
+
+    框架体系：
+        Retrofit 2.0 开始内置 OkHttp，
+            前者专注于接口的封装；
+            后者专注于网络请求的高效；
+            二者分工协作；
+        由此看来，
+            Retrofit负责请求开始和结束的封装处理工作；
+            而OkHttp则专注于处理中间的过程；
+
+                 |— — — — — — — — — — —|          |— — — — — — — — —|          |— — — — — — — —|          |— — — — —|
+                 |                     |—————————>|                 |—————————>|               |— — — — —>|         |
+                 |  Application Layer  |          |  Retrofit Layer |          |  OkHttp Layer |          |  Server |
+                 |                     |<—————————|                 |<—————————|               |<— — — — —|         |
+                 |— — — — — — — — — — —|          |— — — — — — — — —|          |— — — — — — — —|          |— — — — —|
+
+        我们的应用程序通过 Retrofit 请求网络，实际上是
+                 a.使用 Retrofit 接口层封装请求参数、Header、Url 等信息，
+                 b.之后由 OkHttp 完成后续的请求操作，
+                 c.在服务端返回数据之后，OkHttp 将原始的结果交给 Retrofit，后者根据用户的需求对结果进行解析的过程；
+
+        讲到这里，你就会发现所谓 Retrofit，其实就是 Retrofitting OkHttp 了。
+
+
+    使用：
+        1.添加网络权限：
+            <uses-permission android:name="android.permission.INTERNET" />
+
+        2.添加Retrofit依赖：
+            compile 'com.squareup.retrofit2:retrofit:2.0.2'
+
+        3.创建接收服务器返回数据的实体类：
+            MovieEntity.java ——— 根据返回数据的格式和数据解析方式（Json、XML等）定义；
+
+        4.创建 用于描述网络请求 的接口：
+            MovieService.java ——— Retrofit将 Http请求 抽象成 Java接口，采用 注解的形式 描述网络请求参数 和 配置网络请求参数；
+                                      a.用 动态代理 动态的将该接口的注解 “翻译” 成一个 Http请求，最后再执行 Http 请求；
+                                      b.接口中每个方法的参数都需要 使用注解标注，否则会报错；
+
+        5.使用 Retrofit 进行网络请求 ——— 同步/异步：
+            a.创建 Retrofit 实例；
+            b.创建网络请求接口 movieService 实例；
+            c.创建 call 实例；
+            d.发送网络请求 ——— 异步、同步；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
