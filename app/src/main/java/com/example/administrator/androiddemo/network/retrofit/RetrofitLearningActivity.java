@@ -30,7 +30,7 @@ public class RetrofitLearningActivity extends BaseActivity implements View.OnCli
 
     private Button asyncGetReq;  // Retrofit异步Get请求
 
-    String bserUrl = "https://api.douban.com/";
+    String baseUrl = "https://api.douban.com/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,8 +48,8 @@ public class RetrofitLearningActivity extends BaseActivity implements View.OnCli
          * a.创建 Retrofit 实例
          */
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(bserUrl)       // 定义baseUrl
-                .addConverterFactory(GsonConverterFactory.create())   // 添加转换工厂，将接口返回的数据转换为我们需要的实体类，由于接口返回的是Json数据，所以这里使用Gson转换工厂
+                .baseUrl(baseUrl)       // 定义baseUrl
+                .addConverterFactory(GsonConverterFactory.create())      // 添加转换工厂，将接口返回的数据转换为我们需要的实体类，由于接口返回的是Json数据，所以这里使用Gson转换工厂
                 .build();
         /*
          * b.创建网络请求接口 movieService 实例
@@ -59,7 +59,7 @@ public class RetrofitLearningActivity extends BaseActivity implements View.OnCli
         /*
          * c.创建 call 实例
          */
-        Call<MovieEntity> call = movieService.getTopMovie(0, 10);   // 调用MovieService接口对象中的方法，返回一个Call类实体
+        Call<MovieEntity> call = movieService.getTopMovie(0, 10);     // 调用MovieService接口对象中的方法，返回一个Call类实体
         /*
          * d.发送网络请求 ——— 异步、同步
          */
