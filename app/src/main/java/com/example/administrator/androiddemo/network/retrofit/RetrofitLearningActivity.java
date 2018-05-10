@@ -57,7 +57,7 @@ public class RetrofitLearningActivity extends BaseActivity implements View.OnCli
         MovieService movieService = retrofit.create
                 (MovieService.class);
         /*
-         * c.创建 call 实例
+         * c.创建 call 实例（对网络请求 movieService 的封装）
          */
         Call<MovieEntity> call = movieService.getTopMovie(0, 10);     // 调用MovieService接口对象中的方法，返回一个Call类实体
         /*

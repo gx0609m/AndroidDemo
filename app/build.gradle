@@ -56,7 +56,14 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.4'
 
     // Retrofit依赖
-    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'                 // 2.0.2-----------------------------保持一致，否则会报错（https://blog.csdn.net/blueamertj/article/details/51811195）
     // Retrofit将返回的Json数据转换成实体类，这里使用Gson转换工厂
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'           // 2.0.2-----------------------------保持一致，否则会报错
+
+    // RxJava依赖
+    compile 'io.reactivex:rxjava:1.1.0'
+    // 我们定义的接口返回的不再是Retrofit中的Call<T>,而是Observable<T>，因此须添加这样一个adapter依赖
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.0.2'           // 2.0.2-----------------------------保持一致，否则会报错
+    // 使用 AndroidSchedulers.mainThread() 等Android中特有的api，因此须添加此依赖
+    compile 'io.reactivex:rxandroid:1.1.0'
 }
