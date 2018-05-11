@@ -84,6 +84,12 @@
         <activity android:name=".network.retrofit.RetrofitLearningActivity" />
         <activity android:name=".network.retrofit_rxjava.RetrofitWithRxJavaLearningActivity" />
 
+        <!-- 动画相关 -->
+        <activity android:name=".animation.AnimationLearningActivity" />
+        <activity android:name=".animation.tweenanimation.TweenAnimationLearningActivity" />
+        <activity android:name=".animation.frameanimation.FrameAnimationLearningActivity" />
+        <activity android:name=".animation.propertyanimation.PropertyAnimationLearningActivity" />
+
     </application>
 
 </manifest>

@@ -125,10 +125,19 @@
         android:id="@+id/customView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CustomView"
         android:layout_alignBaseline="@+id/network"
         android:layout_alignBottom="@+id/network"
+        android:layout_toEndOf="@+id/network"
         android:layout_toRightOf="@+id/network"
-        android:layout_toEndOf="@+id/network" />
+        android:text="CustomView" />
+
+    <Button
+        android:id="@+id/animation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Animation"
+        android:layout_below="@+id/webView"
+        android:layout_alignLeft="@+id/webView"
+        android:layout_alignStart="@+id/webView" />
 
 </RelativeLayout>

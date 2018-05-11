@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
+import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
 import com.example.administrator.androiddemo.customview.CustomViewLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button tips;
     private Button network;
     private Button customView;
+    private Button animation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.customView:
                 intent = new Intent(MainActivity.this, CustomViewLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.animation:
+                intent = new Intent(MainActivity.this, AnimationLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -175,5 +181,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         customView = (Button) findViewById(R.id.customView);
         customView.setOnClickListener(this);
+
+        animation = (Button) findViewById(R.id.animation);
+        animation.setOnClickListener(this);
     }
 }
