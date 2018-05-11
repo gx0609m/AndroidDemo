@@ -1,0 +1,40 @@
+LayoutInflater
+    简介：
+        Android中，加载布局的任务通常都是在 Activity 中调用 setContentView() 方法来完成；
+        其实，setContentView() 方法的内部是使用 LayoutInflater类 来加载布局的，只不过这部分源码是internal的，不太容易查看到；
+
+        LayoutInflater ——— 布局填充器；
+
+        LayoutInflater 广泛应用于 需要 动态添加View 的时候，比如在ScrollView和ListView中，经常都可以看到LayoutInflater的身影；
+
+    用法：
+        1.获取 layoutInflater 实例：
+            a.LayoutInflater layoutInflater = LayoutInflater.from(context);
+
+            b.LayoutInflater layoutInflater = (LayoutInflater) context
+                                                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            其实a就是b的简单写法，只是Android给我们做了一下封装而已；
+
+        2.调用inflater()方法：
+            得到了LayoutInflater的实例之后就可以调用它的inflate()方法来加载布局了，如下：
+                layoutInflater.inflate(resourceId, root);
+
+            inflate()方法一般接收两个参数：
+                第一个参数是要加载的 布局id；
+                第二个参数是指给该布局的外部再嵌套一层 父布局，如果不需要就直接传null；
+
+        3.将步骤2获取到的 layoutInflater.inflate(resourceId, root) 作为布局实例buttonLayout 通过LinearLayout的addView()方法，添加到指定布局 mainLayout 中；
+            View buttonLayout = layoutInflater.inflate(R.layout.button_layout, null);
+            mainLayout.addView(buttonLayout);
+
+
+
+
+
+
+
+
+
+
+（https://blog.csdn.net/guolin_blog/article/details/12921889）

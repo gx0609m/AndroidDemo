@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
+import com.example.administrator.androiddemo.customview.CustomViewLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
 import com.example.administrator.androiddemo.network.NetworkLearningActivity;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button webView;
     private Button tips;
     private Button network;
+    private Button customView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.network:
                 intent = new Intent(MainActivity.this, NetworkLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.customView:
+                intent = new Intent(MainActivity.this, CustomViewLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -166,5 +172,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         network = (Button) findViewById(R.id.network);
         network.setOnClickListener(this);
+
+        customView = (Button) findViewById(R.id.customView);
+        customView.setOnClickListener(this);
     }
 }

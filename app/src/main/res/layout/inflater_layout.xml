@@ -1,0 +1,18 @@
+<!--<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="320dp"
+    android:background="#654321"
+    android:text="Button Layout" />-->
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="320dp"
+        android:background="#654321"
+        android:text="Button Layout" />
+
+</RelativeLayout>
