@@ -22,4 +22,11 @@
         android:layout_height="wrap_content"
         android:text="PropertyAnimation" />
 
+    <Button
+        android:id="@+id/animationListener"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:text="AnimationListener" />
+
 </LinearLayout>

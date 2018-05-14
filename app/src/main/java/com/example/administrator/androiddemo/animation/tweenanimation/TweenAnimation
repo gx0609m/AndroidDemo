@@ -1,0 +1,365 @@
+TweenAnimation
+    原理：
+        通过确定 开始的视图样式 & 结束的视图样式，中间的 变化过程由系统来补全 的一种动画；
+
+
+    分类：
+        根据不同的动画效果，补间动画分为 4种 ——— 不同类型的动画对应不同的子类：
+
+                    名称                            原理                                   对应Animation的子类
+        1   平移动画（Translate）；              移动视图的位置                              TranslateAnimation
+        2   缩放动画（Scale）；                  放大、缩小视图                                ScaleAnimation
+        3   旋转动画（rotate）；                 旋转视图的角度                                RotateAnimation
+        4   透明度动画（alpha）；                改变视图的透明度                               AlphaAnimation
+        5   组合动画                            1，2，3，4 组合使用
+
+    使用：
+        补间动画的使用方式和逐帧动画一样，也分为两种 ——— XML代码 、 Java代码：
+            XML代码：动画描述的可读性更好；
+            Java代码：动画效果可动态创建；
+
+        平移动画（Translate）：
+            a.XML代码中设置 ——— getTranslateAnimWithXml()：
+                1>.在 res/anim 的文件夹里创建动画效果 translate_anim.xml 文件：
+
+                2>.根据 不同动画效果的语法 在创建的translate_anim.xml中设置 不同动画参数，从而实现动画效果：
+                    // 以下参数是4种动画效果的公共属性,即都有的属性
+                    android:duration="3000" // 动画持续时间（ms），必须设置，动画才有效果
+                    android:startOffset ="1000" // 动画延迟开始时间（ms）
+                    android:fillBefore = “true” // 动画播放完后，视图是否会停留在动画开始的状态，默认为true
+                    android:fillAfter = “false” // 动画播放完后，视图是否会停留在动画结束的状态，优先于fillBefore值，默认为false
+                    android:fillEnabled= “true” // 是否应用fillBefore值，对fillAfter值无影响，默认为true
+                    android:repeatMode= “restart” // 选择重复播放动画模式，restart代表正序重放，reverse代表倒序回放，默认为restart|
+                    android:repeatCount = “0” // 重放次数（所以动画的播放次数=重放次数+1），为infinite时无限重复
+                    android:interpolator = @[package:]anim/interpolator_resource // 插值器，即影响动画的播放速度,下面会详细讲
+
+                    // 以下参数是平移动画特有的属性
+                    android:fromXDelta="0" // 视图在水平方向x 移动的起始值
+                    android:toXDelta="500" // 视图在水平方向x 移动的结束值
+                    android:fromYDelta="0" // 视图在竖直方向y 移动的起始值
+                    android:toYDelta="500" // 视图在竖直方向y 移动的结束值
+
+                3>.在Java代码中创建Animation对象并播放动画：
+                    Button mButton = (Button) findViewById(R.id.Button);                                        // 创建 需要设置动画的 视图View
+                    Animation translateAnimation = AnimationUtils.loadAnimation(this, R.anim.translate_anim);   // 创建 动画对象 并传入设置的动画效果xml文件
+                    mButton.startAnimation(translateAnimation);                                                 // 播放动画
+
+            b.Java代码中设置 ——— getTranslateAnimWithJava()：
+                1>.创建 需要设置动画的 视图View；
+                    translateAnimWithJava = (Button) findViewById(R.id.translateAnimWithJava);
+
+                2>.创建平移动画的对象：平移动画对应的Animation子类为TranslateAnimation；
+                    Animation translateAnimation = new TranslateAnimation(0, 500, 0, 500);
+
+                3>.设置属性等，固定属性的设置都是在其属性前加“set”，如setDuration()；
+                    translateAnimation.setDuration(3000);
+
+                4>.播放动画；
+                    translateAnimWithJava.startAnimation(translateAnimation);
+
+        缩放动画（Scale）：
+            a.XML代码中设置 ——— getScaleAnimWithXml()：
+                1>.在 res/anim 的文件夹里创建动画效果 scale_anim.xml 文件：
+
+                2>.根据 不同动画效果的语法 在创建的 scale_anim.xml 中设置 不同动画参数，从而实现动画效果：
+                    具体参数设置参看 scale_anim.xml；
+
+                3>.在Java代码中创建Animation对象并播放动画：
+                    scaleAnimWithXml = (Button) findViewById(R.id.scaleAnimWithXml);                            // 创建 需要设置动画的 视图View
+                    Animation scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale_anim);           // 创建 动画对象 并传入设置的动画效果xml文件
+                    scaleAnimWithXml.startAnimation(scaleAnimation);                                            // 播放动画
+
+
+            b.Java代码中设置 ——— getScaleAnimWithJava()：
+                1>.创建 需要设置动画的 视图View；
+                    scaleAnimWithJava = (Button) findViewById(R.id.scaleAnimWithJava);
+
+                2>.创建平移动画的对象：平移动画对应的Animation子类为TranslateAnimation；
+                    Animation scaleAnimation = new ScaleAnimation(0, 2, 0, 2, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+                3>.设置属性等，固定属性的设置都是在其属性前加“set”，如setDuration()；
+                    scaleAnimation.setDuration(3000);
+
+                4>.播放动画；
+                    scaleAnimWithJava.startAnimation(scaleAnimation);
+
+        旋转动画（Rotate）：
+            a.XML代码中设置 ——— getRotateAnimWithXml()：
+                1>.在 res/anim 的文件夹里创建动画效果 rotate_anim.xml 文件：
+
+                2>.根据 不同动画效果的语法 在创建的 rotate_anim.xml 中设置 不同动画参数，从而实现动画效果：
+                    具体参数设置参看 rotate_anim.xml；
+
+                3>.在Java代码中创建Animation对象并播放动画：
+                    rotateAnimWithXml = (Button) findViewById(R.id.rotateAnimWithXml);                          // 创建 需要设置动画的 视图View
+                    Animation scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_anim);          // 创建 动画对象 并传入设置的动画效果xml文件
+                    rotateAnimWithXml.startAnimation(scaleAnimation);                                           // 播放动画
+
+            b.Java代码中设置 ——— getRotateAnimWithJava()：
+                1>.创建 需要设置动画的 视图View；
+                    rotateAnimWithJava = (Button) findViewById(R.id.rotateAnimWithJava);
+
+                2>.创建平移动画的对象：平移动画对应的Animation子类为TranslateAnimation；
+                    Animation rotateAnimation = new RotateAnimation(0, 270, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+                3>.设置属性等，固定属性的设置都是在其属性前加“set”，如setDuration()；
+                    rotateAnimation.setDuration(3000);
+
+                4>.播放动画；
+                    rotateAnimWithJava.startAnimation(rotateAnimation);
+
+        透明度动画（Alpha）：
+            a.XML代码中设置 ——— getAlphaAnimWithXml()：
+                1>.在 res/anim 的文件夹里创建动画效果 alpha_anim.xml 文件：
+
+                2>.根据 不同动画效果的语法 在创建的 alpha_anim.xml 中设置 不同动画参数，从而实现动画效果：
+                    具体参数设置参看 alpha_anim.xml；
+
+                3>.在Java代码中创建Animation对象并播放动画：
+                    alphaAnimWithXml = (Button) findViewById(R.id.alphaAnimWithXml);                            // 创建 需要设置动画的 视图View
+                    Animation scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.alpha_anim);           // 创建 动画对象 并传入设置的动画效果xml文件
+                    alphaAnimWithXml.startAnimation(scaleAnimation);                                            // 播放动画
+
+            b.Java代码中设置 ——— getAlphaAnimWithJava()：
+                1>.创建 需要设置动画的 视图View；
+                    alphaAnimWithJava = (Button) findViewById(R.id.alphaAnimWithJava);
+
+                2>.创建平移动画的对象：平移动画对应的Animation子类为TranslateAnimation；
+                    Animation alphaAnimation = new AlphaAnimation(1, 0);
+
+                3>.设置属性等，固定属性的设置都是在其属性前加“set”，如setDuration()；
+                    alphaAnimation.setDuration(3000);
+
+                4>.播放动画；
+                    alphaAnimWithJava.startAnimation(alphaAnimation);
+
+        组合动画：
+            实际中很多需求都需要同时使用平移、缩放、旋转、透明度4种动画，即组合动画；
+
+            组合动画需要用到 标签<Set />，同样分为 XML代码 / Java代码 两种设置方式：
+
+            a.XML代码中设置 ——— getCombinationAnimWithXml()：
+                1>.在 res/anim 的文件夹里创建动画效果 combination_anim.xml 文件：
+
+                2>.组合动画的设置方法 同 单个动画设置，使用<Set />标签将单个动画的设置组合起来：
+                    具体参数设置参看 combination_anim.xml；
+
+                3>.在Java代码中创建Animation对象并播放动画：
+                    combinationAnimWithXml = (Button) findViewById(R.id.combinationAnimWithXml);                    // 创建 需要设置动画的 视图View
+                    Animation combinationAnimation = AnimationUtils.loadAnimation(this, R.anim.combination_anim);   // 创建 动画对象 并传入设置的动画效果xml文件
+                    combinationAnimWithXml.startAnimation(combinationAnimation);                                    // 播放动画
+
+            b.Java代码中设置 ——— getCombinationAnimWithJava()：
+                1>.创建 需要设置动画的 视图View；
+                    combinationAnimWithJava = (Button) findViewById(R.id.combinationAnimWithJava);
+
+                2>.组合动画设置；
+                    通过 AnimationSet 来进行设置；
+
+                3>.播放动画；
+                    combinationAnimWithJava.startAnimation(setAnimation);
+
+
+    监听动画：
+        给动画添加监听 ——— AnimationListenerLearningActivity.java：
+            Animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+
+
+    应用场景：
+        标准的应用场景：
+            补间动画常用于视图View的一些 标准动画效果：平移、旋转、缩放、透明度；
+
+        特殊的应用场景：
+            a.Activity 的切换效果 ——— 在 启动/退出 时调用：
+
+                Intent intent = new Intent (this,Activity.class);
+                startActivity(intent);
+                // 采用overridePendingTransition（int enterAnim, int exitAnim）进行设置
+                // exitAnim： 从Activity a跳转到Activity b，离开a 时的动画效果资源ID
+                // enterAnim：从Activity a跳转到Activity b，进入b 时的动画效果资源ID
+                overridePendingTransition(R.anim.enter_anim,R.anim.exit_anim);
+
+                注意：
+                    1>.overridePendingTransition()，必须要在startActivity(intent)后被调用才能生效；
+
+                    2>.对于参数 enterAnim & exitAnim 的资源ID，系统有自带的效果android.R.anim.xxx，如下设置：
+                          // 淡入淡出的动画效果
+                          overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                          // 从左向右滑动的效果
+                          overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
+                除了使用系统自带的切换效果，还可以
+                    自定义Activity的切换效果，
+                此处就用到 补间动画 了：
+
+                    1>.自定义 淡入淡出 效果 ——— 淡入淡出 效果是采用透明度动画（Alpha）：
+                        fade_in.xml（淡入）
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <set xmlns:android="http://schemas.android.com/apk/res/android" >
+
+                                <alpha
+                                    android:duration="1500"
+                                    android:fromAlpha="0.0"
+                                    android:toAlpha="1.0" />
+                            </set>
+
+                        fade_out.xml（淡出）
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <set xmlns:android="http://schemas.android.com/apk/res/android" >
+
+                                <alpha
+                                    android:duration="1500"
+                                    android:fromAlpha="1.0"
+                                    android:toAlpha="0.0" />
+                            </set>
+                        在Java代码中设置效果：
+                            Intent intent = new Intent(MainActivity.this, SecActivity.class);
+                                            startActivity(intent);
+                                            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);       // 自定义的淡入淡出动画效果
+
+                    2>.自定义 左右滑动 效果 ——— 左右滑动 效果是采用平移动画（Translate）：
+                        先了解下 Activity 的位置信息 ——— 以屏幕底边为X轴，屏幕左边为Y轴：
+                            当Activity在X轴 = -100%p时，刚好完全超出屏幕到左边；
+                            当Activity在X轴 =   0%p 时，刚好完全在屏幕内；
+                            当Activity在X轴 = 100%p 时，刚好完全超出屏幕到右边；
+
+                        下面自定义一个动画效果 ——— 从右滑到左：
+                            in_from_right.xml 从右边滑到中间：
+                                <?xml version="1.0" encoding="utf-8"?>
+                                <set xmlns:android="http://schemas.android.com/apk/res/android">
+                                    <translate
+                                        android:duration="500"
+                                        android:fromXDelta="100%p"
+                                        android:toXDelta="0%p"
+                                        />
+                                </set>
+
+                            out_to_left.xml 从中间滑到左边：
+                                <?xml version="1.0" encoding="utf-8"?>
+                                <set xmlns:android="http://schemas.android.com/apk/res/android">
+                                    <translate
+                                        android:duration="500"
+                                        android:fromXDelta="0%p"
+                                        android:toXDelta="-100%p"
+                                         />
+                                </set>
+                        在Java代码中设置效果：
+                            Intent intent = new Intent(MainActivity.this, SecActivity.class);
+                                            startActivity(intent)
+                                            overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);       // 自定义 从右向左滑动的效果
+
+                    3>.关于 缩放和旋转 作为Activity的动画效果也是类似的，补间动画的 组合动画 效果也是可以实现的；
+
+            b.Fragment 的切换效果：
+                系统自带的动画切换效果：
+                    FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                    fragmentTransaction.setTransition(int transit)；       // 通过setTransition(int transit)进行设置
+
+                    transit参数说明：
+                        1>.FragmentTransaction.TRANSIT_NONE：无动画；
+                        2>.FragmentTransaction.TRANSIT_FRAGMENT_OPEN：标准的打开动画效果；
+                        3>.FragmentTransaction.TRANSIT_FRAGMENT_CLOSE：标准的关闭动画效果；
+
+                    标准动画设置好后，在Fragment添加和移除的时候都会有；
+
+                自定义动画效果：
+                    采用 FragmentTransaction 的 setCustomAnimations() 进行设置：
+                        FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+                        fragmentTransaction.setCustomAnimations(R.anim.in_from_right,R.anim.out_to_left);
+
+                    此处的自定义动画效果同Activity，此处不再过多描述；
+
+            c.视图组（ViewGroup）中子元素的出场效果：
+                视图组（ViewGroup）中子元素可以具备出场时的补间动画效果，例如为 ListView 的 item 设置出场动画；
+                    1>.设置 子元素 的出场动画 ——— res/anim/view_animation.xml：
+                        <?xml version="1.0" encoding="utf-8"?>
+                        // 此处采用了组合动画
+                        <set xmlns:android="http://schemas.android.com/apk/res/android" >
+                            android:duration="3000"
+                            <alpha
+                                android:duration="1500"
+                                android:fromAlpha="1.0"
+                                android:toAlpha="0.0" />
+                            <translate
+                                android:fromXDelta="500"
+                                android:toXDelta="0"
+                                 />
+                        </set>
+
+                    2>.设置 视图组（ViewGroup） 的动画文件：
+                        <?xml version="1.0" encoding="utf-8"?>
+                        // 采用LayoutAnimation标签
+                        <layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+
+                            // 子元素开始动画的时间延迟
+                            // 如子元素入场动画的时间总长设置为300ms
+                            // 那么 delay = "0.5" 表示每个子元素都会延迟150ms才会播放动画效果
+                            // 第一个子元素延迟150ms播放入场效果；第二个延迟300ms，以此类推
+                            android:delay="0.5"
+
+                            // 表示子元素动画的顺序
+                            // 可设置属性为：
+                            // 1. normal ：顺序显示，即排在前面的子元素先播放入场动画
+                            // 2. reverse：倒序显示，即排在后面的子元素先播放入场动画
+                            // 3. random：随机播放入场动画
+                            android:animationOrder="normal"
+
+                            // 设置入场的具体动画效果
+                            // 1> 的子元素出场动画设置到这里
+                            android:animation="@anim/view_animation"
+                        />
+
+                    3>.为 视图组（ViewGroup） 指定 android:layoutAnimation 属性：
+                        指定的方式有两种： XML代码 / Java代码 设置：
+
+                        在 XML 中指定：
+                            <?xml version="1.0" encoding="utf-8"?>
+                            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                xmlns:tools="http://schemas.android.com/tools"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="#FFFFFF"
+                                android:orientation="vertical" >
+
+                                <ListView
+                                    android:id="@+id/listView1"
+                                    android:layoutAnimation="@anim/anim_layout"
+                                    // 指定layoutAnimation属性用以指定子元素的入场动画
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
+                            </LinearLayout>
+
+                        在Java代码中指定：
+                            ListView lv = (ListView) findViewById(R.id.listView1);
+                            Animation animation = AnimationUtils.loadAnimation(this,R.anim.anim_item);   // 加载子元素的出场动画
+                            // 设置LayoutAnimation的属性
+                            LayoutAnimationController controller = new LayoutAnimationController(animation);
+                            controller.setDelay(0.5f);
+                            controller.setOrder(LayoutAnimationController.ORDER_NORMAL);
+                            lv.setLayoutAnimation(controller);                                          // 为ListView设置LayoutAnimation的属性
+
+
+
+
+
+
+
+
+
+
+
+
+
+（https://www.jianshu.com/p/733532041f46）

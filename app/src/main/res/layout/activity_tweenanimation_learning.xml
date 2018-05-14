@@ -1,6 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <Button
+        android:id="@+id/translateAnimWithXml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="平移动画XML实现" />
+
+    <Button
+        android:id="@+id/translateAnimWithJava"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/translateAnimWithXml"
+        android:layout_toRightOf="@+id/translateAnimWithXml"
+        android:text="平移动画Java实现" />
+
+    <Button
+        android:id="@+id/scaleAnimWithXml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/translateAnimWithXml"
+        android:text="缩放动画XML实现" />
+
+    <Button
+        android:id="@+id/scaleAnimWithJava"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/translateAnimWithJava"
+        android:layout_alignStart="@+id/translateAnimWithJava"
+        android:layout_below="@+id/translateAnimWithJava"
+        android:text="缩放动画Java实现" />
+
+
+    <Button
+        android:id="@+id/rotateAnimWithXml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/scaleAnimWithXml"
+        android:text="旋转动画XML实现" />
+
+    <Button
+        android:id="@+id/rotateAnimWithJava"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/scaleAnimWithJava"
+        android:layout_alignStart="@+id/scaleAnimWithJava"
+        android:layout_below="@+id/scaleAnimWithJava"
+        android:text="旋转动画Java实现" />
+
+    <Button
+        android:id="@+id/alphaAnimWithXml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rotateAnimWithXml"
+        android:text="透明度动画XML实现" />
+
+    <Button
+        android:id="@+id/alphaAnimWithJava"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/rotateAnimWithJava"
+        android:layout_alignStart="@+id/rotateAnimWithJava"
+        android:layout_below="@+id/rotateAnimWithJava"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:text="透明度动画Java实现" />
+
+    <Button
+        android:id="@+id/combinationAnimWithXml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/alphaAnimWithXml"
+        android:text="组合动画XML实现" />
+
+    <Button
+        android:id="@+id/combinationAnimWithJava"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/combinationAnimWithXml"
+        android:text="组合动画Java实现" />
+
+    <Button
+        android:id="@+id/startAnim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="47dp"
+        android:layout_toEndOf="@+id/rotateAnimWithXml"
+        android:layout_toRightOf="@+id/rotateAnimWithXml"
+        android:text="开始动画" />
+
+</RelativeLayout>

@@ -89,6 +89,7 @@
         <activity android:name=".animation.tweenanimation.TweenAnimationLearningActivity" />
         <activity android:name=".animation.frameanimation.FrameAnimationLearningActivity" />
         <activity android:name=".animation.propertyanimation.PropertyAnimationLearningActivity" />
+        <activity android:name=".animation.tweenanimation.AnimationListenerLearningActivity" />
 
     </application>
 
