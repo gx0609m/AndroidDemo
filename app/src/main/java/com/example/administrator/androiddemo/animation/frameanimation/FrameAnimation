@@ -2,8 +2,66 @@ FrameAnimation
     原理：
         将动画拆分为 帧 的形式，且定义 每一帧 = 每一张图片；
 
+
     本质：
         按序播放一组预先定义好的图片；
 
+
     使用步骤：
         1.将动画资源（即每张图片资源）放到 drawable文件夹里；
+
+        2.设置&启动 动画（a、b两种方式）
+            逐帧动画的 设置&启动 有两种方式 ——— XML配置文件中 / Java代码中：
+
+            a.XML中实现：
+                1>.在 res/drawable 的文件夹里创建动画效果.xml文件：
+                    anim_circle.xml
+
+                2>.设置动画资源（图片资源）：
+                    <?xml version="1.0" encoding="utf-8"?>
+                    <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+                                    android:oneshot="false">   // 设置是否只播放一次，默认为false
+
+                        <!-- item = 动画图片资源； duration = 设置一帧持续时间(ms) -->
+                        <item android:drawable="@drawable/IMG00000" android:duration="100"/>
+                        <item android:drawable="@drawable/IMG00001" android:duration="100"/>
+                    </animation-list>
+
+                3>.在Java代码中载入 & 启动动画：
+                    xmlAnimImv.setImageResource(R.drawable.anim_circle);                    //  设置动画
+                    animationDrawable = (AnimationDrawable) xmlAnimImv.getDrawable();       //  获取动画对象
+                    animationDrawable.start();                                              //  启动动画
+
+            b.Java代码中实现：
+                1>.从 drawable 文件夹中获取 动画资源文件：
+                    animationDrawable = new AnimationDrawable();
+                    for (int i = 0; i <= 19; i++) {
+                        int id;
+                        if (i < 10) {
+                            id = getResources().getIdentifier("img0000" + i, "drawable", getPackageName());
+                        } else {
+                            id = getResources().getIdentifier("img000" + i, "drawable", getPackageName());
+                        }
+                        Drawable drawable = getResources().getDrawable(id);
+                        animationDrawable.addFrame(drawable, 100);
+                        animationDrawable.setOneShot(true);
+                    }
+
+                2>.获取资源对象：
+                    javaAnimImv.setImageDrawable(animationDrawable);
+
+                3>.启动动画：
+                    animationDrawable.stop();     // 特别注意：在动画start()之前要先stop()，不然在第一次动画之后会停在最后一帧，这样动画就只会触发一次
+                    animationDrawable.start();    // 启动动画
+
+
+    特点：
+        优点：
+            使用简单、方便；
+
+        缺点：
+            容易引起 OOM，因为会使用大量 & 尺寸较大的图片资源；
+
+
+    应用场景：
+        较为复杂的个性化动画效果，要避免使用尺寸较大的图片，否则会引起OOM；
