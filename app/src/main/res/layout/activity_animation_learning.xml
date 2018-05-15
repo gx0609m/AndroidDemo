@@ -23,10 +23,22 @@
         android:text="PropertyAnimation" />
 
     <Button
+        android:id="@+id/interpolator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Interpolator" />
+
+    <Button
+        android:id="@+id/typeEvaluator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TypeEvaluator" />
+
+    <Button
         android:id="@+id/animationListener"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="120dp"
         android:text="AnimationListener" />
 
 </LinearLayout>

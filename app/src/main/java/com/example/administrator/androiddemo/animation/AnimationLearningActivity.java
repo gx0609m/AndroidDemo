@@ -8,9 +8,11 @@ import android.widget.Button;
 
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.animation.frameanimation.FrameAnimationLearningActivity;
+import com.example.administrator.androiddemo.animation.interpolator.InterpolatorLearningActivity;
 import com.example.administrator.androiddemo.animation.propertyanimation.PropertyAnimationLearningActivity;
 import com.example.administrator.androiddemo.animation.tweenanimation.AnimationListenerLearningActivity;
 import com.example.administrator.androiddemo.animation.tweenanimation.TweenAnimationLearningActivity;
+import com.example.administrator.androiddemo.animation.typeevaluator.TypeEvaluatorLearningActivity;
 import com.example.administrator.androiddemo.base.BaseActivity;
 
 /**
@@ -24,6 +26,9 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
     private Button frameAnimation;
     private Button tweenAnimation;
     private Button propertyAnimation;
+
+    private Button interpolator;
+    private Button typeEvaluator;
 
     private Button animationListener;
 
@@ -55,6 +60,14 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
                 intent = new Intent(AnimationLearningActivity.this, AnimationListenerLearningActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.interpolator:
+                intent = new Intent(AnimationLearningActivity.this, InterpolatorLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.typeEvaluator:
+                intent = new Intent(AnimationLearningActivity.this, TypeEvaluatorLearningActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -70,5 +83,11 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
 
         animationListener = (Button) findViewById(R.id.animationListener);
         animationListener.setOnClickListener(this);
+
+        interpolator = (Button) findViewById(R.id.interpolator);
+        interpolator.setOnClickListener(this);
+
+        typeEvaluator = (Button) findViewById(R.id.typeEvaluator);
+        typeEvaluator.setOnClickListener(this);
     }
 }

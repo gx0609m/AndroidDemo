@@ -90,6 +90,8 @@
         <activity android:name=".animation.frameanimation.FrameAnimationLearningActivity" />
         <activity android:name=".animation.propertyanimation.PropertyAnimationLearningActivity" />
         <activity android:name=".animation.tweenanimation.AnimationListenerLearningActivity" />
+        <activity android:name=".animation.interpolator.InterpolatorLearningActivity" />
+        <activity android:name=".animation.typeevaluator.TypeEvaluatorLearningActivity" />
 
     </application>
 
