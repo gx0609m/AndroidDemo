@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ValueAnimator采用 <animator> 标签 -->
+
+<animator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:delay="500"
+    android:duration="3000"
+    android:fillAfter="false"
+    android:fillBefore="true"
+    android:fillEnabled="true"
+    android:interpolator="@android:anim/overshoot_interpolator"
+    android:repeatCount="0"
+    android:repeatMode="restart"
+    android:startOffset="1000"
+    android:valueFrom="0"
+    android:valueTo="10"
+    android:valueType="intType">
+
+    <!--
+    android:valueFrom="0"           // 初始值
+    android:valueTo="10"            // 结束值
+    android:valueType="intType"     // 变化值类型 ：floatType & intType
+    android:delay="500"             // 延时执行
+
+    android:duration="3000"         // 动画持续时间（ms），必须设置，动画才有效果
+    android:startOffset ="1000"     // 动画延迟开始时间（ms）
+    android:fillBefore = “true”     // 动画播放完后，视图是否会停留在动画开始的状态，默认为true
+    android:fillAfter = “false”     // 动画播放完后，视图是否会停留在动画结束的状态，优先于fillBefore值，默认为false
+    android:fillEnabled= “true”     // 是否应用fillBefore值，对fillAfter值无影响，默认为true
+    android:repeatMode= “restart”   // 选择重复播放动画模式，restart代表正序重放，reverse代表倒序回放，默认为restart|
+    android:repeatCount = “0”       // 重放次数（所以动画的播放次数=重放次数+1），为infinite时无限重复
+    android:interpolator = @[package:]anim/interpolator_resource        // 插值器，即影响动画的播放速度,下面会详细讲
+    -->
+
+</animator>

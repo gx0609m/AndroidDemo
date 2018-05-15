@@ -44,6 +44,7 @@ public class AnimationListenerLearningActivity extends BaseActivity {
          * 注意：
          *      这里是通过 AnimationListener接口，但它会强制实现它的三个方法；
          *      我们可以通过 AnimatorListenerAdapter 来解决 实现接口繁琐 的问题 ——— 未验证；
+         *      （Animator.addListener(new AnimatorListenerAdapter() {...}）
          */
         translateAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
