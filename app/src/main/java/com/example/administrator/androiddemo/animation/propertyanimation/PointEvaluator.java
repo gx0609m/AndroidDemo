@@ -25,8 +25,8 @@ public class PointEvaluator implements TypeEvaluator {
         Point endPoint = (Point) endValue;
 
         // 根据fraction来计算当前动画的 x & y 的值
-        float x = startPoint.getX() + fraction * (endPoint.getX() - endPoint.getX());
-        float y = startPoint.getY() + fraction * (endPoint.getY() - endPoint.getY());
+        float x = startPoint.getX() + fraction * (endPoint.getX() - startPoint.getX());
+        float y = startPoint.getY() + fraction * (endPoint.getY() - startPoint.getY());
 
         // 将计算后的坐标封装到一个新的Point对象中并返回
         Point point = new Point(x, y);

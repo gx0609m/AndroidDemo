@@ -5,23 +5,73 @@ Animation
         Animation（动画） ———|                                     |————Tween Animation（补间动画）
                             | ————— Property Animation（属性动画）
 
+Frame Animation（逐帧动画）
+            ——— AnimationDrawable类；
 
+ —— —— —— —— —— —— —— —— —— —— —— —— 分 —— —— —— —— —— —— —— —— —— 割 —— —— —— —— —— —— —— —— —— —— 线 —— —— —— —— —— —— —— —— —— ——
 
+补间动画（Tween Animation）
+            ——— TranslateAnimation类；
+            ——— ScaleAnimation类；
+            ——— RotateAnimation类；
+            ——— AlphaAnimation类；
 
+    Animation translateAnimation = new TranslateAnimation(0, 500, 0, 500);                             // Java代码设置方式 获取Animation实例
+    （Animation translateAnimation = AnimationUtils.loadAnimation(this, R.anim.translate_anim);）       //  XML代码设置方式 获取Animation实例
 
+    translateAnimation.setDuration(3000);
 
+    View.startAnimation(translateAnimation);
 
+ —— —— —— —— —— —— —— —— —— —— —— —— 分 —— —— —— —— —— —— —— —— —— 割 —— —— —— —— —— —— —— —— —— —— 线 —— —— —— —— —— —— —— —— —— ——
 
+属性动画（Property Animation）
+            ——— ObjectAnimator类（继承自ValueAnimator类）；
+            ——— ValueAnimator类；
 
+    ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 10);  // ofFloat()、ofArgb()、ofObject()
 
+    valueAnimator.setDuration(4000);                           // setStartDelay()、setRepeatMode()...
 
+    valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {...}  // Java代码设置方式 ——— 设置要进行动画的对象，将改变的值手动赋值给对象的属性值 ——— 通过动画的更新监听器 AnimatorUpdateListener；
+    （valueAnimator.setTarget(@Nullable Object target);                               //  XML代码设置方式 ——— 设置要进行动画的对象 ）
 
+    valueAnimator.start()
 
+—— —— —— —— —— —— —— —— —— —— —— —— 分 —— —— —— —— —— —— —— —— —— 割 —— —— —— —— —— —— —— —— —— —— 线 —— —— —— —— —— —— —— —— —— ——
 
+注意到：
+    补间动画 中用到的 动画相关类 都是 Animation ；
+    属性动画 中用到的 动画相关类 都是 Animator ；
 
+Animation & Animator
+    相同点：
+        1>.设置动画属性的方法相同；
+            都有.setDuration()等 设置动画属性 的方法；
 
+    不同点：
+        1>.创建自身实例的方式不同，
+            Animation ——— XML代码创建 / Java代码创建：
+                Animation translateAnimation = new TranslateAnimation(0, 500, 0, 500);                             // Java代码设置方式 获取Animation实例
+                （Animation translateAnimation = AnimationUtils.loadAnimation(this, R.anim.translate_anim);）       //  XML代码设置方式 获取Animation实例
 
+            Animator ——— Java代码创建：
+                ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 10);                                           // ofFloat()、ofArgb()、ofObject()
 
+        2>.设置 要进行动画的对象 方式不同：
+            Animation ——— Java代码创建：
+                View.startAnimation(translateAnimation);                                              // 既 设置了要进行动画的对象，又 开始了动画
+
+            Animator ——— XML代码创建 / Java代码创建：
+                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {...}      // Java代码设置方式 ——— 设置动画对象，将改变的值手动赋值给对象的属性值 ——— 通过动画的更新监听器 AnimatorUpdateListener；
+                （valueAnimator.setTarget(@Nullable Object target);                                   //  XML代码设置方式 ——— 设置动画对象 ）
+
+        3>.开始动画的方式不同：
+            Animation ——— Java代码创建 ——— 与 步骤2>中Animation部分 的代码一致；
+                View.startAnimation(translateAnimation);                                              // 既 设置了要进行动画的对象，又 开始了动画
+
+            Animator ——— Java代码创建：
+                valueAnimator.start();
 
 
 

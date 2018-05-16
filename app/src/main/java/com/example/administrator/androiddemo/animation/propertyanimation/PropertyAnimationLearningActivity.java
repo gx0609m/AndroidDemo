@@ -108,13 +108,6 @@ public class PropertyAnimationLearningActivity extends BaseActivity implements V
         animator.start();
     }
 
-    /**
-     * ValueAnimator.ofObject(**) 使用介绍（只有 Java代码设置 方式）
-     */
-    private void valueAnimatorWithOfObject(){
-
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

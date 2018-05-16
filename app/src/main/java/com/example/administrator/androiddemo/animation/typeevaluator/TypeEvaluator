@@ -1,20 +1,32 @@
 TypeEvaluator（估值器）
-    估值器（TypeEvaluator）：
-            作用：
-                设置动画如何从 初始值 过渡到 结束值 的 变化逻辑，决定 值 的具体变化数值；
+    简介：
+        一个接口；
+        属性动画 特有的属性；
 
-            分类：
-                ValueAnimator.ofInt()    ————  IntEvaluator         整形估值器     ————    系统内置；
-                ValueAnimator.ofFloat()  ————  FloatEvaluator       浮点型估值器   ————     系统内置；
-                ValueAnimator.ofObject() ————  MyObjectEvaluator    对象估值器     ————    自定义；
 
-                以 ValueAnimator.ofFloat() 为例，
-                    它实现了 “将初始值 以浮点型的形式 过渡到结束值”  的逻辑，那么这个 过渡逻辑 具体是怎么样的呢？
+    作用：
+        设置动画如何从 初始值 过渡到 结束值 的 变化逻辑，决定 值 的具体变化数值；
 
-                其实，
-                    是系统内置了一个 FloatEvaluator 估值器，内部实现了 初始值 与 结束值 以 浮点型 的过渡逻辑；
 
-                我们可以看下 FloatEvaluator 的代码，如下：
+    与插值器区别：
+        插值器（Interpolator）决定 值 的变化规律（匀速、加速blabla），即决定的是变化趋势，而 具体变化数值 则交给估值器；
+
+
+    分类：
+        因 TypeEvaluator 为属性动画特有，而属性动画中最重要的两个类为 ObjectAnimator & ValueAnimator，同时 ObjectAnimator ——extends——> ValueAnimator，
+        因此这里只对 ValueAnimator 中三个 牵涉到估值器 的方法作说明：
+
+            ValueAnimator.ofInt()    ————  IntEvaluator         整形估值器     ————    系统内置；
+            ValueAnimator.ofFloat()  ————  FloatEvaluator       浮点型估值器   ————    系统内置；
+            ValueAnimator.ofArgb()  ————  ArgbEvaluator         Argb型估值器   ————    系统内置；
+            ValueAnimator.ofObject() ————  MyObjectEvaluator    对象估值器     ————    自定义；
+
+        以 ValueAnimator.ofFloat() 为例，它实现了 “将初始值 以浮点型的形式 过渡到结束值”  的逻辑，那么这个 过渡逻辑 具体是怎么样的呢？
+
+        其实，
+            是系统内置了一个 FloatEvaluator 估值器，内部实现了 初始值 与 结束值 以 浮点型 的过渡逻辑；
+
+            我们可以看下 FloatEvaluator 的代码，如下：
                     /**
                      * FloatEvaluator 实现了 TypeEvaluator 接口
                      */
@@ -36,49 +48,87 @@ TypeEvaluator（估值器）
                         }
                     }
 
-                ValueAnimator.ofInt() & ValueAnimator.ofFloat() 都具备系统内置的估值器，即 FloatEvaluator & IntEvaluator；
+            ValueAnimator.ofInt() & ValueAnimator.ofFloat() 都具备系统内置的估值器，即 FloatEvaluator & IntEvaluator；
 
-                但对于 ValueAnimator.ofObject()，从上面的工作原理可以看出，
-                    并没有系统默认实现，
-                    因为对对象的动画操作复杂 & 多样，
-                    系统无法知道如何从初始对象过度到结束对象，
-                因此，对于 ValueAnimator.ofObject()，我们需自定义估值器（TypeEvaluator）来告知系统如何进行从 初始对象 过渡到 结束对象的逻辑；
+            但对于 ValueAnimator.ofObject()，从上面的工作原理可以看出，
+                并没有系统默认实现，
+                因为对对象的动画 操作复杂 & 多样，
+                系统无法知道如何从初始对象过度到结束对象，
+            因此，对于 ValueAnimator.ofObject()，我们需自定义估值器（TypeEvaluator）来 告知系统 如何进行从 初始对象 过渡到 结束对象的逻辑；
 
-                自定义估值器的实现逻辑如下：
-                    /*
-                     * 实现TypeEvaluator接口
+
+    自定义估值器：
+        本质：
+            根据  '插值器计算出当前属性值改变的百分比'  &  '初始值'  &  '结束值'  这三个元素来计算 当前属性的具体数值；
+
+            例如：
+                动画进行了50%（初始值=100，结束值=200 ），
+                那么匀速插值器计算出了当前属性值改变的百分比是50%，
+                那么估值器则负责计算当前属性值 = 100 + （200-100）x50% = 150；
+
+        具体使用：
+            自定义估值器需要实现 TypeEvaluator接口 & 复写evaluate()；
+
+            在编写自定义估值器前，我们先来看一个已经实现好的系统内置估值器 ——— 浮点型插值器（FloatEvaluator）：
+                /**
+                 * 实现 TypeEvaluator 接口
+                 */
+                public class FloatEvaluator implements TypeEvaluator<Number> {
+
+                    /**
+                     * 重写 evaluate()
+                     * 参数说明：
+                     *     fraction：表示动画完成度（根据它来计算当前动画的值）；
+                     *     startValue、endValue：动画的 初始值 和 结束值；
                      */
-                    public class MyObjectEvaluator implements TypeEvaluator{
+                    public Float evaluate(float fraction, Number startValue, Number endValue) {
                         /*
-                         * 复写evaluate（），在evaluate（）里写入对象动画过渡的逻辑
-                         * 参数说明：
-                         *     fraction：表示动画完成度（根据它来计算当前动画的值）；
-                         *     startValue、endValue：动画的初始值和结束值；
+                         * 初始值 过渡 到结束值 的算法是：
+                         *     1>.用结束值减去初始值，算出它们之间的差值；
+                         *     2>.用上述差值乘以fraction系数；
+                         *     3>.再加上初始值，就得到当前动画的值；
                          */
-                        @Override
-                        public Object evaluate(float fraction, Object startValue, Object endValue) {
-                            /*
-                             * 写入对象动画过渡的逻辑
-                             */
-                            ...
+                        float startFloat = startValue.floatValue();
+                        return startFloat + fraction * (endValue.floatValue() - startFloat);
+                    }
+                }
 
-                            return value;   // 返回对象动画过渡的逻辑计算后的值
-                        }
+        原理（实现逻辑）：
+            /*
+             * 实现TypeEvaluator接口
+             */
+            public class MyObjectEvaluator implements TypeEvaluator{
+                /*
+                 * 复写evaluate（），在evaluate（）里写入对象动画过渡的逻辑
+                 * 参数说明：
+                 *     fraction：表示动画完成度（根据它来计算当前动画的值）；
+                 *     startValue、endValue：动画的初始值和结束值；
+                 */
+                 @Override
+                 public Object evaluate(float fraction, Object startValue, Object endValue) {
+                     /*
+                      * 写入对象动画过渡的逻辑
+                      */
+                      ...
 
-            实例说明自定义估值器的步骤：
-                要实现的动画效果 ———— 一个圆从一个点 移动到 另外一个点：
-                    自定义 TypeEvaluator 接口并通过 ValueAnimator.ofObject() 实现动画效果；
+                      return value;   // 返回对象动画过渡的逻辑计算后的值
+                 }
 
-                步骤：
-                    1>.定义对象类；
-                       由于 ValueAnimator.ofObject() 是面向对象操作的，所以需要自定义对象类，
-                       本例需要操作的对象是 圆的点坐标，所以定义：
-                           Point.java
+        实例 ——— valueAnimatorWithOfObject()：
+            目标：
+                实现 一个TextView控件从一个点 移动到 另外一个点：
 
-                    2>.根据需求 自定义估值器 实现 TypeEvaluator 接口；
-                       实现 TypeEvaluator 接口的目的是 自定义如何 从初始点坐标 过渡 到结束点坐标，本例实现的是一个从左上角到右下角的坐标过渡逻辑；
+            步骤：
+                自定义 TypeEvaluator 接口并通过 ValueAnimator.ofObject() 实现动画效果；
 
-                       PointEvaluator.java
+                1>.定义对象类；
+                   由于 ValueAnimator.ofObject() 是面向对象操作的，所以需要 自定义对象类，
+                   本例需要操作的对象是 圆的点坐标，所以定义：
+                       Point.java
+
+                2>.根据需求 自定义估值器 实现 TypeEvaluator 接口；
+                   实现 TypeEvaluator 接口的目的是 自定义如何 从初始点坐标 过渡 到结束点坐标，本例实现的是一个从左上角到右下角的坐标过渡逻辑；
+                   PointEvaluator.java
                            public class PointEvaluator implements TypeEvaluator {
                                /*
                                 * 实现 TypeEvaluator 接口，并复写 evaluate()
@@ -101,3 +151,28 @@ TypeEvaluator（估值器）
                                    return point;
                                }
                            }
+
+                3>.将 属性动画作用到 我们 想要进行动画的View对象 当中 ——— valueAnimatorWithOfObject()：
+
+        总结：
+            通过上面的一系列代码和文字，我们知道：
+                a.对于 ofInt()、ofFloat()、ofArgb()，系统内置了估值器，当然我们也可以使用自定义的估值器来代替；
+                b.对于 ofObject() 我们是 必须要去 自定义估值器 的，因为对 对象的动画操作 复杂 & 多样 ，系统无法知道如何从 初始对象过渡到结束对象 ，也就没有提供相关内置的估值器；
+                c.同时，由于 ValueAnimator.ofObject() 是面向对象操作的，所以还需要 自定义对象类，自定义对象类 中包含我们想要的 自定义属性，如 Point.java 中包含了 x,y 属性 ；
+
+            由此看来，使用 ofObject() 只是比使用 ofInt() 等方法多了 两个自定义类 ———— 自定义估值器（PointEvaluator）& 自定义对象类（Point）；
+
+            其实：
+                ofInt()、ofFloat()、ofArgb() 都是对 单一属性值 的改变，
+                而 ofObject() 是对 多个属性值 的改变，只不过是将这多个值 封装到一个Object对象 中了；
+
+
+
+
+
+
+
+
+
+
+

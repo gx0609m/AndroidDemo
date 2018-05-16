@@ -1,3 +1,138 @@
 Interpolator（插值器）
+    简介：
+        一个接口；
+
+
     作用：
         设置动画如何从 初始值过渡到结束值 的 变化模式，决定 值 的具体变化模式（匀速、加减速 等~）；
+
+
+    与估值器区别：
+        插值器（Interpolator）决定 值 的变化规律（匀速、加速blabla），即决定的是变化趋势，而 具体变化数值 则交给估值器；
+
+
+    使用：
+        插值器在动画的使用有 两种方式：在 XML / Java代码 中设置；
+        a.在 动画效果的XML 代码中设置 插值器属性 android:interpolator：
+            <?xml version="1.0" encoding="utf-8"?>
+            <scale xmlns:android="http://schemas.android.com/apk/res/android"
+                android:interpolator="@android:anim/overshoot_interpolator"          // 通过 资源ID 设置插值器
+                android:duration="3000"
+                android:fromXScale="0.0"
+                android:fromYScale="0.0"
+                android:pivotX="50%"
+                android:pivotY="50%"
+                android:toXScale="2"
+                android:toYScale="2" />
+            这里是在 补间动画 的 缩放动画XML 代码中设置的插值器属性；
+
+        b.在 Java代码 中设置：
+            1>.创建 需要设置动画的 视图View：
+                Button mButton = (Button) findViewById(R.id.Button);
+
+            2>.创建 透明度动画的对象 & 设置动画效果：
+                Animation alphaAnimation = new AlphaAnimation(1,0);
+                alphaAnimation.setDuration(3000);
+
+            3>.创建对应的插值器类对象：
+                Interpolator overshootInterpolator = new OvershootInterpolator();
+
+            4>.给动画设置插值器：
+                alphaAnimation.setInterpolator(overshootInterpolator);
+
+            5>.播放动画：
+                mButton.startAnimation(alphaAnimation);
+
+        在a、b中我们分别使用了两种方式去设置 插值器OvershootInterpolator，这个插值器其实是系统内置的，那么Android系统中又有哪些内置的插值器呢？
+
+
+    系统内置插值器：
+        Android 内置了 9种 插值器的实现，如下：
+
+                效果                                        资源ID                                           对应的Java类
+            动画加速进行                         @android:anim/accelerate_interpolator                   AccelerateInterpolator
+            动画减速进行                         @android:anim/decelerate_interpolator                   DecelerateInterpolator
+            动画匀速进行                         @android:anim/linear_interpolator                       LinearInterpolator
+
+            先加速再减速                         @android:anim/accelerate_decelerate_interpolator        AccelerateDecelerateInterpolator
+            先退后再加速前进                      @android:anim/anticipate_interpolator                   AnticipateInterpolator
+            先退后再加速前进，超出终点后再回终点    @android:anim/anticipate_overshoot_interpolator         AnticipateOvershootInterpolator
+
+            最后阶段弹球效果                      @android:anim/bounce_interpolator                       BounceInterpolator
+            周期运动                             @android:anim/cycle_interpolator                        CycleInterpolator
+            快速完成动画，超出再回到结束样式        @android:anim/overshoot_interpolator                    OvershootInterpolator
+
+        使用时，
+            a.当在 XML文件 设置插值器时，只需传入对应的插值器资源ID即可；
+            b.当在 Java代码 设置插值器时，只需创建对应的插值器对象即可；
+            c.系统 默认的插值器 是 AccelerateDecelerateInterpolator，即先加速后减速；
+
+        使用 Android内置的插值器 能满足大多数的动画需求，如果上述9个插值器无法满足需求，还可以 自定义插值器；
+
+
+    自定义插值器：
+        本质：
+            根据动画的进度（0%-100%）计算出当前 属性值 改变的百分比；
+
+        具体使用：
+            自定义插值器需要 实现 Interpolator / TimeInterpolator接口 & 复写getInterpolation()；
+                ——— TimeInterpolator 接口是属性动画中新增的，用于兼容Interpolator接口，这使得所有过去的Interpolator实现类都可以直接在属性动画使用；
+                ——— Interpolator接口 ——extends——> TimeInterpolator接口；
+
+            在编写自定义插值器前，我们先来看两个已经实现好的系统内置差值器：
+                a.匀速差值器 ——— LinearInterpolator：
+                    @HasNativeInterpolator
+                    public class LinearInterpolator extends BaseInterpolator implements NativeInterpolatorFactory {
+                        // 仅贴出关键代码
+                        ...
+
+                        public float getInterpolation(float input) {
+                            /*
+                             * 没有对input值进行任何逻辑处理，直接返回
+                             * 即input值 = fraction值
+                             * 因为input值是匀速增加的，因此fraction值也是匀速增加的，所以动画的运动情况也是匀速的，所以是匀速插值器
+                             */
+                            return input;
+                        }
+                    }
+
+                b.先加速再减速差值器 ——— AccelerateDecelerateInterpolator：
+                    @HasNativeInterpolator
+                    public class AccelerateDecelerateInterpolator implements Interpolator, NativeInterpolatorFactory {
+                        // 仅贴出关键代码
+                        ...
+
+                        public float getInterpolation(float input) {
+                            /*
+                             * input的运算逻辑如下：
+                             *     使用了余弦函数，因input的取值范围是0到1，那么cos函数中的取值范围就是π到2π；
+                             *     而cos(π)的结果是-1，cos(2π)的结果是1；
+                             *     所以该值除以2加上0.5后，getInterpolation()方法最终返回的结果值还是在0到1之间；
+                             *     只不过经过了余弦运算之后，最终的结果不再是匀速增加的了，而是经历了一个先加速后减速的过程；
+                             *     所以最终，fraction值 = 运算后的值 = 先加速后减速；
+                             * 因此，该差值器的效果是 先加速再减速的；
+                             */
+                            return (float)(Math.cos((input + 1) * Math.PI) / 2.0f) + 0.5f;
+                        }
+                    }
+                上面看出，自定义插值器的关键在于：
+                    ——— 对input值 根据动画的进度（0%-100%）通过逻辑计算 计算出当前 属性值改变的百分比；
+
+        实例：
+            目的：
+                写一个自定义Interpolator ——— 先减速后加速；
+
+            步骤：
+                1>.根据需求编写 自定义类DecelerateAccelerateInterpolator 实现 TimeInterpolator接口；
+
+                2>.在Activity中进行相关设置 ——— animateWithSetCustomInterpolator()；
+
+
+
+
+
+
+
+
+
+（https://www.jianshu.com/p/2f19fe1e3ca1）

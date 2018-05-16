@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/doNotChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't Change!" />
+
+    <Button
+        android:id="@+id/beginAnim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="StartAnimate"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="63dp" />
+
+</RelativeLayout>
