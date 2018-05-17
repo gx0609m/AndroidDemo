@@ -17,10 +17,22 @@
         android:text="TweenAnimation" />
 
     <Button
-        android:id="@+id/propertyAnimation"
+        android:id="@+id/valueAnimator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PropertyAnimation" />
+        android:text="ValueAnimator" />
+
+    <Button
+        android:id="@+id/objectAnimator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ObjectAnimator"/>
+
+    <Button
+        android:id="@+id/animatorSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AnimatorSet"/>
 
     <Button
         android:id="@+id/interpolator"

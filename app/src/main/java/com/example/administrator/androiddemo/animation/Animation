@@ -15,6 +15,7 @@ Frame Animation（逐帧动画）
             ——— ScaleAnimation类；
             ——— RotateAnimation类；
             ——— AlphaAnimation类；
+            ——— AnimationSet类；
 
     Animation translateAnimation = new TranslateAnimation(0, 500, 0, 500);                             // Java代码设置方式 获取Animation实例
     （Animation translateAnimation = AnimationUtils.loadAnimation(this, R.anim.translate_anim);）       //  XML代码设置方式 获取Animation实例
@@ -28,6 +29,7 @@ Frame Animation（逐帧动画）
 属性动画（Property Animation）
             ——— ObjectAnimator类（继承自ValueAnimator类）；
             ——— ValueAnimator类；
+            ——— AnimatorSet类；
 
     ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 10);  // ofFloat()、ofArgb()、ofObject()
 

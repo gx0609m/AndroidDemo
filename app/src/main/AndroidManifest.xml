@@ -88,7 +88,9 @@
         <activity android:name=".animation.AnimationLearningActivity" />
         <activity android:name=".animation.tweenanimation.TweenAnimationLearningActivity" />
         <activity android:name=".animation.frameanimation.FrameAnimationLearningActivity" />
-        <activity android:name=".animation.propertyanimation.PropertyAnimationLearningActivity" />
+        <activity android:name=".animation.propertyanimation.ValueAnimatorLearningActivity" />
+        <activity android:name=".animation.propertyanimation.ObjectAnimatorLearningActivity" />
+        <activity android:name=".animation.propertyanimation.AnimatorSetLearningActivity" />
         <activity android:name=".animation.tweenanimation.AnimationListenerLearningActivity" />
         <activity android:name=".animation.interpolator.InterpolatorLearningActivity" />
         <activity android:name=".animation.typeevaluator.TypeEvaluatorLearningActivity" />

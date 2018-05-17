@@ -2,7 +2,6 @@ package com.example.administrator.androiddemo.animation.propertyanimation;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +14,12 @@ import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
 
 /**
- * 属性动画
+ * 属性动画 ——— ValueAnimator
  * <p>
  * Created by gx on 2018/5/11 0011
  */
 
-public class PropertyAnimationLearningActivity extends BaseActivity implements View.OnClickListener {
+public class ValueAnimatorLearningActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "PropertyAnimation";
 
@@ -31,7 +30,7 @@ public class PropertyAnimationLearningActivity extends BaseActivity implements V
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_propertyanimation_learning);
+        setContentView(R.layout.activity_value_animator_learning);
 
         initView();
     }
@@ -100,6 +99,8 @@ public class PropertyAnimationLearningActivity extends BaseActivity implements V
         Animator animator = AnimatorInflater.loadAnimator(this, R.animator.value_animation_ofint);
         /*
          * 2.设置动画对象
+         *
+         * 这里想改变 valueAnimatorOfInt 中的字体大小属性该如何？
          */
         animator.setTarget(valueAnimatorOfInt);
         /*
@@ -112,8 +113,8 @@ public class PropertyAnimationLearningActivity extends BaseActivity implements V
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.startAnimate:
-//                valueAnimatorWithOfIntByJava();
-                valueAnimatorWithOfIntByXml();
+                valueAnimatorWithOfIntByJava();
+//                valueAnimatorWithOfIntByXml();
                 break;
         }
     }

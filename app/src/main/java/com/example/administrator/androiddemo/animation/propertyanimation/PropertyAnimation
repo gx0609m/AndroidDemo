@@ -44,157 +44,70 @@ Property Animation
                 ——— ValueAnimator类 & ObjectAnimator类；
 
 
-    ValueAnimator类：
-        实现动画的原理：
-            ——— 通过不断控制 值 的变化，再不断 手动 赋给对象的属性，从而实现动画效果；
+    ViewPropertyAnimator：
+        说明：
+            从上面可以看出，属性动画的 本质是对值 操作，
+            但是，Java是面向对象的，所以 Google 团队添加 面向对象操作 的 属性动画使用类 ——— ViewPropertyAnimator；
 
-        工作流程图：
-            ——— res/flowchart/value_animator.png；
+        使用：
+            /*
+             * ViewPropertyAnimator的功能建立在 .animate() 上；
+             * 调用 animate() 方法返回值是一个ViewPropertyAnimator对象,之后的调用的所有方法都是通过该实例完成；
+             * 通过 调用该实例 的各种方法来实现动画效果；
+             * ViewPropertyAnimator所有接口方法都使用 连缀语法（流式） 来设计，每个方法的返回值都是它自身的实例；
+             * 因此，调用完一个方法后可直接连缀调用另一方法,即可通过一行代码就完成所有动画效果；
+             */
+            View.animate().xxx().xxx();
 
-            从 工作流程图 可看出，ValueAnimator类有三个重要的方法：
-                a.ValueAnimator.ofInt(int values)；
-                b.ValueAnimator.ofFloat(float values)；
-                c.ValueAnimator.ofObject(int values)；
-            下面逐一介绍这三个方法：
+        实例 ——— useViewPropertyAnimator()：
+            mButton = (Button) findViewById(R.id.Button);                                               // 创建动画作用对象：此处以Button为例
+            mButton.animate().alpha(0f);                                                                // 单个动画设置:将按钮变成透明状态
+            mButton.animate().alpha(0f).setDuration(5000).setInterpolator(new BounceInterpolator());    // 单个动画效果设置 & 参数设置
+            mButton.animate().alpha(0f).x(500).y(500);                                                  // 组合动画:将按钮变成透明状态再移动到(500,500)处
 
-        ValueAnimator.ofInt(int... values)：
-            作用：
-                将初始值 以整型数值的形式 过渡到结束值，即估值器是 整型估值器 ——— IntEvaluator；
-
-            工作流程图：
-                ——— res/flowchart/value_animator_ofInt.png；
-
-            具体使用：
-                由于 ValueAnimator 本质只是一种 值 的操作机制，因此这里只先介绍 如何改变一个值 的过程，
-                至于如何实现动画，是需要开发者 手动 将这些 值 赋给 对象的属性值，
-                关于这部分会稍后再做说明；
-
-                操作值的方式 分为 XML设置 / Java 代码设置：
-                    Java代码设置 ——— valueAnimatorWithOfIntByJava()：
-                        实际开发中，建议使用Java代码实现属性动画：因为很多时候属性的起始值是无法提前确定的（无法使用XML设置），这就需要在Java代码里动态获取；
-                        1>.设置动画属性的 初始值 & 结束值；
-                            /*
-                             * ofInt()作用有两个：
-                             *     1>.创建动画实例；
-                             *     2>.将传入的多个Int参数进行平滑过渡：
-                             *          此处传入0和10,表示将值从0平滑过渡到10；
-                             *          如果传入了3个Int参数 a,b,c ,则是先从a平滑过渡到b,再从b平滑过渡到C，以此类推；
-                             *          ValueAnimator.ofInt()内置了整型估值器,直接采用默认的，不需要设置，即默认设置了如何从 初始值 过渡到 结束值；
-                             */
-                            ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 10);
-
-                        2>.设置动画的各种播放属性；
-                            valueAnimator.setDuration(1000);                        // 设置动画运行的时长
-                            valueAnimator.setStartDelay(500);                       // 设置动画延迟播放时间
-                            valueAnimator.setRepeatCount(0);                        // 设置动画重复播放次数 = 重放次数+1，动画播放次数 = infinite 时,动画无限重复
-                            valueAnimator.setRepeatMode(ValueAnimator.RESTART);     // 设置重复播放动画模式，ValueAnimator.RESTART(默认):正序播放；ValueAnimator.REVERSE:倒序回放
-
-                        3>.将改变的值手动赋值给对象的属性值 ——— 通过动画的更新监听器 AnimatorUpdateListener；
-                        4>.将改变后的值赋给对象的属性值 ——— View.setProperty(currentValue)；
-                        5>.刷新视图，即重新绘制，从而实现动画效果 ——— View.requestLayout()；
-                            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                @Override
-                                public void onAnimationUpdate(ValueAnimator animation) {
-                                    int currentValue = (Integer) animation.getAnimatedValue();  // 获得改变后的值
-                                    Log.d(TAG, currentValue + "");                              // 输出改变后的值
-                                    /*
-                                     * 4.将改变后的值赋给对象的属性值 ——— View.setProperty(currentValue)
-                                     */
-                                    valueAnimatorOfInt.setTextSize(currentValue);
-                                    /*
-                                     * 5.刷新视图，即重新绘制，从而实现动画效果 ——— View.requestLayout()
-                                     */
-                                    valueAnimatorOfInt.requestLayout();
-                                }
-                            });
-
-                        6>.启动动画；
-                            valueAnimator.start();
-
-                    XML设置：
-                        具备重用性，即将通用的动画写到XML里，可在各个界面中去重用它；
-                        1>.在路径 res/animator 的文件夹里创建相应的动画 value_animation_ofint.xml 文件：
-
-                        2>.设置动画参数：
-                            具体属性参见 value_animation_ofint.xml；
-
-                        3>.在Java代码中启动动画：
-                            Animator animator = AnimatorInflater.loadAnimator(this, R.animator.value_animation_ofint);  // 载入XML动画
-                            animator.setTarget(valueAnimatorOfInt);                                                     // 设置动画对象
-                            animator.start();                                                                           // 启动动画
-                            这里并没有实现和Java代码一样的 TextView 中 字体大小 变化的动画效果，
-                            因为 Animator 类暂时不能添加 AnimatorUpdateListener，只能添加 AnimatorListener & AnimatorListenerAdapter；
-
-            ofInt(int... values)源码分析：
-                /*
-                 * 允许传入一个或多个 Int 参数：
-                 *     输入一个的情况（如a）——— 从0过渡到a；
-                 *     输入多个的情况（如a，b，c）——— 先从a平滑过渡到b，再从b平滑过渡到C；
-                 */
-                public static ValueAnimator ofInt(int... values) {
-                    ValueAnimator anim = new ValueAnimator();                           // 创建动画对象实例
-                    anim.setIntValues(values);                                          // 将传入的值赋值给这个动画对象实例
-                    return anim;                                                        // 返回这个动画对象实例
-                }
-
-        ValueAnimator.ofFloat(float... values)：
-            作用：
-                将 初始值 以浮点型数值的形式 过渡到结束值，即估值器是 浮点型估值器 ——— FloatEvaluator；
-
-            工作流程图：
-                ——— res/flowchart/value_animator_ofFloat.png；
-
-            具体使用：
-                由于 ValueAnimator 本质只是一种 值 的操作机制，因此这里只先介绍 如何改变一个值 的过程，
-                至于如何实现动画，是需要开发者 手动 将这些 值 赋给 对象的属性值，
-                关于这部分会稍后再做说明；
-
-                操作值的方式 分为 XML设置 / Java 代码设置：
-                    Java代码设置：
-                        与 ValueAnimator.ofInt(int... values) 使用方法类似，只需将 ofInt(**) 替换为 ofFloat(**) 即可；
-
-                    XML设置：
-                        与 ValueAnimator.ofInt(int... values) 使用方法类似，xml 文件中同样是使用 <animator> 标签；
-
-            与ofInt(**)比较：
-                ValueAnimator.ofInt() 与 ValueAnimator.oFloat() 仅仅只是在估值器上的区别：（即如何从 初始值 过渡到 结束值）
-                    a.ValueAnimator.oFloat() ——— 采用默认的 浮点型估值器 （FloatEvaluator）；
-                    b.ValueAnimator.ofInt() ——— 采用默认的 整型估值器（IntEvaluator）；
-
-        ValueAnimator.ofObject(TypeEvaluator evaluator, Object... values)：
-            作用：
-                将初始值 以对象的形式 过渡到结束值；
-
-            工作流程图：
-                ——— res/flowchart/value_animator_ofObject.png；
-
-            具体使用 ——— 只有 Java代码设置 方式：
-                1>.创建 开始动画时的对象 & 结束动画时的对象；
-                    MyObject startObject = new MyObject();                              // 开始动画时的对象
-                    MyObject endObject = new MyObject();                                // 结束动画时的对象
-
-                2>.创建 ValueAnimator 动画对象；
-                    /*
-                     * 参数1 ——— 自定义的估值器对象（TypeEvaluator 类型参数）；
-                     * 参数2 ——— 开始动画的对象；
-                     * 参数3 ——— 结束动画的对象；
-                     */
-                    ValueAnimator valueAnimator = ValueAnimator.ofObject(new myObjectEvaluator(), startObject, endObject);
-
-                3>.设置动画的各种播放属性；
-                    valueAnimator.setDuration(1000);                        // 设置动画运行的时长
-                    valueAnimator.setStartDelay(500);                       // 设置动画延迟播放时间
-                    ...
-                    ...
-
-                4>.启动动画；
-                    valueAnimator.start();
+            特别注意：
+                a.通过 ViewPropertyAnimator 的动画会 自动启动，无需调用start()方法，因为新的接口中使用了隐式启动动画的功能，只要我们将动画定义完成后，动画就会自动启动；
+                b.该机制对于组合动画也同样有效，只要不断地连缀新的方法，那么动画就不会立刻执行，等到所有在ViewPropertyAnimator上设置的方法都执行完毕后，动画就会自动启动；
+                c.如果不想使用这一默认机制，也可以显式地调用start()方法来启动动画；
 
 
+    主要使用到的类对象：
+            使用类                                  作用                                   备注
+        ValueAnimator           先改变值，然后 手动赋值 给对象的属性从而实现动画       本质是一种 值 的操作机制
+                                       （间接 对对象属性 进行操作）
+
+        ObjectAnimator          先改变值，然后 自动赋值 给对象的属性从而实现动画       采用 get() & set() 进行自动赋值
+                                       （直接 对对象属性 进行操作）
+
+        AnimatorSet             实现组合动画
+
+        ViewPropertyAnimator    采用 对对象操作 实现属性动画
+
+        addListener()           动画监听器，监听动画 开始、结束、取消、重复 时刻       可采用动画适配器 ——— AnimatorListenerAdapter
+                                                                                        （按需监听动画时刻）
+
+        类间的 继承关系 如下：
+
+                                 Animator
+                                    |
+                                    |
+                            |—— —— —— —— —— ——|
+                            |                 |
+                      ValueAnimator       AnimatorSet
+                            |
+                            |
+                      ObjectAnimator
 
 
+    总结：
+        ValueAnimator类 & ObjectAnimator 类，二者都属于属性动画
+            ——— 相同点是，本质上都是 先改变值，然后 赋值 给对象的属性从而实现动画效果；
+            ——— 不同点是，
+                    ValueAnimator 类 是 先改变值，然后 手动赋值 给对象的属性从而实现动画，是 间接 对对象属性进行操作；
+                    ObjectAnimator类 是 先改变值，然后 自动赋值 给对象的属性从而实现动画；是 直接 对对象属性进行操作；
 
-
+        整体工作流程图：
+            ——— res/flowchart/property_animation.png；
 
 
 

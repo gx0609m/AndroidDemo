@@ -1,0 +1,220 @@
+ObjectAnimator
+        说明：
+            继承自 ValueAnimator，即 底层的动画实现机制 是基于 ValueAnimator 类；
+
+        工作流程图：
+            ——— res/flowchart/object_animator.png；
+
+        原理：
+            直接对 对象的属性值 进行改变 ——— 通过不断控制 值 的变化，再不断 自动 赋给对象的属性，从而实现动画效果；
+
+        与 ValueAnimator 的区别：
+            由各自的 工作流程图 可看出：
+            ValueAnimator  ——— 是先改变值，然后 手动赋值 给对象的属性从而实现动画，是 间接 对对象属性进行操作；
+            ObjectAnimator ——— 是先改变值，然后 自动赋值 给对象的属性从而实现动画，是 直接 对对象属性进行操作；
+
+        具体使用：
+            由于是继承了 ValueAnimator 类，所以使用的方法十分类似，也分为两种方式 ——— XML代码设置 / Java代码设置；
+
+            Java代码设置：
+                /*
+                 * 获取属性动画对象实例 objectAnimator，ofFloat() 作用有两个：
+                 *     1>.创建动画实例；
+                 *     2>.参数设置，具体参数说明如下：
+                 *            a.Object object ——— 需要操作的对象；
+                 *            b.String property ——— 需要操作的对象的属性；
+                 *            c.float ....values ——— 动画初始值 & 结束值（不固定长度）：
+                 *                          若是两个参数a,b，则动画效果则是从属性的a值到b值；
+                 *                          若是三个参数a,b,c，则则动画效果则是从属性的a值到b值再到c值；
+                 *                          以此类推，至于如何从初始值 过渡到 结束值，同样是由估值器决定；
+                 *                          此处ObjectAnimator.ofFloat()是有系统内置的 浮点型估值器FloatEvaluator，同ValueAnimator讲解；
+                 */
+                ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(Object object, String property, float ....values);
+                /*
+                 * 设置动画相关属性参数
+                 */
+                objectAnimator.setDuration(500);                              // 设置动画运行的时长
+                objectAnimator.setStartDelay(500);                            // 设置动画延迟播放时间
+                objectAnimator.setRepeatCount(0);                             // 设置动画重复播放次数 = 重放次数+1，动画播放次数 = infinite时,动画无限重复
+                objectAnimator.setRepeatMode(ObjectAnimator.RESTART);         // 设置重复播放动画模式，ValueAnimator.RESTART(默认):正序重放，ValueAnimator.REVERSE:倒序回放
+                /*
+                 * 启动动画
+                 */
+                animator.start();
+
+            XML代码设置：
+                1>.在路径 res/animator 的文件夹里创建动画效果 object_animator.xml文件；
+
+                2>.设置动画参数；
+                    具体属性参数可见 object_animator.xml；
+
+                3>.在Java代码中启动动画；
+                    Animator animator = AnimatorInflater.loadAnimator(context, R.animator.view_animation);       // 载入XML动画
+                    animator.setTarget(view);                                                                    // 设置动画对象
+                    animator.start();                                                                            // 启动动画
+
+        实例：
+            Java代码设置实例 ——— objectAnimatorByJava()；
+
+        .ofFloat()第二个参数说明：
+            通过上面的说明，我们知道了：
+                属性动画 最基本的四种动画 效果：
+                            透明度；
+                            平移；
+                            旋转；
+                            缩放；
+                即在 ObjectAnimator.ofFloat() 的第二个参数 String property 传入：
+                            alpha；
+                            translationX、translationY；
+                            rotation、rotationX、rotationY；
+                            scaleX、scaleY；
+
+            那么ofFloat()的第二个参数还能传入什么属性值呢？
+            答案是：任意属性值！
+            原因是：
+                ObjectAnimator类对 对象属性值进行改变 从而实现动画效果的 本质是
+                                         ——— 通过不断控制 值 的变化，再不断 自动赋值 给对象的属性，来实现动画效果的；
+
+                而 自动赋给对象的属性 的本质是
+                                         ——— 调用该对象属性的 set() & get() 方法进行赋值；
+
+                所以，ObjectAnimator.ofFloat(Object object, String property, float ....values)的第二个参数传入值的作用是
+                                         ——— 让ObjectAnimator类根据传入的 属性名 去寻找该 对象对应属性名的 set() & get() 方法，从而进行对象属性值的赋值；
+
+                如：
+                    /*
+                     * 其实Button对象中并没有rotation这个属性值；
+                     * ObjectAnimator 并不是直接对我们传入的属性名进行操作；
+                     * 而是根据传入的属性值"rotation" 去寻找对象 对应属性名对应的get和set方法，从而通过 set() & get() 对属性进行赋值；
+                     */
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(mButton, "rotation", 0f, 360f);
+                    /*
+                     * 因为Button对象中有rotation属性所对应的 get & set 方法；
+                     * 所以，传入的rotation属性是有效的；
+                     * 因此，才能对rotation这个属性进行操作赋值；
+                     * 实际上，这两个方法是由View对象提供的，所以任何继承自View的对象都具备这个属性
+                     */
+                    public void setRotation(float value);
+                    public float getRotation();
+
+        自动赋值的逻辑：
+            之前有提到，属性动画中，
+                ValueAnimator  采用的是 手动赋值；
+                ObjectAnimator 采用的是 自动赋值；
+            而 自动赋值 的本质，其实是 调用该对象属性的 set() & get() 方法进行赋值；
+
+            那 自动赋值 的 整体逻辑 是怎样的呢？
+                1>.初始化时，如果 对象属性的初始值 没有提供，则调用该属性的 get() 进行取值；
+                2>.当值变化时，调用对象该属性的 set() 方法，从而将新的属性值设置给对象属性；
+
+            因此，
+                1>.ObjectAnimator 类针对的是 任意对象 & 任意属性值 ，并不是单单针对于View对象；
+                2>.如果采用 ObjectAnimator 类实现动画效果，那么需要操作的对象：
+                       ——— 必须 有该属性的 set() 方法；
+                       ——— 如果没有给该属性设置初始值，那么还 必须 有该属性的 get() 方法；
+
+        自定义对象属性实现动画效果：
+            对于属性动画，其拓展性在于
+                ——— 不局限于系统限定的动画，可以自定义动画，即自定义对象的属性，并通过操作自定义的属性从而实现动画；
+
+            那么，该如何自定义属性呢？
+                本质上，就是：
+                    1>.为对象设置需要操作属性的 set() & get() 方法；
+                    2>.通过实现TypeEvaluator类从而定义属性变化的逻辑；
+
+            步骤：
+                1>.设置 需要操作对象类属性的 set() & get() 方法；
+                    a.通过继承原始类，直接给类加上该属性的 set() & get() ，从而实现给对象加上该属性的 set() & get()；
+                    b.通过 包装原始动画对象，间接给对象加上该属性的 get() & set()，即 用一个类来包装原始对象；
+
+                2>.在布局文件加入（自定义）View控件；
+
+                3>.根据需求实现 TypeEvaluator 接口；
+
+                4>.调用ObjectAnimator.ofObject()方法；
+
+        注意事项：
+            从 自动赋值的逻辑 可知，如果想让对象的 属性a 的动画生效，属性a 需要 同时满足 下面两个条件：
+            1>.对象必须要提供属性a的 set() 方法：
+                ——— 如果没传递初始值，那么需要提供属性a get() 方法，因为系统要去拿属性a的 初始值；
+                ——— 若该条件不满足，程序直接Crash；
+
+            2>.对象提供的 属性a 的 set() 方法对属性a的改变必须 通过某种方法反映出来：
+                ——— 如带来ui上的变化；
+                ——— 若该条件不满足，动画无效，但不会Crash）；
+
+            上述条件，一般第二条都会满足，出现问题的一般会在第一条，比如说：
+                ——— 由于View的 setWidth() 并不是设置View的宽度，而是设置View的最大宽度和最小宽度的；
+                    所以通过setWidth()无法改变控件的宽度；
+                    所以对View视图的width属性动画没有效果；
+
+            为什么没有动画效果呢？
+                ——— 我们来看View的 getWidth() & setWidth() 方法：
+                    getWidth()：
+                        @ViewDebug.ExportedProperty(category = "layout")
+                        public final int getWidth() {
+                            return mRight - mLeft;                          // getWidth 的确是获取View的宽度
+                        }
+
+                    setWidth(**)：
+                        public void setWidth(int pixels) {
+                            mMaxWidth = mMinWidth = pixels;                 // 因为setWidth()并不是设置View的宽度，而是设置Button的最大宽度和最小宽度的
+                            mMaxWidthMode = mMinWidthMode = PIXELS;         // 所以通过setWidth()无法改变控件的宽度，因而，对width属性做属性动画没有效果
+                            requestLayout();
+                            invalidate();
+                        }
+
+            那问题就来了，
+                ——— 针对上述对象属性的 setXX()不是设置属性值 或 根本没有 setXX()/getXX() 的情况应，该如何处理呢？
+
+            解决方案有两个：
+                a.通过继承原始类，直接给类加上该属性的 get() & set() ，从而实现给对象加上该属性的 get() & set()；
+                b.通过包装原始动画对象，间接给对象加上该属性的 get() & set()，即 用一个类来包装原始对象；
+
+                对于a方法，不是很复杂，下面主要来说下b方法的具体步骤：
+                    ——— 以为 Button 的 width属性 添加动画为例；
+                    1>.提供ViewWrapper类,用于包装View对象：
+                        // 本例:内部类的形式包装Button对象
+                        private static class ViewWrapper {
+                            private View mTarget;
+
+                            // 构造方法:传入需要包装的对象
+                            public ViewWrapper(View target) {
+                                mTarget = target;
+                            }
+
+                            // 为宽度设置get（） & set（）
+                            public int getWidth() {
+                                return mTarget.getLayoutParams().width;
+                            }
+
+                            public void setWidth(int width) {
+                                mTarget.getLayoutParams().width = width;
+                                mTarget.requestLayout();
+                            }
+                        }
+
+                    2>.创建动画作用对象：此处以Button为例：
+                        mButton = (Button) findViewById(R.id.Button);
+
+                    3>.创建包装类,并传入动画作用的对象：
+                        wrapper = new ViewWrapper(mButton);
+
+                    4>.设置动画的对象为包装类的对象：
+                        ObjectAnimator.ofInt(wrapper, "width", 500).setDuration(3000).start();
+
+                包装类的方式，本质上是采用了设计模式中的装饰模式，即通过包装类从而实现扩展对象的功能；
+
+
+
+
+
+
+
+
+
+
+
+
+
+（https://www.jianshu.com/p/2412d00a0ce4）

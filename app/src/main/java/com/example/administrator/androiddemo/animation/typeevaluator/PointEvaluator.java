@@ -1,4 +1,4 @@
-package com.example.administrator.androiddemo.animation.propertyanimation;
+package com.example.administrator.androiddemo.animation.typeevaluator;
 
 import android.animation.TypeEvaluator;
 

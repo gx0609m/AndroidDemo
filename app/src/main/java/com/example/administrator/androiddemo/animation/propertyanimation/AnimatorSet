@@ -1,0 +1,48 @@
+AnimatorSet
+    简介：
+        单一动画实现的效果相当有限，更多的使用场景是同时使用多种动画效果，即组合动画；
+
+
+    具体使用：
+        AnimatorSet.play(Animator anim)   ：播放当前动画
+        AnimatorSet.after(long delay)   ：将现有动画延迟x毫秒后执行
+        AnimatorSet.with(Animator anim)   ：将现有动画和传入的动画同时执行
+        AnimatorSet.after(Animator anim)   ：将现有动画插入到传入的动画之后执行
+        AnimatorSet.before(Animator anim) ：  将现有动画插入到传入的动画之前执行
+
+
+    实例：
+        实现方式有 ——— XML设置 / Java代码设置；
+        a.Java代码设置方式 ——— animatorSetByJava()；
+            1>.创建 要设置动画对象 的实例；
+                animatorSetTv = (TextView) findViewById(R.id.animatorSetTv);
+
+            2>.设置需要组合的动画效果；
+                float curTranslationX = animatorSetTv.getTranslationX();
+                ObjectAnimator translation = ObjectAnimator.ofFloat(animatorSetTv, "translationX", curTranslationX, 300, curTranslationX);  // 平移动画
+                ObjectAnimator rotate = ObjectAnimator.ofFloat(animatorSetTv, "rotation", 0f, 360f);                                        // 旋转动画
+                ObjectAnimator alpha = ObjectAnimator.ofFloat(animatorSetTv, "alpha", 1f, 0f, 1f);                                          // 透明度动画
+
+            3>.创建组合动画的对象；
+                AnimatorSet animSet = new AnimatorSet();
+
+            4>.根据需求组合动画；
+                animSet.play(translation).with(rotate).before(alpha);
+
+            5>.设置 组合动画 的相关属性；
+                animSet.setDuration(5000);
+
+            6>.启动动画；
+                animSet.start();
+
+        b.XML代码设置方式 ——— animatorSetByXML()；
+            1>.在 res/animator的文件夹里创建组合动画 animator_set.xml文件；
+
+            2>.设置动画效果；
+                具体 动画属性 可参看animator_set.xml；
+
+            3>.Java代码中启动动画；
+                animatorSetTv = (TextView) findViewById(R.id.animatorSetTv);
+                AnimatorSet animator = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.animator_set);      // 创建组合动画对象 & 加载XML动画
+                animator.setTarget(animatorSetTv);                                                                      // 设置动画作用对象
+                animator.start();                                                                                       // 启动动画

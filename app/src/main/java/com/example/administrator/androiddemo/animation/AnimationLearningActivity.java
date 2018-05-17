@@ -9,7 +9,9 @@ import android.widget.Button;
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.animation.frameanimation.FrameAnimationLearningActivity;
 import com.example.administrator.androiddemo.animation.interpolator.InterpolatorLearningActivity;
-import com.example.administrator.androiddemo.animation.propertyanimation.PropertyAnimationLearningActivity;
+import com.example.administrator.androiddemo.animation.propertyanimation.AnimatorSetLearningActivity;
+import com.example.administrator.androiddemo.animation.propertyanimation.ObjectAnimatorLearningActivity;
+import com.example.administrator.androiddemo.animation.propertyanimation.ValueAnimatorLearningActivity;
 import com.example.administrator.androiddemo.animation.tweenanimation.AnimationListenerLearningActivity;
 import com.example.administrator.androiddemo.animation.tweenanimation.TweenAnimationLearningActivity;
 import com.example.administrator.androiddemo.animation.typeevaluator.TypeEvaluatorLearningActivity;
@@ -25,7 +27,9 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
 
     private Button frameAnimation;
     private Button tweenAnimation;
-    private Button propertyAnimation;
+    private Button valueAnimator;
+    private Button objectAnimator;
+    private Button animatorSet;
 
     private Button interpolator;
     private Button typeEvaluator;
@@ -52,8 +56,16 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
                 intent = new Intent(AnimationLearningActivity.this, TweenAnimationLearningActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.propertyAnimation:
-                intent = new Intent(AnimationLearningActivity.this, PropertyAnimationLearningActivity.class);
+            case R.id.valueAnimator:
+                intent = new Intent(AnimationLearningActivity.this, ValueAnimatorLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.objectAnimator:
+                intent = new Intent(AnimationLearningActivity.this, ObjectAnimatorLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.animatorSet:
+                intent = new Intent(AnimationLearningActivity.this, AnimatorSetLearningActivity.class);
                 startActivity(intent);
                 break;
             case R.id.animationListener:
@@ -78,8 +90,11 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
         tweenAnimation = (Button) findViewById(R.id.tweenAnimation);
         tweenAnimation.setOnClickListener(this);
 
-        propertyAnimation = (Button) findViewById(R.id.propertyAnimation);
-        propertyAnimation.setOnClickListener(this);
+        valueAnimator = (Button) findViewById(R.id.valueAnimator);
+        valueAnimator.setOnClickListener(this);
+
+        objectAnimator = (Button) findViewById(R.id.objectAnimator);
+        objectAnimator.setOnClickListener(this);
 
         animationListener = (Button) findViewById(R.id.animationListener);
         animationListener.setOnClickListener(this);
@@ -89,5 +104,8 @@ public class AnimationLearningActivity extends BaseActivity implements View.OnCl
 
         typeEvaluator = (Button) findViewById(R.id.typeEvaluator);
         typeEvaluator.setOnClickListener(this);
+
+        animatorSet = (Button) findViewById(R.id.animatorSet);
+        animatorSet.setOnClickListener(this);
     }
 }

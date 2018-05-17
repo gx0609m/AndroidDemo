@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.administrator.androiddemo.R;
-import com.example.administrator.androiddemo.animation.propertyanimation.PointEvaluator;
 import com.example.administrator.androiddemo.base.BaseActivity;
 import com.example.administrator.androiddemo.model.object.Point;
 
