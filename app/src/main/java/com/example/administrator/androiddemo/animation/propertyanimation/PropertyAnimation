@@ -43,6 +43,13 @@ Property Animation
             由工作流程图可以看到，属性动画有两个非常重要的类
                 ——— ValueAnimator类 & ObjectAnimator类；
 
+    监听动画：
+        addListener(new AnimatorListener()){...}
+
+        addListener(new AnimatorListenerAdapter()){...}
+
+        addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {...}
+
 
     ViewPropertyAnimator：
         说明：
