@@ -8,7 +8,8 @@ import android.widget.Button;
 
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
-import com.example.administrator.androiddemo.customview.LayoutInflater.LayoutInflaterLearningActivity;
+import com.example.administrator.androiddemo.customview.layoutInflater.LayoutInflaterLearningActivity;
+import com.example.administrator.androiddemo.customview.measure.MeasureLearningActivity;
 
 /**
  * Created by gx on 2018/4/16 0016
@@ -17,6 +18,7 @@ import com.example.administrator.androiddemo.customview.LayoutInflater.LayoutInf
 public class CustomViewLearningActivity extends BaseActivity implements View.OnClickListener {
 
     private Button layoutInflater;
+    private Button measure;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,11 +36,18 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
                 intent = new Intent(CustomViewLearningActivity.this, LayoutInflaterLearningActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.measure:
+                intent = new Intent(CustomViewLearningActivity.this, MeasureLearningActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
     private void initView() {
         layoutInflater = (Button) findViewById(R.id.layoutInflater);
         layoutInflater.setOnClickListener(this);
+
+        measure = (Button) findViewById(R.id.measure);
+        measure.setOnClickListener(this);
     }
 }

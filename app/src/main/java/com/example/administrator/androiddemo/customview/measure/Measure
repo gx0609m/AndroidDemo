@@ -1,0 +1,13 @@
+Measure
+    作用：
+        测量View的 宽 & 高；
+            a.在某些情况下，需要多次 测量（measure） 才能确定View 最终的 宽 & 高；
+            b.该情况下，measure过程后得到的 宽 & 高 可能不准确；
+            c.此处建议,在layout过程中onLayout()去获取 最终的 宽 & 高；
+
+        了解 measure() 过程前，需要先了解 传递尺寸（宽 / 高测量值） 的两个类：
+            ——— ViewGroup.LayoutParams 类；
+            ——— MeasureSpecs 类（父视图对子视图的测量要求）；
+
+
+    ViewGroup.LayoutParams：
