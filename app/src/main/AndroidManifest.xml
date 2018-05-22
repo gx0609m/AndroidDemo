@@ -70,6 +70,7 @@
         <activity android:name=".customview.layoutInflater.LayoutInflaterLearningActivity" />
         <activity android:name=".customview.measure.MeasureLearningActivity" />
         <activity android:name=".customview.layout.LayoutLearningActivity" />
+        <activity android:name=".customview.draw.DrawLearningActivity" />
 
         <!-- WebView相关 -->
         <activity android:name=".webview.WebViewLearningActivity" />

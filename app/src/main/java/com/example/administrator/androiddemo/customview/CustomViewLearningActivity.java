@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
+import com.example.administrator.androiddemo.customview.draw.DrawLearningActivity;
 import com.example.administrator.androiddemo.customview.layout.LayoutLearningActivity;
 import com.example.administrator.androiddemo.customview.layoutInflater.LayoutInflaterLearningActivity;
 import com.example.administrator.androiddemo.customview.measure.MeasureLearningActivity;
@@ -21,6 +22,7 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
     private Button layoutInflater;
     private Button measure;
     private Button layout;
+    private Button draw;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +48,10 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
                 intent = new Intent(CustomViewLearningActivity.this, LayoutLearningActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.draw:
+                intent = new Intent(CustomViewLearningActivity.this, DrawLearningActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -58,5 +64,8 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
 
         layout = (Button) findViewById(R.id.layout);
         layout.setOnClickListener(this);
+
+        draw = (Button) findViewById(R.id.draw);
+        draw.setOnClickListener(this);
     }
 }
