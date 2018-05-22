@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.example.administrator.androiddemo.R;
 import com.example.administrator.androiddemo.base.BaseActivity;
+import com.example.administrator.androiddemo.customview.layout.LayoutLearningActivity;
 import com.example.administrator.androiddemo.customview.layoutInflater.LayoutInflaterLearningActivity;
 import com.example.administrator.androiddemo.customview.measure.MeasureLearningActivity;
 
@@ -19,6 +20,7 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
 
     private Button layoutInflater;
     private Button measure;
+    private Button layout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +42,10 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
                 intent = new Intent(CustomViewLearningActivity.this, MeasureLearningActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.layout:
+                intent = new Intent(CustomViewLearningActivity.this, LayoutLearningActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -49,5 +55,8 @@ public class CustomViewLearningActivity extends BaseActivity implements View.OnC
 
         measure = (Button) findViewById(R.id.measure);
         measure.setOnClickListener(this);
+
+        layout = (Button) findViewById(R.id.layout);
+        layout.setOnClickListener(this);
     }
 }

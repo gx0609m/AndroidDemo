@@ -503,7 +503,7 @@ Measure
                           int heightMeasure ;
 
                           measureChildren(widthMeasureSpec, heightMeasureSpec)；                // 1. 遍历所有子View & 测量（measureChildren()），->> 分析1
-                          void measureCarson{                                                   // 2. 合并所有子View的尺寸大小，最终得到ViewGroup父视图的测量值
+                          void measureXX{                                                       // 2. 合并所有子View的尺寸大小，最终得到ViewGroup父视图的测量值
                               ...                                                               // 自身实现
                           }
                           setMeasuredDimension(widthMeasure,  heightMeasure);                   // 3. 存储测量后View宽/高的值：调用setMeasuredDimension()，类似单一View的过程，此处不作过多描述
@@ -551,10 +551,10 @@ Measure
 
             至此，ViewGroup 的 measure过程 分析完毕；
 
-
             总结：
                 ViewGroup的measure过程如下：
                 ——— \res\flowchart\viewgroup_measure_flow.png；
+
 
         ViewGroup的measure过程实例解析 ——— LinearLayout：
             此处直接进入LinearLayout复写的onMeasure（）代码分析 ——— 详细分析请看代码注释：

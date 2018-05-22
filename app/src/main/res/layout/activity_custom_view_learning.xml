@@ -16,4 +16,10 @@
         android:layout_height="wrap_content"
         android:text="Measure" />
 
+    <Button
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Layout" />
+
 </LinearLayout>
