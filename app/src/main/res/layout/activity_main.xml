@@ -135,9 +135,18 @@
         android:id="@+id/animation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Animation"
-        android:layout_below="@+id/webView"
         android:layout_alignLeft="@+id/webView"
-        android:layout_alignStart="@+id/webView" />
+        android:layout_alignStart="@+id/webView"
+        android:layout_below="@+id/webView"
+        android:text="Animation" />
+
+    <Button
+        android:id="@+id/eventDispatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/network"
+        android:layout_toEndOf="@+id/recycleview"
+        android:layout_toRightOf="@+id/recycleview"
+        android:text="EventDispatch" />
 
 </RelativeLayout>

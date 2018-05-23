@@ -98,6 +98,9 @@
         <activity android:name=".animation.interpolator.InterpolatorLearningActivity" />
         <activity android:name=".animation.typeevaluator.TypeEvaluatorLearningActivity" />
 
+        <!-- 事件分发 -->
+        <activity android:name=".eventdispatch.EventDispatchLearningActivity" />
+
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
 import com.example.administrator.androiddemo.customview.CustomViewLearningActivity;
+import com.example.administrator.androiddemo.eventdispatch.EventDispatchLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
 import com.example.administrator.androiddemo.network.NetworkLearningActivity;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button network;
     private Button customView;
     private Button animation;
+    private Button eventDispatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.animation:
                 intent = new Intent(MainActivity.this, AnimationLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.eventDispatch:
+                intent = new Intent(MainActivity.this, EventDispatchLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -184,5 +190,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         animation = (Button) findViewById(R.id.animation);
         animation.setOnClickListener(this);
+
+        eventDispatch = (Button) findViewById(R.id.eventDispatch);
+        eventDispatch.setOnClickListener(this);
     }
 }
