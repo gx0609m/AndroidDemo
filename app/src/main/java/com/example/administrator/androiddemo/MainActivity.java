@@ -24,6 +24,7 @@ import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActi
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 import com.example.administrator.androiddemo.thread.ThreadCorrelationLearningActivity;
 import com.example.administrator.androiddemo.tips.TipsLearningActivity;
+import com.example.administrator.androiddemo.viewpager.ViewPagerWithFragmentLearningActivity;
 import com.example.administrator.androiddemo.webview.WebViewLearningActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button customView;
     private Button animation;
     private Button eventDispatch;
+    private Button viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.eventDispatch:
                 intent = new Intent(MainActivity.this, EventDispatchLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.viewPager:
+                intent = new Intent(MainActivity.this, ViewPagerWithFragmentLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -192,5 +198,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         eventDispatch = (Button) findViewById(R.id.eventDispatch);
         eventDispatch.setOnClickListener(this);
+
+        viewPager = (Button) findViewById(R.id.viewPager);
+        viewPager.setOnClickListener(this);
     }
 }

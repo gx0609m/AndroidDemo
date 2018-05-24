@@ -102,6 +102,9 @@
         <!-- 事件分发 -->
         <activity android:name=".eventdispatch.EventDispatchLearningActivity" />
 
+        <!-- ViewPager相关 -->
+        <activity android:name=".viewpager.ViewPagerWithFragmentLearningActivity" />
+
     </application>
 
 </manifest>

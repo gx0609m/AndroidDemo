@@ -149,4 +149,13 @@
         android:layout_toRightOf="@+id/recycleview"
         android:text="EventDispatch" />
 
+    <Button
+        android:id="@+id/viewPager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tips"
+        android:layout_alignRight="@+id/tips"
+        android:layout_below="@+id/customView"
+        android:text="ViewPager" />
+
 </RelativeLayout>
