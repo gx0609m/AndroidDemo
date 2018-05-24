@@ -1,4 +1,4 @@
-package com.example.administrator.androiddemo.customview.measure;
+package com.example.administrator.androiddemo.view.measure;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

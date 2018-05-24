@@ -15,7 +15,7 @@ import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
-import com.example.administrator.androiddemo.customview.CustomViewLearningActivity;
+import com.example.administrator.androiddemo.view.ViewLearningActivity;
 import com.example.administrator.androiddemo.eventdispatch.EventDispatchLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
 import com.example.administrator.androiddemo.imageload.ImageLoadLearningActivity;
@@ -24,7 +24,6 @@ import com.example.administrator.androiddemo.recycleview.RecycleViewLearningActi
 import com.example.administrator.androiddemo.service.ServiceLearningActivity;
 import com.example.administrator.androiddemo.thread.ThreadCorrelationLearningActivity;
 import com.example.administrator.androiddemo.tips.TipsLearningActivity;
-import com.example.administrator.androiddemo.tips.toolsnamespace.ToolsNameSpaceLearningActivity;
 import com.example.administrator.androiddemo.webview.WebViewLearningActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.customView:
-                intent = new Intent(MainActivity.this, CustomViewLearningActivity.class);
+                intent = new Intent(MainActivity.this, ViewLearningActivity.class);
                 startActivity(intent);
                 break;
             case R.id.animation:

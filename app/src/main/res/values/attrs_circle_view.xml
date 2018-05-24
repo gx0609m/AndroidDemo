@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 自定义CircleView 属性集合 -->
+    <!-- 在该集合下，设置不同的自定义属性 -->
+    <declare-styleable name="CircleView">
+        <!-- 在attr标签下设置需要的自定义属性 -->
+        <!-- 此处定义了一个设置图形的颜色:circle_color属性，格式是color，代表颜色 -->
+        <!-- 格式有很多种,如资源id(reference)等等 -->
+        <attr name="circle_color" format="color" />
+
+        <!-- 此处定义了一个 给CircleView设置文字 的属性:circle_text，格式是string，表示文字内容-->
+        <attr name="circle_text" format="string" />
+    </declare-styleable>
+
+</resources>

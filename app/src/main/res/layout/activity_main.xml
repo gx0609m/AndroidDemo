@@ -129,7 +129,7 @@
         android:layout_alignBottom="@+id/network"
         android:layout_toEndOf="@+id/network"
         android:layout_toRightOf="@+id/network"
-        android:text="CustomView" />
+        android:text="View" />
 
     <Button
         android:id="@+id/animation"

@@ -1,4 +1,4 @@
-package com.example.administrator.androiddemo.customview.layoutInflater;
+package com.example.administrator.androiddemo.view.layoutInflater;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

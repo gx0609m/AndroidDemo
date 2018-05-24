@@ -1,0 +1,279 @@
+CustomView
+    分类：
+        自定义View分为两大类，具体如下图：
+                                                                |————继承View
+                             |————自定义单一View（不含子View）————|
+                             |                                  |————继承特定View，如TextView
+            自定义View分类————|
+                             |                                  |————继承ViewGroup
+                             |————自定义ViewGroup（含子View）————|
+                                                                |————继承特定ViewGroup，如LinearLayout
+
+
+    具体介绍 & 使用场景：
+              类型                  使用场景                    实现方式                              注意点
+        —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— —— ——
+           继承特定View        拓展某种已有View的功能     在原有View的基础增加功能           不需要自己支持 wrap_content & padding
+        （自定义单一View）        （如，TextView）              （较容易）
+
+            继承View         实现不规则效果、自定义控件        通过绘制的方式实现             需要自己支持 wrap_content & padding
+        （自定义单一View）       （如不规则图形，圆）          （即重写onDraw()）           （不需要支持margin，因为margin属性是由父容器决定的）
+
+        继承特定的ViewGroup     拓展某种布局的布局方式     在原有ViewGroup的基础组合               相对简单，但自由度不高
+        （自定义ViewGroup）       （如，下雨效果）               （较容易）
+
+          继承ViewGroup       实现不规则效果、自定义布局   ViewGroup & 子View的measure、    需要自己支持 wrap_content & padding & margin；
+        （自定义ViewGroup）       （如，下雨效果）           layout过程 （较复杂）                   更加接近View的底层；
+
+        ——— res\summarychart\custom_view_summary.png；
+
+
+    使用注意点：
+        在使用自定义View时有很多注意点（坑），希望大家要非常留意，总体如下图：
+                                                      | ———— wrap_content
+                           | ———— a. 支持特殊属性 ———— | ———— padding
+                           |                          | ———— margin
+                           |
+                           | ———— b. 多线程直接使用post方式 ———— 避免使用Handler等其他方式
+            使用注意点 ———— |
+                           | ———— c. 避免内存泄漏 ———— 线程、动画要及时停止
+                           |
+                           | ———— d. 处理好滑动冲突 ———— View带有滑动嵌套情况
+
+
+        a.支持特殊属性：
+            支持wrap_content：
+                ——— 如果不在onMeasure（）中对wrap_content作特殊处理，那么wrap_content属性将失效；
+
+            支持padding & margin：
+                如果不支持，那么 padding & margin（ViewGroup中） 的属性将失效；
+
+            对于继承View的控件，padding 是在 onDraw() 中处理；
+            对于继承ViewGroup的控件，padding & margin 会直接影响 measure和layout 过程；
+
+        b.多线程直接使用post方式：
+            View的内部本身提供了post系列 的方法，完全可以替代Handler的作用，使用起来更加方便、直接；
+
+        c.避免内存泄露：
+            主要针对View中含有线程或动画的情况，当View退出或不可见时，记得及时停止该View包含的线程和动画，否则会造成内存泄露问题；
+            启动或停止 线程/动画 的方式：
+                ——— 启动 线程/ 动画：使用view.onAttachedToWindow（），因为该方法调用的时机是当包含View的Activity启动的时刻；
+                ——— 停止 线程/ 动画：使用view.onDetachedFromWindow（），因为该方法调用的时机是当包含View的Activity退出或当前View被remove的时刻；
+
+        d.处理好滑动冲突：
+            当View带有滑动嵌套情况时，必须要处理好滑动冲突，否则会严重影响View的显示效果；
+
+
+    具体实例：
+        说明：
+            我们将通过一个例子，来阐述：
+                a. 如何实现一个基本的自定义View（继承View）；
+                b. 如何自身支持 wrap_content & padding属性；
+                c. 如何为自定义View提供自定义属性（如颜色等等）；
+
+            实例 ——— 画一个实心圆；
+
+        具体步骤：
+            1>.创建自定义View类（CircleView 继承 View）；
+                详见 CircleView.java；
+
+            2>.在布局文件中添加自定义View类的组件；
+                <?xml version="1.0" encoding="utf-8"?>
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+                    <!-- 必须添加schemas —— xmlns:app="http://schemas.android.com/apk/res-auto" 声明才能使用自定义属性-->
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:context=".view.customview.CustomViewLearningActivity">
+
+                    <!-- 注意添加自定义View组件的标签名：包名 + 自定义View类名-->
+                    <com.example.administrator.androiddemo.view.customview.CircleView
+                        android:id="@+id/circleView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="150dp"
+                        android:background="#000000"
+                        android:padding="15dp"
+                        app:circle_color="#FF4081"
+                        app:circle_text="NEO" />
+                </LinearLayout>
+
+            3>.在MainActivity类设置显示；
+                setContentView(R.layout.activity_custom_view_learning);
+
+
+            4>.至此，一个基本的自定义View已经实现了，接下来继续看自定义View所有应该注意的点：
+                a. 手动支持 wrap_content属性 ———— CircleView ———— 在 onMeasure() 中添加默认的 宽/高 值；
+
+                b. 手动支持 padding属性      ———— CircleView ———— 在 onDraw() 中计算位置相关值时，将padding值也计算进去；
+
+                c. 提供自定义属性（如颜色等），具体如下：
+                    ——— 在values目录下创建自定义属性的xml文件 attrs_circle_view.xml；
+                            具体的设置的 属性参数 等如下：
+                            <-- 1. reference：使用某一资源ID -->
+                            <declare-styleable name="名称">
+                                <attr name="background" format="reference" />
+                            </declare-styleable>
+                              // 使用方式 Java代码 & xml代码
+                              // 1. Java代码
+                              private int ResID;
+                              private Drawable ResDraw;
+                              ResID = typedArray.getResourceId(R.styleable.SuperEditText_background, R.drawable.background); // 获得资源ID
+                              ResDraw = getResources().getDrawable(ResID); // 获得Drawble对象
+                              // 2. xml代码
+                            <ImageView
+                                android:layout_width="42dip"
+                                android:layout_height="42dip"
+                                app:background="@drawable/图片ID" />
+
+                            <--  2. color：颜色值 -->
+                            <declare-styleable name="名称">
+                                <attr name="textColor" format="color" />
+                            </declare-styleable>
+                            // 格式使用
+                            <TextView
+                                android:layout_width="42dip"
+                                android:layout_height="42dip"
+                                android:textColor="#00FF00" />
+
+                            <-- 3. boolean：布尔值 -->
+                            <declare-styleable name="名称">
+                                <attr name="focusable" format="boolean" />
+                            </declare-styleable>
+                            // 格式使用
+                            <Button
+                                android:layout_width="42dip"
+                                android:layout_height="42dip"
+                                android:focusable="true" />
+
+                            <-- 4. dimension：尺寸值 -->
+                            <declare-styleable name="名称">
+                                <attr name="layout_width" format="dimension" />
+                            </declare-styleable>
+                            // 格式使用：
+                            <Button
+                                android:layout_width="42dip"
+                                android:layout_height="42dip" />
+
+                            <-- 5. float：浮点值 -->
+                            <declare-styleable name="AlphaAnimation">
+                                <attr name="fromAlpha" format="float" />
+                                <attr name="toAlpha" format="float" />
+                            </declare-styleable>
+                            // 格式使用
+                            <alpha
+                                android:fromAlpha="1.0"
+                                android:toAlpha="0.7" />
+
+                            <-- 6. integer：整型值 -->
+                            <declare-styleable name="AnimatedRotateDrawable">
+                                <attr name="frameDuration" format="integer" />
+                                <attr name="framesCount" format="integer" />
+                            </declare-styleable>
+                            // 格式使用
+                            <animated-rotate
+                                xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:frameDuration="100"
+                                android:framesCount="12"
+                             />
+
+                            <-- 7. string：字符串 -->
+                            <declare-styleable name="MapView">
+                                <attr name="apiKey" format="string" />
+                            </declare-styleable>
+                            // 格式使用
+                            <com.google.android.maps.MapView
+                             android:apiKey="0jOkQ80oD1JL9C6HAja99uGXCRiS2CGjKO_bc_g" />
+
+                            <-- 8. fraction：百分数 -->
+                            <declare-styleable name="RotateDrawable">
+                                <attr name="pivotX" format="fraction" />
+                                <attr name="pivotY" format="fraction" />
+                            </declare-styleable>
+                            // 格式使用
+                            <rotate
+                                xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:pivotX="200%"
+                                android:pivotY="300%"
+                             />
+
+                            <-- 9. enum：枚举值 -->
+                            <declare-styleable name="名称">
+                                <attr name="orientation">
+                                    <enum name="horizontal" value="0" />
+                                    <enum name="vertical" value="1" />
+                                </attr>
+                            </declare-styleable>
+                            // 格式使用
+                            <LinearLayout
+                                android:layout_width="fill_parent"
+                                android:layout_height="fill_parent"
+                            />
+
+                            <-- 10. flag：位或运算 -->
+                            <declare-styleable name="名称">
+                                <attr name="windowSoftInputMode">
+                                    <flag name="stateUnspecified" value="0" />
+                                    <flag name="stateUnchanged" value="1" />
+                                    <flag name="stateHidden" value="2" />
+                                    <flag name="stateAlwaysHidden" value="3" />
+                                    <flag name="stateVisible" value="4" />
+                                    <flag name="stateAlwaysVisible" value="5" />
+                                    <flag name="adjustUnspecified" value="0x00" />
+                                    <flag name="adjustResize" value="0x10" />
+                                    <flag name="adjustPan" value="0x20" />
+                                    <flag name="adjustNothing" value="0x30" />
+                                </attr>
+                            </declare-styleable>、
+                            // 使用
+                            <activity
+                                android:name=".StyleAndThemeActivity"
+                                android:label="@string/app_name"
+                                android:windowSoftInputMode="stateUnspecified | stateUnchanged　|　stateHidden" >
+
+                                <intent-filter>
+                                    <action android:name="android.intent.action.MAIN" />
+                                    <category android:name="android.intent.category.LAUNCHER" />
+                                </intent-filter>
+                            </activity>
+
+                            <-- 特别注意：属性定义时可以指定多种类型值 -->
+                            <declare-styleable name="名称">
+                                <attr name="background" format="reference|color" />
+                            </declare-styleable>
+                            // 使用
+                            <ImageView
+                                android:layout_width="42dip"
+                                android:layout_height="42dip"
+                                android:background="@drawable/图片ID|#00FF00" />
+
+                    ——— 在自定义View的构造方法中解析自定义属性的值；
+                            // 加载自定义属性集合CircleView
+                            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleView);
+
+                            // 解析集合中的属性circle_color属性
+                            // 该属性的id为:R.styleable.CircleView_circle_color
+                            // 将解析的属性传入到画圆的画笔颜色变量当中（本质上是自定义画圆画笔的颜色）
+                            // 第二个参数是默认设置颜色（即无指定circle_color情况下使用）
+                            color = a.getColor(R.styleable.CircleView_circle_color, Color.RED);
+                            text = a.getString(R.styleable.CircleView_circle_text);
+
+                            // 解析后释放资源
+                            a.recycle();
+
+                    ——— 在布局文件中使用自定义属性；
+                            根布局中，必须添加schemas声明才能使用自定义属性，xmlns:app="http://schemas.android.com/apk/res-auto"；
+                            设置自定义属性，app:circle_color="#FF4081"；
+
+        至此，一个 较为规范 的 自定义View 就完成了；
+
+
+
+
+
+
+
+
+（https://www.jianshu.com/p/e9d8420b1b9c）

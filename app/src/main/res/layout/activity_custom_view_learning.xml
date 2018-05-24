@@ -1,31 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    tools:context=".view.customview.CustomViewLearningActivity">
+    <!-- 必须添加schemas —— xmlns:app="http://schemas.android.com/apk/res-auto" 声明才能使用自定义属性-->
 
-    <Button
-        android:id="@+id/layoutInflater"
+    <com.example.administrator.androiddemo.view.customview.CircleView
+        android:id="@+id/circleView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LayoutInflater" />
-
-    <Button
-        android:id="@+id/measure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Measure" />
-
-    <Button
-        android:id="@+id/layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Layout" />
-
-    <Button
-        android:id="@+id/draw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Draw"/>
+        android:layout_height="150dp"
+        android:background="#000000"
+        android:padding="15dp"
+        app:circle_color="#FF4081"
+        app:circle_text="NEO" />
 
 </LinearLayout>
