@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ViewPager + Fragment
+ * （自定义 XViewPager）ViewPager + Fragment
  * <p>
  * Created by gx on 2018/5/24 0024
  */
@@ -32,7 +31,7 @@ public class ViewPagerWithFragmentLearningActivity extends BaseActivity implemen
     private ThirdFragment thirdFragment;
     private FourthFragment fourthFragment;
 
-    private ViewPager viewPager;
+    private XViewPager viewPager;
 
     private List<Fragment> fragmentList = new ArrayList<>();
 
@@ -63,7 +62,8 @@ public class ViewPagerWithFragmentLearningActivity extends BaseActivity implemen
     }
 
     private void initView() {
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = (XViewPager) findViewById(R.id.viewPager);
+        viewPager.setScrollEnabled(false);
 
         firstFragment = new FirstFragment();
         secondFragment = new SecondFragment();

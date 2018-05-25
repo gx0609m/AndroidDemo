@@ -15,6 +15,7 @@ import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
+import com.example.administrator.androiddemo.refreshloading.RefreshLoadingLearningActivity;
 import com.example.administrator.androiddemo.view.ViewLearningActivity;
 import com.example.administrator.androiddemo.eventdispatch.EventDispatchLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button animation;
     private Button eventDispatch;
     private Button viewPager;
+    private Button refreshLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.viewPager:
                 intent = new Intent(MainActivity.this, ViewPagerWithFragmentLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.refreshLoading:
+                intent = new Intent(MainActivity.this, RefreshLoadingLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -201,5 +207,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         viewPager = (Button) findViewById(R.id.viewPager);
         viewPager.setOnClickListener(this);
+
+        refreshLoading = (Button) findViewById(R.id.refreshLoading);
+        refreshLoading.setOnClickListener(this);
     }
 }
