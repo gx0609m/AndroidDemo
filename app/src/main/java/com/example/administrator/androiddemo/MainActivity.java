@@ -15,7 +15,7 @@ import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
-import com.example.administrator.androiddemo.refreshloading.RefreshLoadingLearningActivity;
+import com.example.administrator.androiddemo.refreshload.RefreshLoadingLearningActivity;
 import com.example.administrator.androiddemo.view.ViewLearningActivity;
 import com.example.administrator.androiddemo.eventdispatch.EventDispatchLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;

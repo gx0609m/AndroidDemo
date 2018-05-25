@@ -106,7 +106,7 @@
         <activity android:name=".viewpager.ViewPagerWithFragmentLearningActivity" />
 
         <!-- 上拉刷新 & 下拉加载 -->
-        <activity android:name=".refreshloading.RefreshLoadingLearningActivity" />
+        <activity android:name=".refreshload.RefreshLoadingLearningActivity" />
 
     </application>
 

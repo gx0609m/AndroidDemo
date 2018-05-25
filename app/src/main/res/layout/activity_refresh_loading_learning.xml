@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.administrator.androiddemo.refreshloading.PullRefreshLayout
+    <com.example.administrator.androiddemo.refreshload.PullRefreshLayout
         android:id="@+id/pullRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.example.administrator.androiddemo.refreshloading.PullRefreshLayout>
+    </com.example.administrator.androiddemo.refreshload.PullRefreshLayout>
 
 </LinearLayout>
