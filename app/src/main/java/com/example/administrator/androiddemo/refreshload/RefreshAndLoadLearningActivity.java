@@ -12,7 +12,7 @@ import com.example.administrator.androiddemo.base.BaseActivity;
  * Created by gx on 2018/5/25 0025
  */
 
-public class RefreshLoadingLearningActivity extends BaseActivity {
+public class RefreshAndLoadLearningActivity extends BaseActivity {
 
     private PullRefreshLayout pullRefreshLayout;
 

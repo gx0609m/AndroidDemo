@@ -2,12 +2,14 @@ package com.example.administrator.androiddemo.refreshload;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -33,9 +35,11 @@ public class PullRefreshLayout extends ViewGroup {
     private TextView mFooterText;
     private ProgressBar mFooterProgressBar;
 
-    private int mlastMoveY;  // 起始点的y坐标
+    private int mlastMoveY;       // MOTION_EVENT事件中（因为肯定会从ACTION_DOWN事件开始），不断的记录 最新的MOTION_EVENT事件  y 坐标值
+    private int mLastYIntercept;  // MOTION_EVENT事件后，将 mlastMoveY 值赋给 mLastYIntercept，为的是在下一次 MOTION_EVENT事件中（本类中是ACTION_MOVE） ，将二者的值进行比较，来判断时 向下/向上 滑动
 
     private int lastChildIndex;
+    // 所有content的高度，即所有child加起来的高度，是一个不断累加的值，添加一个child就添加一些，但是不包括header和footer
     private int mLayoutContentHeight = 0;
 
     boolean intercept = false;
@@ -144,10 +148,33 @@ public class PullRefreshLayout extends ViewGroup {
         Log.e(TAG, "onDraw");
     }
 
+    /*
+     * 处理滑动事件，我们需要注意两个函数：
+     *
+     * onInterceptTouchEvent
+     *     ——— 在 onTouchEvent 前面执行，在这里需要判断是否应该拦截这个事件，然后交由 我的onTouchEvent 处理；
+     *         一旦 onInterceptTouchEvent 返回 true 表示拦截，后续事件都会交给 onTouchEvent 处理，onInterceptTouchEvent 不会再去执行下一次按下事件；
+     *
+     * onTouchEvent
+     *     ——— 处理touch事件，如按下，滑动，松开等；
+     */
+
+    /**
+     * 在这个函数中判断是否应该拦截滑动事件；
+     * <p>
+     * 例如child是一个ListView，
+     * ——— 那么，当它没有滑到头或者没有滑到尾的时候，我们都不应该拦截；
+     * ——— ACTION_DOWN 和 ACTION_UP和不需要拦截；
+     * ——— 当事件为 ACTION_MOVE 时，
+     * 如果是向下滑动，判断第一个child是否滑倒最上面，如果是，则更新状态为 TRY_REFRESH；
+     * 如果是向上滑动，则判断最后一个child是否滑动最底部，如果是，则更新状态为TRY_LOADMORE；
+     * 然后返回 intercept = true；
+     * 这样，接下来的滑动事件就会传给本类的 onTouchEvent 处理；
+     */
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
 
-        int y = (int) ev.getY();
+        int y = (int) ev.getY();    // 如果是 ACTION_MOVE 事件的话，那么 y 值是不断改变的，因为不断的getY()
 
         // 正在刷新 或 加载更多，避免重复
         if (status == Status.REFRESHING || status == Status.LOADING) {
@@ -157,17 +184,36 @@ public class PullRefreshLayout extends ViewGroup {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mlastMoveY = y;
+                intercept = false;
                 break;
             case MotionEvent.ACTION_MOVE:
-
+                // 向下滑动
+                if (y > mLastYIntercept) {
+                    // 判断 刷新 是否拦截
+                    View child = getChildAt(lastChildIndex); // 如果 内部放置的都是 ListView、RecyclerView之类的，那么 getChildAt(lastChildIndex) 和 getChildAt(0) 效果应该是一样的
+                    intercept = getRefreshIntercept(child);
+                    if (intercept) {
+                        updateStatus(Status.TRY_REFRESH);
+                    }
+                }
+                // 向上滑动
+                else if (y < mLastYIntercept) {
+                    // 判断 加载 是否拦截
+                    View child = getChildAt(lastChildIndex); // 如果 内部放置的都是 ListView、RecyclerView之类的，那么 getChildAt(lastChildIndex) 和 getChildAt(0) 效果应该是一样的
+                    intercept = getLoadMoreIntercept(child);
+                    if (intercept) {
+                        updateStatus(Status.TRY_LOADMORE);
+                    }
+                }
                 break;
             case MotionEvent.ACTION_UP:
-
+                intercept = false;
                 break;
         }
-
         Log.e(TAG, "onInterceptTouchEvent");
-        return super.onInterceptTouchEvent(ev);
+
+        mLastYIntercept = mlastMoveY;
+        return intercept;
     }
 
     @Override
@@ -176,4 +222,96 @@ public class PullRefreshLayout extends ViewGroup {
         return super.onTouchEvent(event);
     }
 
+    /*汇总判断 刷新&加载 是否拦截*/
+    private boolean getRefreshIntercept(View child) {
+        boolean ifIntercept = false;
+        if (child instanceof RecyclerView) {
+            ifIntercept = recyclerViewRefreshIntercept(child);
+        } else if (child instanceof AdapterView) {
+            ifIntercept = adapterViewRefreshIntercept(child);
+        } else if (child instanceof ScrollView) {
+            ifIntercept = scrollViewRefreshIntercept(child);
+        }
+        return ifIntercept;
+    }
+
+    private boolean getLoadMoreIntercept(View child) {
+        boolean ifIntercept = false;
+        if (child instanceof RecyclerView) {
+            ifIntercept = recyclerViewLoadMoreIntercept(child);
+        } else if (child instanceof AdapterView) {
+            ifIntercept = adapterViewLoadMoreIntercept(child);
+        } else if (child instanceof ScrollView) {
+            ifIntercept = scrollViewLoadMoreIntercept(child);
+        }
+        return ifIntercept;
+    }
+    /*汇总判断 刷新&加载 是否拦截*/
+
+
+    /*具体判断 各种View 是否应该拦截*/
+    // 判断 RecyclerView刷新 是否拦截
+    private boolean recyclerViewRefreshIntercept(View child) {
+        boolean ifIntercept = false;
+        RecyclerView recyclerView = (RecyclerView) child;
+        if (recyclerView.computeVerticalScrollOffset() < 0) {  // 拦截
+            ifIntercept = true;
+        }
+        return ifIntercept;
+    }
+
+    // 判断RecyclerView加载更多是否拦截
+    private boolean recyclerViewLoadMoreIntercept(View child) {
+        boolean ifIntercept = false;
+        RecyclerView recyclerView = (RecyclerView) child;
+        if (recyclerView.computeVerticalScrollExtent() + recyclerView.computeVerticalScrollOffset()
+                >= recyclerView.computeVerticalScrollRange()) {
+            ifIntercept = true;
+        }
+        return ifIntercept;
+    }
+
+    // 判断AdapterView下拉刷新是否拦截
+    private boolean adapterViewRefreshIntercept(View child) {
+        boolean intercept = true;
+        AdapterView adapterChild = (AdapterView) child;
+        if (adapterChild.getFirstVisiblePosition() != 0
+                || adapterChild.getChildAt(0).getTop() != 0) {
+            intercept = false;
+        }
+        return intercept;
+    }
+
+    // 判断AdapterView加载更多是否拦截
+    private boolean adapterViewLoadMoreIntercept(View child) {
+        boolean intercept = false;
+        AdapterView adapterChild = (AdapterView) child;
+        if (adapterChild.getLastVisiblePosition() == adapterChild.getCount() - 1 &&
+                (adapterChild.getChildAt(adapterChild.getChildCount() - 1).getBottom() >= getMeasuredHeight())) {
+            intercept = true;
+        }
+        return intercept;
+    }
+
+    // 判断ScrollView刷新是否拦截
+    private boolean scrollViewRefreshIntercept(View child) {
+        boolean intercept = false;
+        if (child.getScrollY() <= 0) {
+            intercept = true;
+        }
+        return intercept;
+    }
+
+    // 判断ScrollView加载更多是否拦截
+    private boolean scrollViewLoadMoreIntercept(View child) {
+        boolean intercept = false;
+        ScrollView scrollView = (ScrollView) child;
+        View scrollChild = scrollView.getChildAt(0);
+
+        if (scrollView.getScrollY() >= (scrollChild.getHeight() - scrollView.getHeight())) {
+            intercept = true;
+        }
+        return intercept;
+    }
+    /*具体判断 各种View 是否应该拦截*/
 }

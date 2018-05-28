@@ -15,7 +15,7 @@ import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
-import com.example.administrator.androiddemo.refreshload.RefreshLoadingLearningActivity;
+import com.example.administrator.androiddemo.refreshload.RefreshAndLoadLearningActivity;
 import com.example.administrator.androiddemo.view.ViewLearningActivity;
 import com.example.administrator.androiddemo.eventdispatch.EventDispatchLearningActivity;
 import com.example.administrator.androiddemo.imagecompress.ImageCompressLearningActivity;
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.refreshLoading:
-                intent = new Intent(MainActivity.this, RefreshLoadingLearningActivity.class);
+                intent = new Intent(MainActivity.this, RefreshAndLoadLearningActivity.class);
                 startActivity(intent);
                 break;
         }
