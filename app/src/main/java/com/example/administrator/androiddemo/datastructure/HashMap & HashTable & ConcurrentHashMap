@@ -1,0 +1,52 @@
+HashMap
+    背景
+        由于
+            ——— 数组 查找快、增删慢；
+            ——— 链表 查找慢、增删快；
+        因此，Java中使用了 HashMap 来综合这两者的优点；
+
+    简介
+        HashMap 这种数据结构
+            ——— 一般的，实现哈希表的方法为“拉链法”，我们可以理解为“链表的数组”，即 HashMap = 数组 + 链表；
+            ——— 综合了 数组&链表 的优势，具有较快（常量级）的查询速度，及相对较快的增删速度，适合在海量数据的环境中使用；
+
+
+HashTable
+    背景
+        HashMap中的方法是 非线程安全 的，多线程环境中的HashMap并不适用；
+
+
+ConcurrentHashMap
+    背景
+        ConcurrentHashMap中的方法与HashTable中的一样，是线程安全的；
+        不同的是，锁的粒度 以及 如何锁；
+
+        都可以用于多线程的环境，但是当HashTable的大小增加到一定的时候，性能会急剧下降，因为迭代时需要被锁定很长的时间。因为ConcurrentHashMap引入了分割(segmentation)，不论它变得多么大，仅仅需要锁定map的某个部分，而其它的线程不需要等到迭代完成才能访问map。简而言之，在迭代的过程中，ConcurrentHashMap仅仅锁定map的某个部分，而Hashtable则会锁定整个map
+
+
+比较
+    HashTable & ConcurrentHashMap
+        相同点：
+            类中的方法都是线程安全的，都可以用于 多线程 环境下；
+
+        区别：
+            ——— HashTable的大小增加到一定的时候，性能会急剧下降，因为迭代时需要被锁定很长的时间；
+            ——— ConcurrentHashMap引入了 段（segment） 的概念，不论它变得多么大，仅仅需要锁定map的某个部分，而其它的线程不需要等到迭代完成才能访问map；
+
+            简而言之，在迭代的过程中，ConcurrentHashMap仅仅锁定map的某个部分，而HashTable则会锁定整个map；
+
+            它们两者的 主要区别 就是围绕着 锁的粒度 以及 如何锁，如下：
+                ——— HashTable 锁 整个hash表；
+                ——— ConcurrentHashMap 锁 segment（段/桶），ConcurrentHashMap会将hash表分为16（默认值）个segment；
+
+
+
+
+
+
+
+
+
+
+（https://blog.csdn.net/u011258318/article/details/45116877）
+（https://www.cnblogs.com/wang-meng/p/5808006.html）
