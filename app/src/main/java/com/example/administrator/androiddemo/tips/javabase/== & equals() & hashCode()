@@ -1,0 +1,100 @@
+==
+    用于比较 地址 是否相同，这里的 地址 可以理解为栈中的值，因为 栈中的值 是 指向堆中的地址；
+
+    由于 基本数据类型 的值都是存在栈中的，例如：
+        int a = 1;
+        int b = 1;
+    此时，a == b 返回的就是true，因为栈中的 a、b 值都是1，所以相同，返回true；
+
+    而 对象类型 其实是 对象实例 存在堆上，指向对象实例的 引用 存在栈中，因此：
+        String s1 = new String("Hello");
+        String s2 = new String("Hello");
+    此时，s1 == s2 返回的就是false，因为 虽然两个对象实例的值都是 “Hello”，但由于是两个对象实例，
+    因此栈上的 s1、s2 指向的是不同的地址，也就是 s1、s2 中存的地址值是不同的，所以 返回false；
+
+
+equals()
+    equals()是 Object类 中的方法，它可以被重写，通常如果 重写了equals() 还必须 重写hashCode() ，在 Object类 中：
+        /**
+         * Indicates whether some other object is "equal to" this one.
+         */
+        public boolean equals(Object obj) {
+            return (this == obj);
+        }
+    可以看到，Object类中equals()方法的 默认实现 也是 使用“==”，即如果子类不重写equals()的话，效果与使用 “==” 一致；
+
+    我们常见的类，如 String类，就重写了 equals() 方法，重写的实现如下：
+        public boolean equals(Object anObject) {
+            if (this == anObject) {                                 // 如果指向同一个对象实例，直接返回true
+                return true;
+            }
+            if (anObject instanceof String) {                       // 否则，
+                String anotherString = (String) anObject;
+                int n = count;
+                if (n == anotherString.count) {
+                    int i = 0;
+                    while (n-- != 0) {                              // 比较字符串中的 每一个字符 是否相同
+                        if (charAt(i) != anotherString.charAt(i))   // 由于字符是 基本数据类型 ，直接比较栈中的值即可，即使用 “==” 比较
+                                return false;                       // 有一个字符不同，则返回false
+                        i++;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+    因此，对于 String类的equals() 方法，同样使用上面的例子：
+        String s1 = new String("Hello");
+        String s2 = new String("Hello");
+    此时，s1.equals(s2) 返回的就是 true 了，因为 s1、s2 都是String类型，String类又重写了equals()方法，
+    在重写的逻辑中不在使用“==”，取而代之的逻辑是比较字符串的内容了，而 s1、s2 所指向实例的字符串内容都是 “Hello”，因此返回的是 true；
+
+    我们还应该注意，Java语言对 重写equals()的要求 如下，这些要求是必须遵循的：
+        • 对称性：如果x.equals(y)返回“true”，那么y.equals(x)也应该返回“true”；
+        • 反射性：如果x.equals(y)返回“true”，那么y.equals(x)也必须返回“true”；
+        • 类推性：如果x.equals(y)返回“true”，而且y.equals(z)返回是“true”，那么x.equals(z)也应该返回“true”；
+        • 一致性：如果x.equals(y)返回“true”，只要x和y内容一直不变，不管你重复x.equals(y)多少次，都是返回“true”；
+        • 任何情况下，x.equals(null)，永远返回“false”，x.equals(和x不同类型的对象)永远返回“false”；
+    以上这五点，是在重写equals()方法时，必须遵守的准则；
+
+
+hashCode()
+    hashCode()是 Object类 中的方法，它可以被重写，通常如果 重写了equals() 就必须 重写hashCode() ，在 Object类 中：
+        /**
+         * Returns a hash code value for the object. This method is
+         * supported for the benefit of hash tables such as those provided by
+         * {@link java.util.HashMap}.
+         *
+         * 这是一个本地方法，其实现与本地机器有关
+         */
+        public native int hashCode();
+    可以看到，hashCode()返回一个 int型 的值，在 线性数据结构 中通常不会被调用，只有在 散列数据结构 中会被调用，如 HashSet、HashMap等；
+    这里说 “只有在 散列数据结构 中会被调用” 的原因是：
+        ——— hashCode() 原本就是为了提高 在散列数据结构中 查找 的效率；
+
+    我们以 HashMap 为例，说明下在什么情况下 hashCode() 会被调用：
+        ——— 参见 HashMap 内部原理（数组 + 链表）；
+
+    由 HashMap的内部原理，我们可以更好的理解 equals() & hashCode() 间的关系：
+        ——— 若 两个对象引用 s1.equals(s2) 返回 true ，则 s1.hashCode()、s2.hashCode() 返回值 肯定   相同；
+        ——— 若 两个对象引用 s1.equals(s2) 返回 false，则 s1.hashCode()、s2.hashCode() 返回值 有可能 相同；
+        ——— 若 两个对象引用 s1.hashCode()、s2.hashCode() 返回相同的 int值，则 s1.equals(s2) 不一定 返回true；
+        ——— 若 两个对象引用 s1.hashCode()、s2.hashCode() 返回不同的 int值，则 s1.equals(s2) 一定   返回false；
+    因此，如果一个类 重写了equals() 方法，则其必须要 重写hashCode() 方法，防止以后被存入到 散列数据结构 中出现问题；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
