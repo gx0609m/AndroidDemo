@@ -15,6 +15,7 @@ import com.example.administrator.androiddemo.activity.ActivityLearningActivity;
 import com.example.administrator.androiddemo.algorithm.SortLearningActivity;
 import com.example.administrator.androiddemo.animation.AnimationLearningActivity;
 import com.example.administrator.androiddemo.broadcast.BroadcastLearningActivity;
+import com.example.administrator.androiddemo.messagemechanism.MessageMechanismLearningActivity;
 import com.example.administrator.androiddemo.refreshload.RefreshAndLoadLearningActivity;
 import com.example.administrator.androiddemo.view.ViewLearningActivity;
 import com.example.administrator.androiddemo.eventdispatch.EventDispatchLearningActivity;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button eventDispatch;
     private Button viewPager;
     private Button refreshLoading;
+    private Button handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +127,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.refreshLoading:
                 intent = new Intent(MainActivity.this, RefreshAndLoadLearningActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.handler:
+                intent = new Intent(MainActivity.this, MessageMechanismLearningActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -210,5 +216,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         refreshLoading = (Button) findViewById(R.id.refreshLoading);
         refreshLoading.setOnClickListener(this);
+
+        handler = (Button) findViewById(R.id.handler);
+        handler.setOnClickListener(this);
     }
 }

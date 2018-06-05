@@ -166,4 +166,13 @@
         android:layout_alignStart="@+id/animation"
         android:layout_below="@+id/animation"
         android:text="RefreshLoading" />
+
+    <Button
+        android:id="@+id/handler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/eventDispatch"
+        android:layout_toLeftOf="@+id/imageCompress"
+        android:layout_toStartOf="@+id/imageCompress"
+        android:text="Handler" />
 </RelativeLayout>

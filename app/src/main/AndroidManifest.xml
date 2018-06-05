@@ -108,6 +108,9 @@
         <!-- 上拉刷新 & 下拉加载 -->
         <activity android:name=".refreshload.RefreshAndLoadLearningActivity" />
 
+        <!-- Handler相关 -->
+        <activity android:name=".messagemechanism.MessageMechanismLearningActivity" />
+
     </application>
 
 </manifest>

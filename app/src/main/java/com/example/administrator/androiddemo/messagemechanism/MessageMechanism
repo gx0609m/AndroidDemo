@@ -1,0 +1,397 @@
+整体架构
+    ——— res\summarychart\MessageMechanism.jpg；
+
+
+相关概念
+    主线程、子线程、Message、MessageQueue、Looper、Handler：
+    ——— res\summarychart\MessageMechanism.png；
+
+
+写法
+    主线程中 异步消息处理 线程的写法：
+        public Handler mHandler = new Handler() {
+            public void handleMessage(Message msg) {
+                // process incoming messages here
+            }
+        };
+
+        class LooperThread extends Thread {
+            public void run() {
+                // send messages
+                mHandler.sendMessage(message);                   // 消息入队
+            }
+        }
+
+    非主线程中 异步消息处理 线程的最标准（官方）写法：
+        class LooperThread extends Thread {
+            public Handler mHandler;
+
+            public void run() {
+                Looper.prepare();                                // 分析 -->>1
+
+                mHandler = new Handler() {
+                    public void handleMessage(Message msg) {
+                        // process incoming messages here
+                    }
+                };
+
+                Looper.loop();                                   // 分析 -->>2   消息出队
+            }
+        }
+
+    注意到，非主线程中的 Handler/Thread 使用多了两行代码，如果去掉的话，则会报
+        “ Can't create handler inside thread that has not called Looper.prepare()”
+    意思是 “不能在没有调用 Looper.prepare() 的线程中创建Handler”；
+
+    那我们尝试在子线程中先调用一下 Looper.prepare() 呢，即加上 ‘分析 -->>1’ 的代码；
+    果然，这样就不会崩溃了；
+
+    原因是什么呢？                 // 问题1
+    我们来看下 Handler 的构造方法；
+
+
+Handler构造方法（Handler的创建）
+    Handler 有 7 个构造方法，如下：
+     1>.public Handler() {
+            this(null, false);
+        }
+
+     2>.public Handler(boolean async) {
+            this(null, async);
+        }
+
+     3>.public Handler(Callback callback) {
+            this(callback, false);
+        }
+
+     4>.public Handler(Callback callback, boolean async) {
+            if (FIND_POTENTIAL_LEAKS) {
+                final Class<? extends Handler> klass = getClass();
+                if ((klass.isAnonymousClass() || klass.isMemberClass() || klass.isLocalClass()) &&
+                        (klass.getModifiers() & Modifier.STATIC) == 0) {
+                    Log.w(TAG, "The following Handler class should be static or leaks might occur: " +
+                        klass.getCanonicalName());
+                }
+            }
+
+            mLooper = Looper.myLooper();                        // 标记1
+            if (mLooper == null) {
+                throw new RuntimeException(
+                    "Can't create handler inside thread that has not called Looper.prepare()");
+            }
+            mQueue = mLooper.mQueue;
+            mCallback = callback;
+            mAsynchronous = async;
+        }
+
+     5>.public Handler(Looper looper) {
+            this(looper, null, false);
+        }
+
+     6>.public Handler(Looper looper, Callback callback) {
+            this(looper, callback, false);
+        }
+
+     7>.public Handler(Looper looper, Callback callback, boolean async) {
+            mLooper = looper;
+            mQueue = looper.mQueue;
+            mCallback = callback;
+            mAsynchronous = async;
+        }
+
+    可以看到，1>、2>、3>最终调用的都是 构造方法4> ，5>、6>最终调用的是 构造方法7> ；
+    而我们常用的 创建Handler 的方式是通过 1>这种无参构造方法 创建，因此这里我们主要分析下 构造方法4> ；
+
+    可以看到，在 “标记1” 调用了Looper.myLooper()方法获取了一个Looper对象，如果Looper对象为空，则会抛出一个运行时异常，提示的错误正是
+        “Can't create handler inside thread that has not called Looper.prepare()”
+    那什么时候Looper对象才可能为空呢？
+
+    这就要看看Looper.myLooper()中的代码了！
+        /**
+         * Return the Looper object associated with the current thread.  Returns
+         * null if the calling thread is not associated with a Looper.
+         */
+        public static @Nullable Looper myLooper() {
+            return sThreadLocal.get();
+        }
+    这个方法很简单，就是从 sThreadLocal对象中 取出Looper，如果sThreadLocal中有Looper存在就返回Looper，如果没有Looper就返回null；
+
+    因此，我们可以猜测到是在哪里 给sThreadLocal设置Looper 了吧，当然是Looper.prepare()方法！
+    我们来看下它的源码：
+        public static void prepare() {
+            prepare(true);
+        }
+    再看下 prepare(true) 方法：
+        private static void prepare(boolean quitAllowed) {
+            if (sThreadLocal.get() != null) {
+                throw new RuntimeException("Only one Looper may be created per thread");
+            }
+            sThreadLocal.set(new Looper(quitAllowed));      // 标记2
+        }
+    可以看到，方法中首先判断sThreadLocal中是否已经存在Looper了，
+        ——— 如果有，则抛出 “Only one Looper may be created per thread” 异常；
+        ——— 如果没有，则创建一个新的Looper设置进去；
+    这样就
+        ——— 解释了为什么我们要先调用Looper.prepare()方法，才能创建Handler对象；
+        ——— 同时也可以看出每个线程中最多只会有一个Looper对象；
+
+    而且，看到 “标记2” 处，我们跟踪 new Looper(quitAllowed) 进去，发现：
+        private Looper(boolean quitAllowed) {
+            mQueue = new MessageQueue(quitAllowed);
+            mThread = Thread.currentThread();
+        }
+    在创建 Looper实例 的同时，也创建了 MessageQueue实例 ，因此一个Looper也就对应了一个MessageQueue！
+
+    现在再回到 “问题1”，为什么 主线程的Handler 没有调用Looper.prepare()方法，却没有崩溃呢？
+    这是由于在程序启动的时候，系统已经帮我们自动调用了Looper.prepare()方法；
+    查看ActivityThread中的main()方法，代码如下所示：
+        public static void main(String[] args) {
+            SamplingProfilerIntegration.start();
+            CloseGuard.setEnabled(false);
+            Environment.initForCurrentUser();
+            EventLogger.setReporter(new EventLoggingReporter());
+            Process.setArgV0("<pre-initialized>");
+            Looper.prepareMainLooper();                         // 标记3
+            ActivityThread thread = new ActivityThread();
+            thread.attach(false);
+            if (sMainThreadHandler == null) {
+                sMainThreadHandler = thread.getHandler();
+            }
+            AsyncTask.init();
+            if (false) {
+                Looper.myLooper().setMessageLogging(new LogPrinter(Log.DEBUG, "ActivityThread"));
+            }
+            Looper.loop();
+            throw new RuntimeException("Main thread loop unexpectedly exited");
+        }
+    可以看到，在 “标记3” 处调用了Looper.prepareMainLooper()方法，而这个方法又会再去调用Looper.prepare()方法，代码如下所示：
+        public static final void prepareMainLooper() {
+            prepare();
+            setMainLooper(myLooper());
+            if (Process.supportsProcesses()) {
+                myLooper().mQueue.mQuitAllowed = false;
+            }
+        }
+    因此我们应用程序的主线程中会始终存在一个Looper对象，从而不需要再手动去调用Looper.prepare()方法；
+
+    到这里，Handler的创建过程 就算搞定了，总结一下就是
+        ——— 在主线程中可以直接创建Handler对象；
+        ——— 在子线程中需要先调用Looper.prepare()才能创建Handler对象；
+
+
+Handler发送消息
+    Handler发送消息的流程相信大家也已经非常熟悉了：
+        1>.new出一个Message对象；
+        2>.使用setData() 或 arg参数 或 .what参数 等方式为消息携带一些数据；
+        3>.借助Handler将消息发送出去；
+    示例代码如下：
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message message = new Message();
+                message.what = 1;
+                message.arg1 = 11;
+                Bundle bundle = new Bundle();
+                bundle.putString("data", "data");
+                message.setData(bundle);
+                handler.sendMessage(message);
+            }
+        }).start();
+
+    可是这里Handler到底是把Message发送到哪里去了呢？
+    为什么之后又可以在Handler的handleMessage()方法中重新得到这条Message呢？
+
+    为了解决以上两个疑问，我们需要来看下 Handler发送消息 的源码，Handler中提供了很多个发送消息的方法，
+    其中除了sendMessageAtFrontOfQueue()方法外，其它的发送消息方法最终都会辗转调用到sendMessageAtTime()方法中，这个方法的源码如下所示：
+        public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
+            MessageQueue queue = mQueue;            // 在创建Handler实例前， 调用Looper.prepare()方法时，在其内部 new Looper(quitAllowed)的同时也创建了mQueue
+            if (queue == null) {
+                RuntimeException e = new RuntimeException(
+                        this + " sendMessageAtTime() called with no mQueue");
+                Log.w("Looper", e.getMessage(), e);
+                return false;
+            }
+            return enqueueMessage(queue, msg, uptimeMillis);
+        }
+    跟踪进入 enqueueMessage(*,*,*) 方法：
+        private boolean enqueueMessage(MessageQueue queue, Message msg, long uptimeMillis) {
+            msg.target = this;
+            if (mAsynchronous) {
+                msg.setAsynchronous(true);
+            }
+            return queue.enqueueMessage(msg, uptimeMillis);
+        }
+    最后其实是调用 MessageQueue 的 enqueueMessage() 方法，同时也将 msg、uptimeMillis 这两个参数传入；
+
+    这个MessageQueue又是什么东西呢？
+    其实从名字上就可以看出了：
+        ——— 它是一个消息队列；
+        ——— 用于将所有收到的消息以队列的形式进行排列；
+        ——— 并提供入队和出队的方法；
+    这个类是在 Looper的构造函数中 创建的，因此一个Looper也就对应了一个MessageQueue；
+
+    那么 enqueueMessage() 方法毫无疑问就是 入队 的方法了，我们来看下这个方法的源码：
+        boolean enqueueMessage(Message msg, long when) {
+            if (msg.target == null) {
+                throw new IllegalArgumentException("Message must have a target.");
+            }
+            if (msg.isInUse()) {
+                throw new IllegalStateException(msg + " This message is already in use.");
+            }
+
+            synchronized (this) {
+                if (mQuitting) {
+                    IllegalStateException e = new IllegalStateException(
+                            msg.target + " sending message to a Handler on a dead thread");
+                    Log.w(TAG, e.getMessage(), e);
+                    msg.recycle();
+                    return false;
+                }
+
+                msg.markInUse();
+                msg.when = when;                                // 标记4
+                Message p = mMessages;
+                boolean needWake;
+                if (p == null || when == 0 || when < p.when) {
+                    // New head, wake up the event queue if blocked.
+                    msg.next = p;
+                    mMessages = msg;
+                    needWake = mBlocked;
+                } else {
+                    // Inserted within the middle of the queue.  Usually we don't have to wake
+                    // up the event queue unless there is a barrier at the head of the queue
+                    // and the message is the earliest asynchronous message in the queue.
+                    needWake = mBlocked && p.target == null && msg.isAsynchronous();
+                    Message prev;
+                    for (;;) {
+                        prev = p;
+                        p = p.next;
+                        if (p == null || when < p.when) {
+                            break;
+                        }
+                        if (needWake && p.isAsynchronous()) {
+                            needWake = false;
+                        }
+                    }
+                    msg.next = p; // invariant: p == prev.next
+                    prev.next = msg;
+                }
+
+                // We can assume mPtr != 0 because mQuitting is false.
+                if (needWake) {
+                    nativeWake(mPtr);
+                }
+            }
+            return true;
+        }
+    首先你要知道，MessageQueue并没有使用一个集合把所有的消息都保存起来，它只使用了一个mMessages对象表示当前待处理的消息，
+    然后观察上面 “标记4”行 以下的代码我们就可以看出：
+        ——— 所谓的入队，其实就是将所有的消息按时间来进行排序，这个时间当然就是我们刚才介绍的uptimeMillis参数；
+        ——— 具体的操作方法就 根据时间的顺序 调用 msg.next，从而为每一个消息指定它的下一个消息是什么（类似于单链表的原理）；
+
+    当然如果你是通过sendMessageAtFrontOfQueue()方法来发送消息的，它也会调用enqueueMessage()来让消息入队，只不过时间为0，
+    这时会把mMessages赋值为新入队的这条消息，然后将这条消息的next指定为刚才的mMessages，这样也就完成了添加消息到队列头部的操作；
+
+    现在入队操作我们就已经看明白了，那出队操作是在哪里进行的呢？
+    这个就需要看一看 Looper.loop() 的源码了，如下所示：
+        public static void loop() {
+            final Looper me = myLooper();
+            if (me == null) {
+                throw new RuntimeException("No Looper; Looper.prepare() wasn't called on this thread.");
+            }
+            final MessageQueue queue = me.mQueue;               // 由于MessageQueue是在Looper的构造函数中创建的，因此 Looper 与 MessageQueue 一一对应
+
+            // Make sure the identity of this thread is that of the local process,
+            // and keep track of what that identity token actually is.
+            Binder.clearCallingIdentity();
+            final long ident = Binder.clearCallingIdentity();
+
+            for (;;) {                                                      // 标记5
+                Message msg = queue.next(); // might block
+                if (msg == null) {
+                    // No message indicates that the message queue is quitting.
+                    return;
+                }
+
+                // This must be in a local variable, in case a UI event sets the logger
+                final Printer logging = me.mLogging;
+                if (logging != null) {
+                    logging.println(">>>>> Dispatching to " + msg.target + " " +
+                            msg.callback + ": " + msg.what);
+                }
+
+                final long traceTag = me.mTraceTag;
+                if (traceTag != 0 && Trace.isTagEnabled(traceTag)) {
+                    Trace.traceBegin(traceTag, msg.target.getTraceName(msg));
+                }
+                try {
+                    msg.target.dispatchMessage(msg);                        // 标记6
+                } finally {
+                    if (traceTag != 0) {
+                        Trace.traceEnd(traceTag);
+                    }
+                }
+
+                if (logging != null) {
+                    logging.println("<<<<< Finished to " + msg.target + " " + msg.callback);
+                }
+
+                // Make sure that during the course of dispatching the
+                // identity of the thread wasn't corrupted.
+                final long newIdent = Binder.clearCallingIdentity();
+                if (ident != newIdent) {
+                    Log.wtf(TAG, "Thread identity changed from 0x"
+                            + Long.toHexString(ident) + " to 0x"
+                            + Long.toHexString(newIdent) + " while dispatching to "
+                            + msg.target.getClass().getName() + " "
+                            + msg.callback + " what=" + msg.what);
+                }
+
+                msg.recycleUnchecked();
+            }
+        }
+    这个方法从 “标记5” 开始，进入了一个死循环，然后不断地调用的MessageQueue.next()方法，这个next()方法就是消息队列的出队方法；
+    这个方法的简单逻辑就是：
+        ——— 如果当前MessageQueue中存在mMessages(即待处理消息)，就将这个消息出队；
+        ——— 然后让下一条消息成为mMessages，否则就进入一个阻塞状态，一直等到有新的消息入队；
+
+    这里注意下 “标记6” 处，每当有一个消息出队，就将它传递到msg.target的dispatchMessage()方法中，这里的 msg.target 指的就是 Handler，
+    接下来看下Handler中dispatchMessage()的源码：
+        public void dispatchMessage(Message msg) {
+            if (msg.callback != null) {
+                handleCallback(msg);
+            } else {
+                if (mCallback != null) {                    // 标记7
+                    if (mCallback.handleMessage(msg)) {
+                        return;
+                    }
+                }
+                handleMessage(msg);
+            }
+        }
+    在 “标记7” 处进行判断，如果mCallback不为空，则调用mCallback的handleMessage()方法，否则直接调用Handler的handleMessage()方法，并将消息对象作为参数传递过去；
+
+    到这里，Handler发送消息 的过程就说完了，相信大家也都明白了 为什么在 handleMessage() 中可以获取到 sendMessage(message) 中发送的message了！
+    整个 异步消息处理流程 的示意图如下所示：
+        ——— res\summarychart\async_message_mechanism.png；
+
+
+子线程中修改UI
+    除了使用 Handler发送消息 之外，还有以下几种方法可以实现 在子线程中修改UI：
+        ——— Handler的post()方法；
+        ——— View的post()方法；
+        ——— Activity的runOnUiThread()方法；
+
+    
+
+
+
+
+
+
+
+
+
+
+
+（https://blog.csdn.net/guolin_blog/article/details/9991569）

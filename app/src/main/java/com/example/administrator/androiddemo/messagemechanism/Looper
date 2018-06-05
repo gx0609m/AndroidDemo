@@ -1,0 +1,8 @@
+简介
+    消息队列（MessageQueue） 与 处理者（Handler） 的通信媒介；
+
+
+作用
+    消息循环，即：
+    ——— 消息获取，循环取出 消息队列（MessageQueue） 的 消息（Message）；
+    ——— 消息分发，将取出的 消息（Message） 发送给对应的 处理者（Handler）；
