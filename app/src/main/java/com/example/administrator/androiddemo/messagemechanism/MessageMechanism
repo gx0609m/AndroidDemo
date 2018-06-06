@@ -140,7 +140,7 @@ Handler构造方法（Handler的创建）
             mQueue = new MessageQueue(quitAllowed);
             mThread = Thread.currentThread();
         }
-    在创建 Looper实例 的同时，也创建了 MessageQueue实例 ，因此一个Looper也就对应了一个MessageQueue！
+    在创建 Looper实例 的同时，也创建了 MessageQueue实例 ，因此 一个Looper对象 也就对应了一个 MessageQueue对象 ！
 
     现在再回到 “问题1”，为什么 主线程的Handler 没有调用Looper.prepare()方法，却没有崩溃呢？
     这是由于在程序启动的时候，系统已经帮我们自动调用了Looper.prepare()方法；
@@ -215,11 +215,11 @@ Handler发送消息
         }
     跟踪进入 enqueueMessage(*,*,*) 方法：
         private boolean enqueueMessage(MessageQueue queue, Message msg, long uptimeMillis) {
-            msg.target = this;
+            msg.target = this;                                  // 把消息的target设置为本Handler对象
             if (mAsynchronous) {
                 msg.setAsynchronous(true);
             }
-            return queue.enqueueMessage(msg, uptimeMillis);
+            return queue.enqueueMessage(msg, uptimeMillis);     // 把消息放入消息队列中的合适位置
         }
     最后其实是调用 MessageQueue 的 enqueueMessage() 方法，同时也将 msg、uptimeMillis 这两个参数传入；
 
@@ -287,7 +287,7 @@ Handler发送消息
     首先你要知道，MessageQueue并没有使用一个集合把所有的消息都保存起来，它只使用了一个mMessages对象表示当前待处理的消息，
     然后观察上面 “标记4”行 以下的代码我们就可以看出：
         ——— 所谓的入队，其实就是将所有的消息按时间来进行排序，这个时间当然就是我们刚才介绍的uptimeMillis参数；
-        ——— 具体的操作方法就 根据时间的顺序 调用 msg.next，从而为每一个消息指定它的下一个消息是什么（类似于单链表的原理）；
+        ——— 具体的操作方法就 根据时间的顺序 调用 msg.next()，从而为每一个消息指定它的下一个消息是什么（类似于单链表的原理，Looper.loop()在取消息时，也是先取出 MessageQueue 中 队头的Message的）；
 
     当然如果你是通过sendMessageAtFrontOfQueue()方法来发送消息的，它也会调用enqueueMessage()来让消息入队，只不过时间为0，
     这时会把mMessages赋值为新入队的这条消息，然后将这条消息的next指定为刚才的mMessages，这样也就完成了添加消息到队列头部的操作；
@@ -352,13 +352,13 @@ Handler发送消息
         }
     这个方法从 “标记5” 开始，进入了一个死循环，然后不断地调用的MessageQueue.next()方法，这个next()方法就是消息队列的出队方法；
     这个方法的简单逻辑就是：
-        ——— 如果当前MessageQueue中存在mMessages(即待处理消息)，就将这个消息出队；
+        ——— 如果当前MessageQueue中存在mMessages(即待处理消息)，就将这个消息出队（按照时间顺序，取出MessageQueue中 队头的Message ）；
         ——— 然后让下一条消息成为mMessages，否则就进入一个阻塞状态，一直等到有新的消息入队；
 
     这里注意下 “标记6” 处，每当有一个消息出队，就将它传递到msg.target的dispatchMessage()方法中，这里的 msg.target 指的就是 Handler，
     接下来看下Handler中dispatchMessage()的源码：
         public void dispatchMessage(Message msg) {
-            if (msg.callback != null) {
+            if (msg.callback != null) {                     // 标记8
                 handleCallback(msg);
             } else {
                 if (mCallback != null) {                    // 标记7
@@ -370,6 +370,10 @@ Handler发送消息
             }
         }
     在 “标记7” 处进行判断，如果mCallback不为空，则调用mCallback的handleMessage()方法，否则直接调用Handler的handleMessage()方法，并将消息对象作为参数传递过去；
+    另外，从上面的源码中也能看出来， 消息分发的优先级 如下：
+        ——— Message的回调方法：message.callback.run()，优先级最高；
+        ——— Handler的回调方法：Handler.mCallback.handleMessage(msg)，优先级次之；
+        ——— Handler的默认方法：Handler.handleMessage(msg)，优先级最低；
 
     到这里，Handler发送消息 的过程就说完了，相信大家也都明白了 为什么在 handleMessage() 中可以获取到 sendMessage(message) 中发送的message了！
     整个 异步消息处理流程 的示意图如下所示：
@@ -382,11 +386,89 @@ Handler发送消息
         ——— View的post()方法；
         ——— Activity的runOnUiThread()方法；
 
-    
+    Handler的post()方法
+        代码如下所示：
+            public final boolean post(Runnable r){
+               return  sendMessageDelayed(getPostMessage(r), 0);
+            }
+        这里还是调用了sendMessageDelayed()方法去发送一条消息，sendMessageDelayed()最终还是会调用sendMessageAtTime()方法；
+        第一个参数还使用了getPostMessage()方法将Runnable对象转换成了一条消息，我们来看下这个方法的源码：
+            private static Message getPostMessage(Runnable r) {
+                Message m = Message.obtain();
+                m.callback = r;
+                return m;
+            }
+        在这个方法中将 消息的callback字段（m.callback） 的值指定为传入的Runnable对象；
+
+        这个callback字段看起来好像有点眼熟啊，原来，在Handler的dispatchMessage()方法中有做一个检查，见 “标记8” 处：
+            “ 如果Message的callback等于不为null，就会去调用handleCallback()方法 ”，
+        那我们就来看下 handleCallback() 方法中的代码吧：
+            private static void handleCallback(Message message) {
+                message.callback.run();                             // message.callback = runnable
+            }
+        到这里我们发现，handleCallback() 内部竟然就是调用了 一开始传入的Runnable对象 的 run() 方法；
+
+        因此在子线程中通过Handler的post()方法进行UI操作就可以这么写：
+            public class MainActivity extends Activity {
+                private Handler handler;
+
+                @Override
+                protected void onCreate(Bundle savedInstanceState) {
+                    super.onCreate(savedInstanceState);
+                    setContentView(R.layout.activity_main);
+                    handler = new Handler();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // 在这里进行UI操作
+                                    // 因为这个 run() 本质上就是在 Handler.handleCallBack() 中，也就是 Handler.dispatchMessage() 中执行
+                                }
+                            });
+                        }
+                    }).start();
+                }
+            }
+        虽然在写法上有点差别，但是原理是完全一样的，我们在Runnable对象的run()方法里更新UI，效果完全等同于在handleMessage()方法中更新UI；
+
+    View的post()方法
+        先看一下View中的post()方法：
+            public boolean post(Runnable action) {
+                final AttachInfo attachInfo = mAttachInfo;
+                if (attachInfo != null) {
+                    return attachInfo.mHandler.post(action);            // 标记9
+                }
+
+                // Postpone the runnable until we know on which thread it needs to run.
+                // Assume that the runnable will be successfully placed after attach.
+                getRunQueue().post(action);
+                return true;
+            }
+        根据 “标记9” 处，原来就是调用了 Handler的post() 方法；
+
+    Activity的runOnUiThread()方法
+        代码如下所示：
+            public final void runOnUiThread(Runnable action) {
+                if (Thread.currentThread() != mUiThread) {
+                    mHandler.post(action);
+                } else {
+                    action.run();
+                }
+            }
+        代码已经展示的很清晰明了了，
+            ——— 如果 当前线程 不是 UI线程（主线程），就去调用Handler的post()方法；
+            ——— 如果 当前线程 是  UI线程（主线程），就去调用Runnable的run()方法；
+
+    小结
+        通过对以上 三个在子线程中修改UI方法 的源码的分析，我们发现了：
+            它们背后的原理是相同的，都是通过 借助异步消息处理 的机制来实现的；
 
 
-
-
+总结
+    到这里，相信我们已经对 异步消息处理机制 有了更好的了解了；
+    ——— res\summarychart\message_mechanism2.jpg；
 
 
 

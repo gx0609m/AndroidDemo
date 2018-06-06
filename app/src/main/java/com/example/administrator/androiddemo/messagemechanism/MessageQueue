@@ -4,3 +4,14 @@
 
 作用
     存储 Handler 发送过来的 消息（Message）；
+
+
+主要方法
+    ——— boolean enqueueMessage(Message msg, long when)；
+
+    ——— Message next()；
+
+
+
+
+

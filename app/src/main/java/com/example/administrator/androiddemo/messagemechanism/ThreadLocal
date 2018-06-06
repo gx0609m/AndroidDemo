@@ -1,0 +1,26 @@
+简介
+    ThreadLocal并不是Android的sdk中的类，而是java.lang中的一个类；
+
+
+作用
+    该类的作用是为线程创建一个 基于线程的 变量存储，称之为 线程局部存储 ；
+
+    简单的说，就是作用域在线程内，本线程内的该类中的任何对象保持一致；
+
+
+原理
+    ThreadLocal可以使对象达到线程隔离的目的，它为每一个线程维护自己的变量拷贝，通过其中的set方法将变量绑定到线程上；
+
+    ThreadLocal提供了一种解决多线程同步的问题解决方案，通过为每一份变量进行拷贝，这样的话，每个线程操作的都是属于自己的变量，
+    而不是共同的一个变量，因此也就不需要同步锁了；
+
+    在Android的异步线程中，ThreadLocal 为 每个线程变量 绑定 一个Looper对象 ；
+    而 Looper实例 创建的同时，也创建了 MessageQueue实例 ，因此 一个Looper对象 也就对应了一个 MessageQueue对象；
+
+
+主要方法
+    ——— public void set(T value)；
+
+    ——— public T get()；
+
+

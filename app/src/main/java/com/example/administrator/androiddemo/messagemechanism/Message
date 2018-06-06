@@ -4,3 +4,42 @@
 
 作用
     存储需要操作的通信信息；
+
+
+主要方法
+    /**
+     * Return a new Message instance from the global pool. Allows us to
+     * avoid allocating new objects in many cases.
+     */
+    public static Message obtain() {
+
+        // Message内部维护了1个Message池，用于Message消息对象的复用
+        // 使用obtain（）则是直接从池内获取
+        // 建议使用 此方法 创建 消息对象，避免每次都使用new重新分配内存
+
+        synchronized (sPoolSync) {
+            if (sPool != null) {
+                Message m = sPool;
+                sPool = m.next;
+                m.next = null;         //从sPool中取出一个Message对象，并消息链表断开
+                m.flags = 0;           // clear in-use flag
+                sPoolSize--;           //消息池的可用大小进行减1操作
+                return m;
+            }
+        }
+
+        // 若池内无消息对象可复用，则还是用关键字new创建
+        return new Message();
+    }
+
+
+主要成员变量
+    数据类型         成员变量         解释
+     int             what         消息类别
+     long            when         消息触发时间
+     int             arg1         参数1
+     int             arg2         参数2
+     Object          obj          消息内容
+     Handler         target       消息响应方
+     Runnable        callback     回调方法
+

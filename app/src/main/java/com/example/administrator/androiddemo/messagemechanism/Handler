@@ -16,10 +16,36 @@
                                        b.处理 循环器（Looper） 分发过来的 消息（Message）；
 
 
+主要方法
+    ——— public final boolean sendMessage(Message msg)；
+
+    ——— public final boolean post(Runnable r)；
+
+    ——— public void dispatchMessage(Message msg)；
+
+    ——— private static void handleCallback(Message message)；
+
+    ——— public void handleMessage(Message msg)；
 
 
+主要用途
+    1>.合理调度安排 消息 和 runnable对象 ，使它们在 将来的某个点 被执行；
+    2>.将一个动作 入队 安排在 非当前线程 执行；
 
 
+说明
+    Handler属于某个线程，取决Handler对象在哪个线程中建立，Handler在构建时做了如下的默认动作：
+        ——— 从线程上下文取得Looper；
+        ——— 通过 Looper获取到消息队列 并记录在自己的成员mQueue变量中；
 
+
+Handler发送消息
+    Handler有两个发送消息的方法：
+        ——— post(Runnable r)；
+        ——— sendMessage(Message msg)；
+    这两个方法，本质上都是调用了 sendMessageAtTime(Message msg, long uptimeMillis) 方法，
+    而发送消息，其实有两步：
+        a.将 消息的target 设置为 本Handler对象 ；
+        b.将 消息 放入 消息队列中 的合适位置 ；
 
 
