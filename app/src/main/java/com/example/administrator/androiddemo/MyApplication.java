@@ -3,6 +3,7 @@ package com.example.administrator.androiddemo;
 import android.app.Application;
 
 import com.example.administrator.androiddemo.imageload.fresco.ImageLoaderConfig;
+import com.example.administrator.androiddemo.utils.CrashHandler;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 /**
@@ -15,5 +16,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fresco.initialize(this, ImageLoaderConfig.getImagePipelineConfig(this));
+//        CrashHandler.getInstance().init(getApplicationContext());  // 开发阶段注释掉此行
     }
 }
