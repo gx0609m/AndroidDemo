@@ -46,7 +46,7 @@ public class ThreadLearningActivity extends BaseActivity implements View.OnClick
 //        new MyThread("thread1").start();
     }
 
-    private class MyThread extends Thread {
+    private static class MyThread extends Thread {
 
         private String params;
 
@@ -85,7 +85,7 @@ public class ThreadLearningActivity extends BaseActivity implements View.OnClick
 //        new Thread(new MyRunnable("thread2")).start();
     }
 
-    private class MyRunnable implements Runnable {
+    private static class MyRunnable implements Runnable {
 
         private String params;
 

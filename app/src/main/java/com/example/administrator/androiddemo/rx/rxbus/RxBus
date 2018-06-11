@@ -1,0 +1,52 @@
+前言
+    随着RxJava的流行，现在越来越多的使用RxBus来取代EventBus与Otto了，需要注意的是后两者都是第三方的事件总线库，而RxBus是我们自己编写的java文件,它的核心是RxJava；
+
+
+实现
+    ——— 添加依赖
+        在module的build.gradle文件中：
+            compile 'io.reactivex:rxandroid:1.1.0'
+            compile 'io.reactivex:rxjava:1.1.0'
+
+    ——— 编写RxBus类
+        RxBus.Java；
+
+    ——— 发送事件
+        这里发送一个User对象：
+            RxBus.getInstance().send(new User(userId,username,password,teamId));
+
+    ——— 接收事件
+        使用有参的 toObservable(Class<T> eventType) 方法：
+            private Subscription mSubscription;
+            mSubscription = RxBus.getInstance().toObservable(User.class).subscribe(new Action1<User>() {
+                @Override
+                public void call(User user) {       // 接收到User对象
+                    userId = user.getUser_id();
+                }
+            });
+
+        如果我们使用的是无参的 toObservable() 方法，在接收时代码这样实现：
+            RxBus.getDefault().toObservable().subscribe(new Action1<Object>() {
+                @Override
+                public void call(Object event) {
+                    if (event instanceof TapEvent) { // 加个判断
+                        //do something
+                    }else if(event instanceof otherEvent){
+                        //do otherthing
+                    }
+                }
+            });
+
+    ——— 取消订阅
+        通常在OnDestroy()方法中：
+            if (!mSubscription.isUnsubscribed()){
+                mSubscription.unsubscribe();
+            }
+
+
+Sticky事件（粘性事件）
+    Sticky事件是指 事件消费者 在 事件发布之后才注册 的 也能接收到该事件 的 特殊类型；
+    Android中就有这样的实例 ——— Sticky Broadcast，即粘性广播；
+        正常情况下，如果发送者发送了某个广播，而接收者在这个广播发送后才注册自己的Receiver，这时接收者便无法接收到刚才的广播，
+        为此，Android引入了StickyBroadcast，在广播发送结束后会保存刚刚发送的广播（Intent），这样当接收者注册完Receiver后就可以接收到刚才已经发布的广播；
+    这就使得我们可以预先处理一些事件，让有消费者时再把这些事件投递给消费者；
