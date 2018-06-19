@@ -17,9 +17,13 @@
 
 
 主要方法
+    ——— public Handler(Callback callback, boolean async)；
+
     ——— public final boolean sendMessage(Message msg)；
 
     ——— public final boolean post(Runnable r)；
+
+    ——— public boolean sendMessageAtTime(Message msg, long uptimeMillis)；
 
     ——— public void dispatchMessage(Message msg)；
 
